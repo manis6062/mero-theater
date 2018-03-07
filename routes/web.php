@@ -16,7 +16,7 @@ Route::get('/', function () {
 });
 
 Route::get('/theatre_admin', function () {
-    return view('admin.login');
+    return view('welcome');
 });
 
 Route::post('theatre_admin/login/validate', 'Admin\LoginController@index');
