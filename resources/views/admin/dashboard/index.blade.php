@@ -11,7 +11,7 @@
             Dashboard
         </h1>
         <ol class="breadcrumb">
-            <li><a href="{{url('movie-theatres')}}"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li><a href="{{url('admin/dashboard')}}"><i class="fa fa-dashboard"></i> Home</a></li>
         </ol>
     </section>
 
@@ -21,8 +21,6 @@
         <div class="row">
             <hr>
         </div>
-
-
     </section>
 @stop
 

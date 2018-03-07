@@ -28,4 +28,11 @@ Route::group(['prefix'=>'admin','middleware'=> 'admin'], function(){
 
 	Route::get('logout', 'Admin\LoginController@logout');
 
+	// Route for movies
+	Route::group(['prefix'=>'movies'], function(){
+	   Route::get('/', 'Admin\MovieController@movieslist');
+	   Route::get('/create','Admin\MovieController@createmovie');
+	   Route::post('/submit','Admin\MovieController@submit');
+	});
+
 });
