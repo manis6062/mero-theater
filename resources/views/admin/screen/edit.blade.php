@@ -38,13 +38,12 @@
 @section('main-body')
     <div class="create-form">
         <span>Create New Screen</span>
-        <form action="{{url('admin/screens/submit')}}" class="form-horizontal" id="create-form" method="post"
+        <form action="{{url('admin/screens/'.$screen->slug.'/update')}}" class="form-horizontal" id="create-form" method="post"
               enctype="multipart/form-data">
             {{csrf_field()}}
-
             <div class="form-group">
-                <input type="text" name="name" value="{{old('name')}}" class="form-control" id="screen-name"
-                       onfocus="removeError();" placeholder="Enter Screen Name">
+                <input value="{{$screen->name}}" type="text" name="name" value="{{old('name')}}" class="form-control"
+                       id="screen-name" onfocus="removeError();" placeholder="Enter Screen Name">
                 @if($errors->has('name'))
                     <span class="help-block">
                     <strong>
@@ -58,6 +57,10 @@
 
             <div class="form-group">
                 <span id="seatImageSpan">Available Seat Image (Dimension 25x25 | Max Size 2mb | Format jpeg, jpg, png, bmp, svg)</span>
+                <div class="existingImage">
+                    <span>Currently Existing Image</span>
+                    <img src="{{asset('screen/available-seat-image/'.$screen->available_seat)}}" alt="">
+                </div>
                 <input type="file" id="available_seat" name="available_seat" onclick="removeError();">
                 @if($errors->has('available_seat'))
                     <span class="help-block error">
@@ -72,6 +75,10 @@
 
             <div class="form-group">
                 <span id="seatImageSpan">Selected Seat Image (Dimension 25x25 | Max Size 2mb | Format jpeg, jpg, png, bmp, svg)</span>
+                <div class="existingImage">
+                    <span>Currently Existing Image</span>
+                    <img src="{{asset('screen/selected-seat-image/'.$screen->selected_seat)}}" alt="">
+                </div>
                 <input type="file" id="selected_seat" name="selected_seat" onclick="removeError();">
                 @if($errors->has('selected_seat'))
                     <span class="help-block error">
@@ -86,6 +93,10 @@
 
             <div class="form-group">
                 <span id="seatImageSpan">Reserved Seat Image (Dimension 25x25 | Max Size 2mb | Format jpeg, jpg, png, bmp, svg)</span>
+                <div class="existingImage">
+                    <span>Currently Existing Image</span>
+                    <img src="{{asset('screen/reserved-seat-image/'.$screen->reserved_seat)}}" alt="">
+                </div>
                 <input type="file" id="reserved_seat" name="reserved_seat" onclick="removeError();">
                 @if($errors->has('reserved_seat'))
                     <span class="help-block error">
@@ -100,6 +111,10 @@
 
             <div class="form-group">
                 <span id="seatImageSpan">Sold Seat Image (Dimension 25x25 | Max Size 2mb | Format jpeg, jpg, png, bmp, svg)</span>
+                <div class="existingImage">
+                    <span>Currently Existing Image</span>
+                    <img src="{{asset('screen/sold-seat-image/'.$screen->sold_seat)}}" alt="">
+                </div>
                 <input type="file" id="sold_seat" name="sold_seat" onclick="removeError();">
                 @if($errors->has('sold_seat'))
                     <span class="help-block error">
@@ -110,10 +125,7 @@
                 @endif
                 <span class="sold-seat-error error help-block"></span>
             </div>
-
-            <div class="form-group">
-            <input type="submit" class="btn btn-primary subBtn" value="Create">
-            </div>
+            <input type="submit" class="btn btn-primary subBtn" value="Update">
         </form>
     </div>
 @stop
@@ -128,8 +140,7 @@
             }
 
             if ($('#available_seat').val() == '') {
-                e.preventDefault();
-                $('.available-seat-error').html('<strong>Please enter the seat image.</strong>');
+
             } else {
                 var ext = $('input#available_seat').val().split('.').pop().toLowerCase();
                 if ($.inArray(ext, ['jpeg', 'jpg', 'png', 'bmp', 'svg']) == -1) {
@@ -146,8 +157,7 @@
 
 
             if ($('#selected_seat').val() == '') {
-                e.preventDefault();
-                $('.selected-seat-error').html('<strong>Please enter the seat image.</strong>');
+
             } else {
                 var ext = $('input#selected_seat').val().split('.').pop().toLowerCase();
                 if ($.inArray(ext, ['jpeg', 'jpg', 'png', 'bmp', 'svg']) == -1) {
@@ -164,8 +174,7 @@
 
 
             if ($('#reserved_seat').val() == '') {
-                e.preventDefault();
-                $('.reserved-seat-error').html('<strong>Please enter the seat image.</strong>');
+
             } else {
                 var ext = $('input#reserved_seat').val().split('.').pop().toLowerCase();
                 if ($.inArray(ext, ['jpeg', 'jpg', 'png', 'bmp', 'svg']) == -1) {
@@ -181,8 +190,7 @@
             }
 
             if ($('#sold_seat').val() == '') {
-                e.preventDefault();
-                $('.sold-seat-error').html('<strong>Please enter the seat image.</strong>');
+
             } else {
                 var ext = $('input#sold_seat').val().split('.').pop().toLowerCase();
                 if ($.inArray(ext, ['jpeg', 'jpg', 'png', 'bmp', 'svg']) == -1) {

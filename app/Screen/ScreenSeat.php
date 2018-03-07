@@ -4,8 +4,8 @@ namespace App\Screen;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Screen extends Model
+class ScreenSeat extends Model
 {
-    protected $table = 'screens';
+    protected $table = 'screen_seats';
     protected $guarded = ['id'];
 }

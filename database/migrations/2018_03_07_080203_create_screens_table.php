@@ -15,6 +15,8 @@ class CreateScreensTable extends Migration
     {
         Schema::create('screens', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('admin_id');
+            $table->string('name', 100);
             $table->timestamps();
         });
     }
