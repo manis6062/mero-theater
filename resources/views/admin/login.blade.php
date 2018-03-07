@@ -107,7 +107,7 @@
                 @if(Session::has('error'))
                     <h4 class="text-center" style="color: darkred;"><i class="fa fa-warning"></i> {{ Session::get('error') }}</h4>
                 @endif
-                <form class="login-form" method="post" action="{{url('theatre_admin/login/validate')}}">
+                <form class="login-form" method="post" action="{{url('admin/login/validate')}}">
                     {{ csrf_field() }}
                     <input type="text" placeholder="username" name="username" id="focusedInput" required value="{{ old('username') }}"/>
                     @if ($errors->has('username'))

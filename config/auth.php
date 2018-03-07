@@ -45,9 +45,9 @@ return [
             'driver' => 'token',
             'provider' => 'users',
         ],
-        'theatre_admin'=> [
+        'admin'=> [
             'driver'=>'session',
-            'provider'=>'movie_theatre_admins',
+            'provider'=>'admins',
         ]
     ],
 
@@ -74,7 +74,7 @@ return [
             'model' => App\User::class,
         ],
 
-        'movie_theatre_admins' => [
+        'admins' => [
             'driver' => 'eloquent',
             'model' => App\Admin::class,
         ],

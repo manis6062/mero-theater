@@ -15,14 +15,14 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/theatre_admin', function () {
-    return view('welcome');
+Route::get('/admin', function () {
+    return view('admin.login');
 });
 
-Route::post('theatre_admin/login/validate', 'Admin\LoginController@index');
+Route::post('admin/login/validate', 'Admin\LoginController@index');
 
 
-Route::group(['prefix'=>'theatre_admin','middleware'=> 'theatre_admin'], function(){
+Route::group(['prefix'=>'admin','middleware'=> 'admin'], function(){
 
 	Route::get('dashboard', 'Admin\DashboardController@index');
 

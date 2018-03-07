@@ -15,7 +15,7 @@
 
         <div class="pull-right" style="margin-right: 20px;">
             <div class="logoutLink" style="margin-top: 12px;">
-                <a href="{{ url('theatre_admin/logout') }}" style="color: #fff;"><i class="fa fa-sign-out"></i> Sign out</a>
+                <a href="{{ url('admin/logout') }}" style="color: #fff;"><i class="fa fa-sign-out"></i> Sign out</a>
             </div>
         </div>
     </nav>

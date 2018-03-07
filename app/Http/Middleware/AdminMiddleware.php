@@ -5,7 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Support\Facades\Auth;
 
-class TheatreAdminMiddleware
+class AdminMiddleware
 {
     /**
      * Handle an incoming request.
@@ -16,8 +16,8 @@ class TheatreAdminMiddleware
      */
     public function handle($request, Closure $next, $guard = null)
     {
-         if (!Auth::guard('theatre_admin')->check()) {
-            return redirect('/theatre_admin');
+         if (!Auth::guard('admin')->check()) {
+            return redirect('/admin');
         }
 
         return $next($request);

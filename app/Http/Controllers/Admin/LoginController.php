@@ -19,22 +19,22 @@ class LoginController extends Controller
 
     	$data = $request->all();
 
-    	$check  = Auth::guard('theatre_admin')->attempt([
+    	$check  = Auth::guard('admin')->attempt([
     		'email'=>$data['username'],
     		'password'=>$data['password']
     	]);
 
     	if($check)
     	{  
-    		return redirect('theatre_admin/dashboard');
+    		return redirect('admin/dashboard');
     	}
-    	return redirect('theatre_admin')->with('error','Invalid Credential  !')->withInput();
+    	return redirect('admin')->with('error','Invalid Credential  !')->withInput();
  
     }
 
     public function logout()
     {
-        Auth::guard('theatre_admin')->logout();
-        return redirect('theatre_admin');
+        Auth::guard('admin')->logout();
+        return redirect('admin');
     }
 }
