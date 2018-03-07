@@ -28,4 +28,9 @@ Route::group(['prefix'=>'admin','middleware'=> 'admin'], function(){
 
 	Route::get('logout', 'Admin\LoginController@logout');
 
+
+//	Route for screens
+    Route::get('screens/create', 'Admin\ScreenController@create');
+    Route::get('screens', 'Admin\ScreenController@lists');
+//	Route for screens
 });
