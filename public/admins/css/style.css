@@ -1,0 +1,247 @@
+.req{
+    color: red;
+}
+
+.chooseDateRange{
+    color: darkblue;
+    cursor: pointer;
+}
+
+.content-wrapper{
+    background: #FAFAFA;
+}
+
+/*#createArtistForm{*/
+    /*padding: 0 5%;*/
+/*}*/
+
+#artistAvatar{
+    margin: 0;
+    padding: 0;
+}
+
+#artistBanner{
+    margin: 0;
+    padding: 0;
+}
+
+.create-new-artist-btn{
+    margin-right: 20px;
+    margin-bottom: 20px;
+}
+
+.artist-avtr {
+    height: 100px;
+    width: 100px;
+}
+
+.events-list-table {
+    padding: 0 2%;
+}
+
+.artist-list-table {
+    padding: 0 2%;
+}
+
+.assign-artist-table{
+    padding: 0 2%;
+}
+
+.view-event{
+    padding: 0 2%;
+}
+
+.event-counter-table{
+    padding: 0 2%;
+}
+
+.view-event-heading{
+    height: 40px;
+    background: #000;
+    display: flex;
+    align-content: center;
+    /*justify-content: center;*/
+}
+
+.view-event-footer{
+    height: 40px;
+    background: #D2D2D2;
+    display: flex;
+    align-content: center;
+    /*justify-content: center;*/
+    align-items: center;
+}
+
+.view-event-footer a{
+    margin-left: 10px;
+}
+
+.view-event-heading h5{
+    color: #c5d52b;
+    text-transform: uppercase;
+    font-weight: 900;
+    margin-left: 20px;
+}
+
+.view-event-heading a{
+    color: #c5d52b;
+    text-transform: uppercase;
+    font-weight: 900;
+    margin-left: 20px;
+}
+
+.view-event-image{
+    display: flex;
+    align-content: center;
+    justify-content: center;
+}
+
+.view-event-first-section{
+    margin-top: 20px;
+}
+
+.view-event-second-section .col-md-12{
+    background: #fff;
+}
+
+.view-event-third-section .col-md-12{
+    margin-top: 20px !important;
+}
+
+.artist-profile-first-sec img{
+    display: block;
+    margin: 0 auto;
+}
+
+.artist-profile-first-sec .cur-st-div, .artist-profile-second-sec .ear-li-div
+{
+    font-size: 18px;
+    padding: 0 5%;
+}
+
+.event-counter-create-form{
+    padding: 0 3%;
+}
+
+.event-counter-dashboard{
+    padding: 0 2%;
+}
+
+.event-counter-booking{
+    padding: 0 2%;
+}
+
+.bs{
+    color: #900;
+    font-weight: 800;
+}
+
+.ec-table{
+    border: 1px solid #ccc;
+}
+
+.ec-book-btn{
+    display: block;
+   text-align: center;
+}
+
+.ec-book-btn button{
+    color: #fff !important;
+    background-color: #c41010;
+    padding: 5px 15px;
+    border-radius: 4px;
+    font-size: 16px;
+    text-align: center;
+}
+
+.btn-book{
+    color: #fff !important;
+    background-color: #c41010;
+    padding: 5px 15px;
+    border-radius: 4px;
+    font-size: 16px;
+    text-align: center;
+}
+
+.white_content {
+    display: none;
+    position: fixed;
+    top: 25%;
+    left: 15%;
+    width: 70%;
+    height: auto;
+    padding: 16px;
+    border: 3px solid #CE4E4E;
+    border-radius: 6px;
+    background-color: #FFF;
+    z-index: 1002;
+    overflow: auto;
+}
+
+.black_overlay {
+    display: none;
+    position: fixed;
+    top: 0%;
+    left: 0%;
+    width: 100%;
+    height: 100%;
+    background-color: #333333;
+    z-index: 1001;
+    -moz-opacity: 0.8;
+    opacity: .80;
+    filter: alpha(opacity=80);
+}
+
+.confirm-event-counter-ticket{
+    font-size: 20px;
+    font-weight: 800;
+}
+
+.signup-bg {
+    background-color: #fff;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    margin-top: 15px;
+    width: 90%;
+}
+
+.total-bh-count{
+    font-size: 20px;
+    font-weight: 700;
+    color: #C41010;
+}
+
+.mws-panel-header{
+    background: #000;
+    padding: 5px 15px;
+    color: #fff;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.site-setting-general{
+    padding: 0 2%;
+}
+
+.site-setting-general form{
+    padding: 1% 2%;
+    background: #fff;
+}
+
+
+.badge-info {
+    background-color: #3a87ad;
+}
+.badge {
+    padding-left: 9px;
+    padding-right: 9px;
+    -webkit-border-radius: 9px;
+    -moz-border-radius: 9px;
+    border-radius: 9px;
+}
+
+
+
+
+
+

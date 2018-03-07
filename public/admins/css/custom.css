@@ -1,0 +1,71 @@
+/*css for user overall detail from admin*/
+
+.userDetailBox{
+    border-top: 3px solid #f39c12;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+    padding: 0 50px;
+}
+
+.userAccountDetailBox{
+    border-top: 3px solid #dd4b39;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+    padding: 0 50px;
+}
+
+.crditLogTable{
+    margin: 20px 0;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+}
+
+.crditLogTableHeader{
+    background-color: #00a65a;
+}
+
+.contactTable{
+    margin: 20px 0;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+}
+
+.contactTableHeader{
+    background-color: #00a7d0;
+}
+
+.contactGroupTable{
+    margin: 20px 0;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+}
+
+.contactGroupTableHeader{
+    background-color: #f39c12;
+}
+
+.tokenTable{
+    margin: 20px 0;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+}
+
+.tokenTableHeader{
+    background-color: #DD4B39;
+}
+
+.paymentDraftTable{
+    margin: 20px 0;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+}
+
+.paymentDraftTableHeader{
+    background-color: #00a65a;
+}
+
+.supportTable{
+    margin: 20px 0;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+}
+
+.supportTableHeader{
+    background-color: #00a7d0;
+}
+
+.req{
+    color: red;
+}
