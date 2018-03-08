@@ -36,9 +36,10 @@
 
 
 @section('main-body')
+    <section class="content">
     <div class="create-form">
         <span>Create New Screen</span>
-        <form action="{{url('admin/screens/'.$screen->slug.'/update')}}" class="form-horizontal" id="create-form" method="post"
+        <form action="{{url('admin/seat-management/screens/'.$screen->slug.'/update')}}" class="form-horizontal" id="create-form" method="post"
               enctype="multipart/form-data">
             {{csrf_field()}}
             <div class="form-group">
@@ -128,6 +129,7 @@
             <input type="submit" class="btn btn-primary subBtn" value="Update">
         </form>
     </div>
+    </section>
 @stop
 
 @section('scripts')

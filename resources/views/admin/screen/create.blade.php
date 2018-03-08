@@ -36,9 +36,10 @@
 
 
 @section('main-body')
+    <section class="content">
     <div class="create-form">
         <span>Create New Screen</span>
-        <form action="{{url('admin/screens/submit')}}" class="form-horizontal" id="create-form" method="post"
+        <form action="{{url('admin/seat-management/screens/submit')}}" class="form-horizontal" id="create-form" method="post"
               enctype="multipart/form-data">
             {{csrf_field()}}
 
@@ -116,6 +117,7 @@
             </div>
         </form>
     </div>
+    </section>
 @stop
 
 @section('scripts')

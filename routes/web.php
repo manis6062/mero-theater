@@ -37,13 +37,19 @@ Route::group(['prefix'=>'admin','middleware'=> 'admin'], function(){
 
 
 //	Route for screens
-    Route::get('screens/create', 'Admin\ScreenController@create');
-    Route::post('screens/submit', 'Admin\ScreenController@submit');
-    Route::get('screens/delete', 'Admin\ScreenController@delete');
-    Route::get('screens/{slug}/edit', 'Admin\ScreenController@edit');
-    Route::post('screens/{slug}/update', 'Admin\ScreenController@update');
-    Route::get('screens/{slug}/seat', 'Admin\ScreenController@seat');
-    Route::get('screens/{slug}/seat/create', 'Admin\ScreenController@createSeat');
-    Route::get('screens', 'Admin\ScreenController@lists');
+    Route::group(['prefix'=>'seat-management'], function() {
+        Route::get('screens/create', 'Admin\ScreenController@create');
+        Route::post('screens/submit', 'Admin\ScreenController@submit');
+        Route::get('screens/delete', 'Admin\ScreenController@delete');
+        Route::get('screens/{slug}/edit', 'Admin\ScreenController@edit');
+        Route::post('screens/{slug}/update', 'Admin\ScreenController@update');
+        Route::get('screens/{slug}/seat', 'Admin\ScreenController@seat');
+        Route::get('screens/{slug}/seat/create', 'Admin\ScreenController@createSeat');
+        Route::post('screens/{slug}/seat/update', 'Admin\ScreenController@updateSeat');
+        Route::get('screens/{slug}/seat/edit', 'Admin\ScreenController@editSeat');
+        Route::post('screens/{slug}/seat/submit', 'Admin\ScreenController@submitSeat');
+        Route::post('screens/{slug}/seat/ajax-call', 'Admin\ScreenController@ajaxCall');
+        Route::get('screens', 'Admin\ScreenController@lists');
+    });
 //	Route for screens
 });
