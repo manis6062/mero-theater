@@ -17,8 +17,9 @@ class MovieController extends Controller
 	}
 
 	public function movieslist()
-	{
-		return view('admin.movies.movielist');
+	{  
+        $data = $this->movie->listofmovies();
+		return view('admin.movies.movielist',compact('data'));
 	}
 
 	public function createmovie()
@@ -34,15 +35,13 @@ class MovieController extends Controller
             'genre' => 'required',
             'distributor' => 'required',
             'openingdate' => 'required|date',
-            'duration' => 'required|numeric|max:4',
+            'duration' => 'required|numeric',
             'displaysequence' => 'required|numeric',
             'filmformat' =>'required',
-            'image' => 'nullable|image|dimensions:width=420,height=200|max:2097152',
-            'banner' => 'nullable|image|dimensions:width=1280,height=490|max:2097152',
-            // 'video' => 'sometimes|required|mimetypes:video/ogg,video/mp4,video/webm|max:2097152',
+            'image' => 'required|mimes:jpeg,jpg,bmp,png,svg',
+            'bannerimage' => 'required|mimes:jpeg,jpg,bmp,png,svg',
             'trailerurl' => 'nullable|url',
         ]);
-		// dd($request->movieTitle);
 
 		$data = array(
             'movie_title' => $request->movieTitle,
@@ -57,31 +56,103 @@ class MovieController extends Controller
             'displaysequence'=>$request->displaysequence,
             'filmformat'=>$request->filmformat,
             'trailerurl'=>$request->trailerurl,
-            // 'image'=>$request->image,
-            // 'banner_image'=>$request->banner
+            'status'=>$request->status
             );
 
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $filename = time() . uniqid() . '.' . $image->getClientOriginalExtension();
+            $path = public_path('movies/posterimage');
+            $image->move($path, $filename);
+            $data['image'] = $filename;
+        }
+
+         if ($request->hasFile('bannerimage')) {
+            $image = $request->file('bannerimage');
+            $filename = time() . uniqid() . '.' . $image->getClientOriginalExtension();
+            $path = public_path('movies/bannerimage');
+            $image->move($path, $filename);
+            $data['banner_image'] = $filename;
+        }
+
         $this->movie->store($data);
-
-        // if ($request->hasFile('image')) {
-        //     $orgiImage = $request->file('image');
-        //     $filename = time() . time() . '.' . $orgiImage->getClientOriginalExtension();
-        //     $path2 = public_path('images/events/small-thumb');
-        //     $img = Image::make($orgiImage->getRealPath());
-        //     $img->resize(60, 60)->save($path2 . '/' . $filename);
-        //     $path = public_path('images/events/thumbnail');
-        //     $orgiImage->move($path, $filename);
-        //     $eventData['image'] = $filename;
-        // }
-
-        // if ($request->hasFile('banner')) {
-        //     $orgiBanner = $request->file('banner');
-        //     $filename = time() . time() . '.' . $orgiBanner->getClientOriginalExtension();
-        //     $path = public_path('images/events/banner');
-        //     $orgiBanner->move($path, $filename);
-        //     $eventData['banner'] = $filename;
-        // }
-
+        return  redirect('admin/movies');
 
 	}
+
+    public function editmovie($movieid)
+    {   
+        $editdata = $this->movie->getrequestedmovie($movieid);
+        return view('admin.movies.editmovie',compact('editdata'));
+    }
+
+    public function update(Request $request,$movieid)
+    {
+        $this->validate($request, [
+            'movieTitle' => 'required',
+            'movieShortName' => 'required',
+            'genre' => 'required',
+            'distributor' => 'required',
+            'openingdate' => 'required|date',
+            'duration' => 'required|numeric',
+            'displaysequence' => 'required|numeric',
+            'filmformat' =>'required',
+            'image' => 'sometimes|required|mimes:jpeg,jpg,bmp,png,svg',
+            'bannerimage' => 'sometimes|required|mimes:jpeg,jpg,bmp,png,svg',
+            'trailerurl' => 'nullable|url',
+        ]);
+
+        $data = array(
+            'movie_title' => $request->movieTitle,
+            'movie_short_name'=>$request->movieShortName,
+            'synopsis'=>$request->synopsis,
+            'genre'=>$request->genre,
+            'distributor'=>$request->distributor,
+            'openingdate'=>$request->openingdate,
+            'content'=>$request->content,
+            'duration'=>$request->duration,
+            'isrestricted'=>$request->isrestricted,
+            'displaysequence'=>$request->displaysequence,
+            'filmformat'=>$request->filmformat,
+            'trailerurl'=>$request->trailerurl,
+            'status'=>$request->status
+            );
+
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $filename = time() . uniqid() . '.' . $image->getClientOriginalExtension();
+            $path = public_path('movies/posterimage');
+            $image->move($path, $filename);
+            $data['image'] = $filename;
+        }
+
+         if ($request->hasFile('bannerimage')) {
+            $image = $request->file('bannerimage');
+            $filename = time() . uniqid() . '.' . $image->getClientOriginalExtension();
+            $path = public_path('movies/bannerimage');
+            $image->move($path, $filename);
+            $data['banner_image'] = $filename;
+        }
+
+       $updated = $this->movie->updatedata($data,$movieid);
+       if($updated)
+          return redirect('admin/movies');
+
+      return redirect('admin/movies');
+    }
+
+    public function deletemovie($movieid)
+    {
+       $deleted = $this->movie->deletedata($movieid);
+       if($deleted)
+        return redirect('admin/movies');
+    }
+
+    public function changemoviestatus($movieid)
+    {   
+        // dd($movieid);
+         $statuschanged = $this->movie->newstatus($movieid);
+         if($statuschanged)
+            return true;
+    }
 }

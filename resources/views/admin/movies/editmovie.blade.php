@@ -8,7 +8,7 @@
         </h1>
         <ol class="breadcrumb">
             <li><a href="{{url('admin/dashboard')}}"><i class="fa fa-dashboard"></i>Home</a></li>
-            <li>Create Movie</li>
+            <li>Edit Movie</li>
         </ol>
     </section>
 
@@ -17,13 +17,13 @@
         <!-- Small boxes (Stat box) -->
         <div class="row">
             <hr>
-            <form method="post" action="{{url('admin/movies/submit')}}" enctype="multipart/form-data" id="submitmovie">
+            <form method="post" action="{{url('admin/movies/update/'.$editdata->id)}}" enctype="multipart/form-data" id="submitmovie">
                 {{csrf_field()}}
 
                 <div class="form-group row">
                     <label for="movieTitle" class="col-sm-2 text-right"><span class="req">*</span>Title: </label>
                     <div class="col-sm-4">
-                        <input type="text" id="movieTitle" name="movieTitle" class="form-control" value="{{old('movieTitle')}}">
+                        <input type="text" id="movieTitle" name="movieTitle" class="form-control" value="{{ isset($editdata->movie_title)?$editdata->movie_title:old('movieTitle') }}">
                         @if($errors->has('movieTitle'))
                             <span class="help-block">
                                 <strong>{{$errors->first('movieTitle')}}</strong>
@@ -36,7 +36,7 @@
                 <div class="form-group row">
                     <label for="movieShortName" class="col-sm-2 text-right"><span class="req">*</span>Short Name:</label>
                     <div class="col-sm-4">
-                        <input type="text" id="movieShortName" name="movieShortName" class="form-control" value="{{old('movieShortName')}}">
+                        <input type="text" id="movieShortName" name="movieShortName" class="form-control" value="{{ isset($editdata->movie_short_name)?$editdata->movie_short_name:old('movieTitle') }}">
                         @if($errors->has('movieShortName'))
                             <span class="help-block">
                                 <strong>{{$errors->first('movieShortName')}}</strong>
@@ -49,7 +49,7 @@
                 <div class="form-group row">
                     <label for="Synopsis" class="col-sm-2 text-right">Synopsis:</label>
                     <div class="col-sm-10">
-                        <textarea class="form-control ckeditor" rows="6" name="synopsis">{{old('synopsis')}}</textarea>
+                        <textarea class="form-control ckeditor" rows="6" name="synopsis">{{ isset($editdata->synopsis)?$editdata->synopsis:old('synopsis') }}</textarea>
                         @if($errors->has('synopsis'))
                             <span class="help-block">
                                 <strong>{{$errors->first('synopsis')}}</strong>
@@ -104,9 +104,9 @@
                 </div>
 
                 <div class="form-group row">
-                    <label for="openingshow" class="col-sm-2 text-right"><span class="req">*</span>Opening Date:</label>
+                    <label for="openingdate" class="col-sm-2 text-right"><span class="req">*</span>Opening Date:</label>
                     <div class="col-sm-4">
-                        <input type="text" id="openingdate" name="openingdate" class="form-control" value="{{old('openingdate')}}">
+                        <input type="text" id="openingdate" name="openingdate" class="form-control"  value="{{ isset($editdata->openingdate)?$editdata->openingdate:old('openingdate') }}">
                         @if($errors->has('openingdate'))
                             <span class="help-block">
                                 <strong>{{$errors->first('openingdate')}}</strong>
@@ -117,9 +117,9 @@
                 </div>
 
                 <div class="form-group row">
-                    <label for="distributor" class="col-sm-2 text-right">Content:</label>
+                    <label for="content" class="col-sm-2 text-right">Content:</label>
                     <div class="col-sm-4">
-                        <input type="text" id="content" name="content" class="form-control" value="{{old('content')}}">
+                        <input type="text" id="content" name="content" class="form-control"  value="{{ isset($editdata->content)?$editdata->content:old('content') }}">
                         <span id="seatImageSpan">
                         @if($errors->has('content'))
                             <span class="help-block">
@@ -130,9 +130,9 @@
                 </div>
 
                 <div class="form-group row">
-                    <label for="distributor" class="col-sm-2 text-right"><span class="req">*</span>Duration:</label>
+                    <label for="duration" class="col-sm-2 text-right"><span class="req">*</span>Duration:</label>
                     <div class="col-sm-4">
-                        <input type="text" id="duration" name="duration" class="form-control" placeholder="Duration in minutes only" value="{{old('duration')}}">
+                        <input type="text" id="duration" name="duration" class="form-control" placeholder="Duration in minutes only"  value="{{ isset($editdata->duration)?$editdata->duration:old('duration') }}">
                         @if($errors->has('duration'))
                             <span class="help-block">
                                 <strong>{{$errors->first('duration')}}</strong>
@@ -145,7 +145,7 @@
                 <div class="form-group row">
                     <label for="distributor" class="col-sm-2 text-right">Restricted:</label>
                     <div class="col-sm-1">
-                        <input type="checkbox" id="isrestricted" name="isrestricted" value="restricted">
+                        <input type="checkbox" id="isrestricted" name="isrestricted" value="restricted" {{ isset($editdata->isrestricted)?'checked':''}}>
                         @if($errors->has('isrestricted'))
                             <span class="help-block">
                                 <strong>{{$errors->first('isrestricted')}}</strong>
@@ -157,7 +157,7 @@
                 <div class="form-group row">
                     <label for="displaysequence" class="col-sm-2 text-right"><span class="req">*</span>Display Sequence:</label>
                     <div class="col-sm-4">
-                        <input type="text" id="displaysequence" name="displaysequence" class="form-control" value="{{old('displaysequence')}}">
+                        <input type="text" id="displaysequence" name="displaysequence" class="form-control" value="{{ isset($editdata->displaysequence)?$editdata->displaysequence:old('displaysequence') }}">
                         @if($errors->has('displaysequence'))
                             <span class="help-block">
                                 <strong>{{$errors->first('displaysequence')}}</strong>
@@ -193,7 +193,7 @@
                 <div class="form-group row">
                     <label for="trailerurl" class="col-sm-2 text-right">Trailer URL:</label>
                     <div class="col-sm-4">
-                        <input type="text" id="trailerurl" name="trailerurl" class="form-control" value="{{old('trailerurl')}}">
+                        <input type="text" id="trailerurl" name="trailerurl" class="form-control" value="{{ isset($editdata->trailerurl)?$editdata->trailerurl:old('trailerurl') }}">
                         @if($errors->has('trailerurl'))
                             <span class="help-block">
                                 <strong>{{$errors->first('trailerurl')}}</strong>
@@ -204,29 +204,27 @@
 
                 <div class="form-group row">
                     <label for="image" class="col-sm-2 text-right">Poster Image:</label>
-                    <div class="col-sm-4">
-                        <input type="file" id="image" name="image" class="form-control" value="{{old('image')}}">
-                        @if($errors->has('image'))
-                            <span class="help-block">
-                                <strong>{{$errors->first('image')}}</strong>
-                            </span>
+                    <div class="col-sm-4">       
+                        @if(isset($editdata->image))
+                            <img src="{{ asset('movies/posterimage/'.$editdata->image) }}" alt="Poster Image" class="img img-responsive">
                         @endif
+                        <label for="poster">Change Poster Image:</label>
+                        <input type="file" class="form-control " name="image" id="image">
+                        (Dimension 25x25 | Max Size 2mb | Format jpeg, jpg, png, bmp, svg)
                     </div>
-                    (Dimension 25x25 | Max Size 2mb | Format jpeg, jpg, png, bmp, svg)</span>
                     <span class="image-error error help-block"></span>
                 </div>
 
                 <div class="form-group row">
                     <label for="bannerimage" class="col-sm-2 text-right">Banner Image:</label>
                     <div class="col-sm-4">
-                        <input type="file" id="bannerimage" name="bannerimage" class="form-control" value="{{old('bannerimage')}}">
-                        @if($errors->has('bannerimage'))
-                            <span class="help-block">
-                                <strong>{{$errors->first('bannerimage')}}</strong>
-                            </span>
+                        @if(isset($editdata->image))
+                            <img src="{{ asset('movies/bannerimage/'.$editdata->banner_image) }}" alt="Banner Image" class="img img-responsive">
                         @endif
+                        <label for="banner">Change Poster Image:</label>
+                        <input type="file" class="form-control " name="bannerimage" id="bannerimage" style="padding: 0; margin: 0;">
+                        (Dimension 25x25 | Max Size 2mb | Format jpeg, jpg, png, bmp, svg)
                     </div>
-                    (Dimension 25x25 | Max Size 2mb | Format jpeg, jpg, png, bmp, svg)</span>
                     <span class="bannerimage-error error help-block"></span>
                 </div>
 
@@ -325,85 +323,109 @@
                 $('.duration-error').html('<strong>Please enter the Movie Format.</strong>');
             }
 
-            if ($('#image').val() == '') {
-                e.preventDefault();
-                $('.image-error').html('<strong>Please enter the Poster Image.</strong>');
-            } else {
-                var ext = $('input#image').val().split('.').pop().toLowerCase();
-                if ($.inArray(ext, ['jpeg', 'jpg', 'png', 'bmp', 'svg']) == -1) {
-                    e.preventDefault();
-                    $('.image-error').html('<strong>Invalid Image Format !</strong>');
-                }
-                else {
+            $('#image').on('change', function () {
+                var fileOrg = '';
+                var widthOfImg = '';
+                var heightOfImg = '';
+                var file = $('input#image').val();
+                if (file != '') {
                     var fileSize = $('input#image')[0].files[0].size;
                     if (fileSize > 2097152) {
-                        e.preventDefault();
-                        $('.image-error').html('<strong>File Size exceed max allowed size !</strong>');
-                    }else{
-                        var fileOrg = '';
-                        var widthOfImg = '';
-                        var heightOfImg = '';
-                        var fileInput = $(this)[0],
-                        fileOrg = fileInput.files && fileInput.files[0];
+                        $('.subBtn').prop('disabled', true);
+                        $('.image-error').html('<strong style="color: red;">Max size 2 mb only !</strong>');
+                    } else {
+                        var ext = $('input#image').val().split('.').pop().toLowerCase();
+                        if ($.inArray(ext, ['jpeg', 'jpg', 'png', 'bmp', 'gif', 'svg']) == -1) {
+                            $('.subBtn').prop('disabled', true);
+                            $('.image-error').html('<strong style="color: red;">Invalid Image Format !</strong>');
+                        } else {
+                            var fileInput = $(this)[0],
+                                fileOrg = fileInput.files && fileInput.files[0];
 
-                        if (fileOrg) {
-                            var img = new Image();
+                            if (fileOrg) {
+                                var img = new Image();
 
-                            img.src = window.URL.createObjectURL(fileOrg);
+                                img.src = window.URL.createObjectURL(fileOrg);
 
-                            img.onload = function () {
-                                widthOfImg = img.naturalWidth;
-                                heightOfImg = img.naturalHeight;
+                                img.onload = function () {
+                                    widthOfImg = img.naturalWidth;
+                                    heightOfImg = img.naturalHeight;
 
-                                if (widthOfImg != 420 && heightOfImg != 200) {
-                                    e.preventDefault();
-                                    $('.image-error').html('<strong style="color: red;">Invalid Image Dimension !</strong>');
-                                }
-                            };
+                                    if (widthOfImg != 420 && heightOfImg != 200) {
+                                        $('.image-error').html('<strong style="color: red;">Invalid Image Dimension !</strong>');
+                                        $('.subBtn').prop('disabled', true);
+                                    } else {
+                                        $('.image-error').html('');
+                                        $('.subBtn').prop('disabled', false);
+                                    }
+                                };
+                            }
                         }
                     }
                 }
-            }
+            });
 
-            if ($('#bannerimage').val() == '') {
-                e.preventDefault();
-                $('.bannerimage-error').html('<strong>Please enter the Banner Image.</strong>');
-            } else {
-                var ext = $('input#bannerimage').val().split('.').pop().toLowerCase();
-                if ($.inArray(ext, ['jpeg', 'jpg', 'png', 'bmp', 'svg']) == -1) {
-                    e.preventDefault();
-                    $('.bannerimage-error').html('<strong>Invalid Image Format !</strong>');
-                } else {
+            $('#bannerimage').on('change', function () {
+                var fileOrg = '';
+                var widthOfImg = '';
+                var heightOfImg = '';
+                var file = $('input#bannerimage').val();
+                if (file != '') {
                     var fileSize = $('input#bannerimage')[0].files[0].size;
                     if (fileSize > 2097152) {
-                        e.preventDefault();
-                        $('.bannerimage-error').html('<strong>File Size exceed max allowed size !</strong>');
-                    }else{
-                        var fileOrg = '';
-                        var widthOfImg = '';
-                        var heightOfImg = '';
-                        var fileInput = $(this)[0],
-                        fileOrg = fileInput.files && fileInput.files[0];
+                        $('.subBtn').prop('disabled', true);
+                        $('.bannerimage-error').html('<strong style="color: red;">Max size 2 mb only !</strong>');
+                    } else {
+                        var ext = $('input#bannerimage').val().split('.').pop().toLowerCase();
+                        if ($.inArray(ext, ['jpeg', 'jpg', 'png', 'bmp', 'gif', 'svg']) == -1) {
+                            $('.subBtn').prop('disabled', true);
+                            $('.bannerimage-error').html('<strong style="color: red;">Invalid Image Format !</strong>');
+                        } else {
+                            var fileInput = $(this)[0],
+                                fileOrg = fileInput.files && fileInput.files[0];
 
-                        if (fileOrg) {
-                            var img = new Image();
+                            if (fileOrg) {
+                                var img = new Image();
 
-                            img.src = window.URL.createObjectURL(fileOrg);
+                                img.src = window.URL.createObjectURL(fileOrg);
 
-                            img.onload = function () {
-                                widthOfImg = img.naturalWidth;
-                                heightOfImg = img.naturalHeight;
+                                img.onload = function () {
+                                    widthOfImg = img.naturalWidth;
+                                    heightOfImg = img.naturalHeight;
 
-                                if (widthOfImg != 420 && heightOfImg != 200) {
-                                    e.preventDefault();
-                                    $('.image-error').html('<strong style="color: red;">Invalid Image Dimension !</strong>');
-                                }
-                            };
+                                    if (widthOfImg != 1280 && heightOfImg != 490) {
+                                        $('.bannerimage-error').html('<strong style="color: red;">Invalid Image Dimension !</strong>');
+                                        $('.subBtn').prop('disabled', true);
+                                    } else {
+                                        $('.bannerimage-error').html('');
+                                        $('.subBtn').prop('disabled', false);
+                                    }
+                                };
+                            }
+
                         }
                     }
                 }
-            }
+            });
+
         });
+
+        $(window).on('load', function(){
+            var genreData = "{{$editdata->genre}}";
+            $(document).find('select[name=genre]').val(genreData);
+
+            var distributordata = "{{$editdata->distributor}}";
+            $(document).find('select[name=distributor]').val(distributordata);
+            
+            var filmformatdata = "{{$editdata->filmformat}}";
+            $(document).find('select[name=filmformat]').val(filmformatdata);
+
+            var statusdata = "{{$editdata->status}}";
+            $(document).find('select[name=status]').val(statusdata);
+        });
+
+
+        
     </script>
 @stop
 

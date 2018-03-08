@@ -33,6 +33,10 @@ Route::group(['prefix'=>'admin','middleware'=> 'admin'], function(){
 	   Route::get('/', 'Admin\MovieController@movieslist');
 	   Route::get('/create','Admin\MovieController@createmovie');
 	   Route::post('/submit','Admin\MovieController@submit');
+	   Route::get('{movieid}/edit','Admin\MovieController@editmovie');
+	   Route::post('update/{movieid}','Admin\MovieController@update');
+	   Route::get('delete/{movieid}','Admin\MovieController@deletemovie');
+	   Route::get('statuschange/{movieid}','Admin\MovieController@changemoviestatus');
 	});
 
 
