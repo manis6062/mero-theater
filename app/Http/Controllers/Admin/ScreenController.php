@@ -22,6 +22,7 @@ class ScreenController extends Controller
     {
         $this->validate($request, [
             'name' => 'required',
+            'screen_number' => 'required',
             'available_seat' => 'required|dimensions:width=25,height=25|mimes:jpeg,jpg,bmp,png,svg',
             'reserved_seat' => 'required|dimensions:width=25,height=25|mimes:jpeg,jpg,bmp,png,svg',
             'selected_seat' => 'required|dimensions:width=25,height=25|mimes:jpeg,jpg,bmp,png,svg',
@@ -30,7 +31,10 @@ class ScreenController extends Controller
 
         $dataToStore = [
             'admin_id' => Auth::guard('admin')->user()->id,
-            'name' => $request->name
+            'name' => $request->name,
+            'screen_number' => $request->screen_number,
+            'house_seats' => $request->house_seats == null ? 0 : $request->house_seats,
+            'wheel_chair_seats' => $request->wheel_chair_seats == null ? 0 : $request->wheel_chair_seats,
         ];
 
         if ($request->hasFile('available_seat')) {
@@ -132,6 +136,7 @@ class ScreenController extends Controller
     {
         $this->validate($request, [
             'name' => 'required',
+            'screen_number' => 'required',
             'available_seat' => 'sometimes|required|dimensions:width=25,height=25|mimes:jpeg,jpg,bmp,png,svg',
             'reserved_seat' => 'sometimes|required|dimensions:width=25,height=25|mimes:jpeg,jpg,bmp,png,svg',
             'selected_seat' => 'sometimes|required|dimensions:width=25,height=25|mimes:jpeg,jpg,bmp,png,svg',
@@ -140,7 +145,10 @@ class ScreenController extends Controller
 
         $dataToStore = [
             'admin_id' => Auth::guard('admin')->user()->id,
-            'name' => $request->name
+            'name' => $request->name,
+            'screen_number' => $request->screen_number,
+            'house_seats' => $request->house_seats == null ? 0 : $request->house_seats,
+            'wheel_chair_seats' => $request->wheel_chair_seats == null ? 0 : $request->wheel_chair_seats,
         ];
 
         $detail = Screen::where('slug', $slug)->first();
@@ -256,10 +264,18 @@ class ScreenController extends Controller
 
         $dataToStore['active_seats'] = json_encode($activeSeat);
         $dataToStore['alphabets'] = json_encode($alphabets);
+        $dataToStore['total_seats'] = count($activeSeat);
 
         $result = ScreenSeat::create($dataToStore);
         if ($result)
+        {
+            $hs = $screen->house_seats;
+            $wcs = $screen->wheel_chair_seats;
+            $ss = $dataToStore['total_seats'] - $hs - $wcs;
+            Screen::find($screen->id)->update(['standard_seats' => $ss]);
             return redirect('admin/seat-management/screens/' . $screen->slug . '/seat')->with('status', 'success');
+        }
+
 
         return redirect('admin/seat-management/screens/' . $screen->slug . '/seat')->with('status', 'unsuccess');
     }
@@ -302,10 +318,17 @@ class ScreenController extends Controller
 
         $dataToStore['active_seats'] = json_encode($activeSeat);
         $dataToStore['alphabets'] = json_encode($alphabets);
+        $dataToStore['total_seats'] = count($activeSeat);
 
         $result = ScreenSeat::find($data['screenSeatDataId'])->update($dataToStore);
         if ($result)
+        {
+            $hs = $screen->house_seats;
+            $wcs = $screen->wheel_chair_seats;
+            $ss = $dataToStore['total_seats'] - $hs - $wcs;
+            Screen::find($screen->id)->update(['standard_seats' => $ss]);
             return redirect('admin/seat-management/screens/' . $screen->slug . '/seat')->with('status', 'success-update');
+        }
 
         return redirect('admin/seat-management/screens/' . $screen->slug . '/seat')->with('status', 'unsuccess-update');
     }

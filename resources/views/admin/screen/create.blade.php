@@ -31,6 +31,17 @@
             font-size: 15px;
             font-weight: 500;
         }
+
+        .info-span{
+            font-size: 18px;
+            text-align: center;
+            font-weight: 600;
+            color: magenta;
+        }
+
+        small{
+            color: red;
+        }
     </style>
 @stop
 
@@ -38,12 +49,13 @@
 @section('main-body')
     <section class="content">
     <div class="create-form">
-        <span>Create New Screen</span>
+        <p class="info-span">Create New Screen</p>
         <form action="{{url('admin/seat-management/screens/submit')}}" class="form-horizontal" id="create-form" method="post"
               enctype="multipart/form-data">
             {{csrf_field()}}
 
             <div class="form-group">
+                <span>Screen Name <small>*</small></span>
                 <input type="text" name="name" value="{{old('name')}}" class="form-control" id="screen-name"
                        onfocus="removeError();" placeholder="Enter Screen Name">
                 @if($errors->has('name'))
@@ -56,9 +68,51 @@
                 <span class="screen-name-error error help-block"></span>
             </div>
 
+            <div class="form-group">
+                <span>Screen Number <small>*</small></span>
+                <input type="text" name="screen_number" value="{{old('screen_number')}}" class="form-control" id="screen-number"
+                       onfocus="removeError();" placeholder="Enter Screen Number">
+                @if($errors->has('screen_number'))
+                    <span class="help-block">
+                    <strong>
+                        {{$errors->first('screen_number')}}
+                    </strong>
+                </span>
+                @endif
+                <span class="screen-number-error error help-block"></span>
+            </div>
 
             <div class="form-group">
-                <span id="seatImageSpan">Available Seat Image (Dimension 25x25 | Max Size 2mb | Format jpeg, jpg, png, bmp, svg)</span>
+                <span>House Seats</span>
+                <input type="text" name="house_seats" value="{{old('house_seats')}}" class="form-control" id="house-seats"
+                       onfocus="removeError();" placeholder="Enter House Seats Value (Optional)">
+                @if($errors->has('house_seats'))
+                    <span class="help-block">
+                    <strong>
+                        {{$errors->first('house_seats')}}
+                    </strong>
+                </span>
+                @endif
+                <span class="house-seats-error error help-block"></span>
+            </div>
+
+            <div class="form-group">
+                <span>Wheel Chair Seats</span>
+                <input type="text" name="wheel_chair_seats" value="{{old('wheel_chair_seats')}}" class="form-control" id="wheel-chair-seats"
+                       onfocus="removeError();" placeholder="Enter Wheel Chair Seats Value (Optional)">
+                @if($errors->has('wheel_chair_seats'))
+                    <span class="help-block">
+                    <strong>
+                        {{$errors->first('wheel_chair_seats')}}
+                    </strong>
+                </span>
+                @endif
+                <span class="wheel-chair-seats-error error help-block"></span>
+            </div>
+
+
+            <div class="form-group">
+                <span id="seatImageSpan">Available Seat Image <small>*</small> (Dimension 25x25 | Max Size 2mb | Format jpeg, jpg, png, bmp, svg)</span>
                 <input type="file" id="available_seat" name="available_seat" onclick="removeError();">
                 @if($errors->has('available_seat'))
                     <span class="help-block error">
@@ -72,7 +126,7 @@
 
 
             <div class="form-group">
-                <span id="seatImageSpan">Selected Seat Image (Dimension 25x25 | Max Size 2mb | Format jpeg, jpg, png, bmp, svg)</span>
+                <span id="seatImageSpan">Selected Seat Image <small>*</small> (Dimension 25x25 | Max Size 2mb | Format jpeg, jpg, png, bmp, svg)</span>
                 <input type="file" id="selected_seat" name="selected_seat" onclick="removeError();">
                 @if($errors->has('selected_seat'))
                     <span class="help-block error">
@@ -86,7 +140,7 @@
 
 
             <div class="form-group">
-                <span id="seatImageSpan">Reserved Seat Image (Dimension 25x25 | Max Size 2mb | Format jpeg, jpg, png, bmp, svg)</span>
+                <span id="seatImageSpan">Reserved Seat Image <small>*</small> (Dimension 25x25 | Max Size 2mb | Format jpeg, jpg, png, bmp, svg)</span>
                 <input type="file" id="reserved_seat" name="reserved_seat" onclick="removeError();">
                 @if($errors->has('reserved_seat'))
                     <span class="help-block error">
@@ -100,7 +154,7 @@
 
 
             <div class="form-group">
-                <span id="seatImageSpan">Sold Seat Image (Dimension 25x25 | Max Size 2mb | Format jpeg, jpg, png, bmp, svg)</span>
+                <span id="seatImageSpan">Sold Seat Image <small>*</small> (Dimension 25x25 | Max Size 2mb | Format jpeg, jpg, png, bmp, svg)</span>
                 <input type="file" id="sold_seat" name="sold_seat" onclick="removeError();">
                 @if($errors->has('sold_seat'))
                     <span class="help-block error">
@@ -127,6 +181,11 @@
             if ($('#screen-name').val() == '') {
                 e.preventDefault();
                 $('.screen-name-error').html('<strong>Please enter the screen name.</strong>');
+            }
+
+            if ($('#screen-number').val() == '') {
+                e.preventDefault();
+                $('.screen-number-error').html('<strong>Please enter the screen number.</strong>');
             }
 
             if ($('#available_seat').val() == '') {
@@ -198,6 +257,30 @@
                     }
                 }
             }
+        });
+
+        function isNumber(evt, element) {
+
+            var charCode = (evt.which) ? evt.which : event.keyCode
+
+            if (
+                (charCode < 48 || charCode > 57) &&
+                (charCode != 8) &&
+                (charCode != 110))
+                return false;
+
+            return true;
+        }
+        $('input#screen-number').keypress(function (event) {
+            return isNumber(event, this)
+        });
+
+        $('input#house-seats').keypress(function (event) {
+            return isNumber(event, this)
+        });
+
+        $('input#wheel-chair-seats').keypress(function (event) {
+            return isNumber(event, this)
         });
 
         function removeError() {
