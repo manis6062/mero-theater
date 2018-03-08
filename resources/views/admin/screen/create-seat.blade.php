@@ -86,7 +86,8 @@
 
             <div class="form-group input-field">
                 <span id="seatImageSpan">Number of Columns</span>
-                <input oninput="checkNumberFieldLength(this); cancelSeats();" type="text" name="num_rows" value="{{old('num_rows')}}" class="form-control" id="num_rows"
+                <input oninput="checkNumberFieldLength(this); cancelSeats();" type="text" name="num_rows"
+                       value="{{old('num_rows')}}" class="form-control" id="num_rows"
                        onfocus="removeError();" placeholder="Enter Number of Seat Rows">
                 @if($errors->has('num_rows'))
                     <span class="help-block">
@@ -102,7 +103,8 @@
 
             <div class="form-group input-field">
                 <span id="seatImageSpan">Number of Columns</span>
-                <input type="text" oninput="checkNumberFieldLength(this); cancelSeats();" name="num_columns" value="{{old('num_columns')}}" class="form-control"
+                <input type="text" oninput="checkNumberFieldLength(this); cancelSeats();" name="num_columns"
+                       value="{{old('num_columns')}}" class="form-control"
                        id="num_columns"
                        onfocus="removeError();" placeholder="Enter Number of Seat Columns">
                 @if($errors->has('num_columns'))
@@ -170,14 +172,12 @@
     <script>
         $(document).find('.previewBtn').on('click', function (e) {
             var error = 0;
-            if($('#num_columns').val() == '')
-            {
+            if ($('#num_columns').val() == '') {
                 error = 1;
                 $('.num-columns-error').html('<strong>This fiels is required !</strong>');
             }
 
-            if($('#num_rows').val() == '')
-            {
+            if ($('#num_rows').val() == '') {
                 error = 1;
                 $('.num-rows-error').html('<strong>This fiels is required !</strong>');
             }
@@ -190,6 +190,28 @@
             if (!$('input[name=alphabet_direction]:checked').val()) {
                 error = 1;
                 $('.alphabet-direction-error').html('<strong>This fiels is required !</strong>');
+            }
+
+            if (error == 0) {
+                var ajaxData = {
+                    numRows: $('#num_rows').val(),
+                    numcols: $('#num_columns').val(),
+                    seatDir: $('input[name=seat_direction]:checked').val(),
+                    alphaDir: $('input[name=alphabet_direction]:checked').val(),
+                    _token: "{{csrf_token()}}"
+                };
+
+                $.ajax({
+                   url: baseurl+'/admin/screens/{{$screen->slug}}/create/ajax-call',
+                    type: 'post',
+                    data: ajaxData,
+                    success: function (data) {
+                        console.log(data);
+                    }, error: function(data)
+                    {
+                        console.log(data);
+                    }
+                });
             }
         });
 
@@ -220,12 +242,11 @@
         }
 
         function removeError() {
-            alert('here');
             $('.error').html('');
         }
 
         function cancelSeats() {
-            alert('asdfasdfasdfasdfa');
+
         }
     </script>
 @stop
