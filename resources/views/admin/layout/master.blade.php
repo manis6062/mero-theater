@@ -62,7 +62,7 @@
     {{--<script src="{{asset('admins/plugins/datatables/jquery.dataTables_themeroller.css')}}"></script>--}}
 
 
-@yield('styles')
+    @yield('styles')
     @include('admin.include.scripts')
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->

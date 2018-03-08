@@ -28,6 +28,7 @@ Route::group(['prefix'=>'admin','middleware'=> 'admin'], function(){
 
 	Route::get('logout', 'Admin\LoginController@logout');
 
+<<<<<<< HEAD
 	// Route for movies
 	Route::group(['prefix'=>'movies'], function(){
 	   Route::get('/', 'Admin\MovieController@movieslist');
@@ -35,4 +36,17 @@ Route::group(['prefix'=>'admin','middleware'=> 'admin'], function(){
 	   Route::post('/submit','Admin\MovieController@submit');
 	});
 
+=======
+
+//	Route for screens
+    Route::get('screens/create', 'Admin\ScreenController@create');
+    Route::post('screens/submit', 'Admin\ScreenController@submit');
+    Route::get('screens/delete', 'Admin\ScreenController@delete');
+    Route::get('screens/{slug}/edit', 'Admin\ScreenController@edit');
+    Route::post('screens/{slug}/update', 'Admin\ScreenController@update');
+    Route::get('screens/{slug}/seat', 'Admin\ScreenController@seat');
+    Route::get('screens/{slug}/seat/create', 'Admin\ScreenController@createSeat');
+    Route::get('screens', 'Admin\ScreenController@lists');
+//	Route for screens
+>>>>>>> 04bd4b9a1d1e7b140be01279b92abc70076a0f4b
 });
