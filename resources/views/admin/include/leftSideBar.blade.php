@@ -24,8 +24,12 @@
                     <li {{(\Illuminate\Support\Facades\Request::is('admin/movies'))? 'class=active' : ''}}><a
                                 href="{{ url('admin/movies') }}"><i class="fa fa-circle-o"></i> Manage Films</a>
                     </li>
-                    <li {{(\Illuminate\Support\Facades\Request::is('admin/tickets'))? 'class=active' : ''}}><a
-                                href="{{ url('admin/tickets') }}"><i class="fa fa-circle-o"></i>Tickets</a></li>
+
+                    <li {{(\Illuminate\Support\Facades\Request::is('admin/box-office/ticket-types/classes'))? 'class=active' : ''}}><a
+                                href="{{ url('admin/box-office/ticket-types/classes') }}"><i class="fa fa-circle-o"></i>Ticket Classes</a></li>
+
+                    <li {{(\Illuminate\Support\Facades\Request::is('admin/cox-office/ticket-types'))? 'class=active' : ''}}><a
+                                href="{{ url('admin/box-office/ticket-types') }}"><i class="fa fa-circle-o"></i>Ticket Types</a></li>
                 </ul>
             </li>
             <!-- Side bar for Box Office End -->
@@ -41,9 +45,6 @@
                     </span>
                 </a>
                 <ul class="treeview-menu">
-                    {{--<li {{(\Illuminate\Support\Facades\Request::is('admin/screens/create'))? 'class=active' : ''}}><a--}}
-                                {{--href="{{ url('admin/screens/create') }}"><i class="fa fa-circle-o"></i> Add Screen</a>--}}
-                    {{--</li>--}}
                     <li {{(\Illuminate\Support\Facades\Request::is('admin/seat-management/screens'))? 'class=active' : ''}}><a
                                 href="{{ url('admin/seat-management/screens') }}"><i class="fa fa-circle-o"></i> Screens</a></li>
                 </ul>
