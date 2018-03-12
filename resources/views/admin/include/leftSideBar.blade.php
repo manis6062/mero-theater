@@ -30,12 +30,14 @@
                                 href="{{ url('admin/box-office/movies') }}"><i class="fa fa-circle-o"></i> Manage Films</a>
                     </li>
 
+                    <li {{(\Illuminate\Support\Facades\Request::is('admin/box-office/ticket-types/classes'))? 'class=active' : ''}}>
+                        <a href="{{ url('admin/box-office/ticket-types/classes') }}"><i class="fa fa-circle-o"></i>Ticket Classes</a></li>
 
-                    <li {{(\Illuminate\Support\Facades\Request::is('admin/box-office/ticket-types/classes'))? 'class=active' : ''}}><a
-                                href="{{ url('admin/box-office/ticket-types/classes') }}"><i class="fa fa-circle-o"></i>Ticket Classes</a></li>
-
-                    <li {{(\Illuminate\Support\Facades\Request::is('admin/cox-office/ticket-types'))? 'class=active' : ''}}><a
+                    <li {{(\Illuminate\Support\Facades\Request::is('admin/box-office/ticket-types') || \Illuminate\Support\Facades\Request::is('admin/box-office/ticket-types/create') || \Illuminate\Support\Facades\Request::is('admin/box-office/ticket-types/edit'))? 'class=active' : ''}}><a
                                 href="{{ url('admin/box-office/ticket-types') }}"><i class="fa fa-circle-o"></i>Ticket Types</a></li>
+
+                    <li {{(\Illuminate\Support\Facades\Request::is('admin/box-office/price-card-management') || \Illuminate\Support\Facades\Request::is('admin/box-office/price-card-management/*'))? 'class=active' : ''}}><a
+                                href="{{ url('admin/box-office/price-card-management') }}"><i class="fa fa-circle-o"></i>Price Card Management</a></li>
                 </ul>
             </li>
             <!-- Side bar for Box Office End -->
@@ -55,7 +57,7 @@
                                 href="{{ url('admin/seat-management/screens') }}"><i class="fa fa-circle-o"></i> Screens</a></li>
                 </ul>
             </li>
-            {{--side bar for screens--}}
+
         </ul>
     </section>
     <!-- /.sidebar -->

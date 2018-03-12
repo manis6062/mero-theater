@@ -44,11 +44,11 @@
 
 <script src="{{asset('admins/plugins/alertify/alertify.min.js')}}"></script>
 
-<script src="{{asset('admins/plugins/datatables/js/dataTables.bootstrap.js')}}"></script>
+{{--<script src="{{asset('admins/plugins/datatables/js/dataTables.bootstrap.js')}}"></script>--}}
 
-<script src="{{asset('admins/plugins/datatables/js/dataTables.jqueryui.js')}}"></script>
+{{--<script src="{{asset('admins/plugins/datatables/js/dataTables.jqueryui.js')}}"></script>--}}
 
-<script src="{{asset('admins/plugins/datatables/js/jquery.dataTables.js')}}"></script>
+{{--<script src="{{asset('admins/plugins/datatables/js/jquery.dataTables.js')}}"></script>--}}
 
 
 <script src="{{asset('admins/plugins/dateJs/date.js')}}"></script>

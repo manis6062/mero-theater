@@ -48,16 +48,16 @@
 
     <link rel="stylesheet" href="{{asset('admins/plugins/alertify/alertify.min.css')}}">
 
-    <link rel="stylesheet" href="{{asset('admins/plugins/datatables/css/dataTables.bootstrap.css')}}">
+    {{--<link rel="stylesheet" href="{{asset('admins/plugins/datatables/css/dataTables.bootstrap.css')}}">--}}
 
-    <link rel="stylesheet" href="{{asset('admins/plugins/datatables/css/dataTables.jqueryui.css')}}">
+    {{--<link rel="stylesheet" href="{{asset('admins/plugins/datatables/css/dataTables.jqueryui.css')}}">--}}
     <style>
         .ajs-header{
             display: none !important;
         }
     </style>
 
-    <script src="{{asset('admins/plugins/datatables/css/jquery.dataTables.css')}}"></script>
+    {{--<script src="{{asset('admins/plugins/datatables/css/jquery.dataTables.css')}}"></script>--}}
 
     {{--<script src="{{asset('admins/plugins/datatables/jquery.dataTables_themeroller.css')}}"></script>--}}
 

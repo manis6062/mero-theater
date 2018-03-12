@@ -4,7 +4,7 @@
     <section class="content">
         <div class="row">
             <div class="screen-list" style="width: 80%; margin: 5% 10%;">
-                <a href="{{url('admin/box-office/ticket-types/create-ticket-class')}}">Add New Ticket Class</a>
+                <a href="{{url('admin/box-office/ticket-types/classes/create')}}">Add New Ticket Class</a>
                 @if(\Illuminate\Support\Facades\Session::has('message'))
                     <div class="alert alert-success">
                         <i class="fa fa-times pull-right closeMessage"></i>

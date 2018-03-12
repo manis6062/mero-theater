@@ -79,7 +79,7 @@ Route::group(['prefix'=>'admin','middleware'=> 'admin'], function(){
             Route::get('classes', 'TicketTypesController@ticketClass');
             Route::get('classes/{slug}/edit', 'TicketTypesController@editTicketClass');
             Route::post('classes/{slug}/update', 'TicketTypesController@updateTicketClass');
-            Route::get('create-ticket-class', 'TicketTypesController@createTicketClass');
+            Route::get('classes/create', 'TicketTypesController@createTicketClass');
             Route::get('delete-ticket-class', 'TicketTypesController@deleteTicketClass');
             Route::post('submit-ticket-class', 'TicketTypesController@submitTicketClass');
             Route::get('create', 'TicketTypesController@create');
@@ -91,4 +91,12 @@ Route::group(['prefix'=>'admin','middleware'=> 'admin'], function(){
             Route::get('delete', 'TicketTypesController@deleteTicketType');
         });
 //    Route for box office ticket types
+
+    //    Route for box office PCM
+    Route::group(['prefix'=>'box-office/price-card-management', 'namespace' => 'Admin'], function() {
+        Route::get('/', 'PriceCardController@index');
+        Route::get('create', 'PriceCardController@create');
+        Route::post('submit', 'PriceCardController@submit');
+    });
+    //    Route for box office PCM
 });
