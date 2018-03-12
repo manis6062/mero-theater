@@ -28,8 +28,11 @@
             font-weight: 500 !important;
         }
 
-        .inactiveSeat{
-           background: #FAFAFA;
+        .inactiveSeat {
+            background: url("{{asset('screen/available-seat-image/'.$screen->available_seat)}}") no-repeat scroll 0 0 transparent;
+            width: 25px;
+            height: 25px;
+            opacity: 0.3;
         }
     </style>
 

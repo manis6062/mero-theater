@@ -72,4 +72,23 @@ Route::group(['prefix'=>'admin','middleware'=> 'admin'], function(){
         Route::get('screens', 'Admin\ScreenController@lists');
     });
 //	Route for screens
+
+//    Route for box office ticket types
+        Route::group(['prefix'=>'box-office/ticket-types', 'namespace' => 'Admin'], function() {
+            Route::get('/', 'TicketTypesController@index');
+            Route::get('classes', 'TicketTypesController@ticketClass');
+            Route::get('classes/{slug}/edit', 'TicketTypesController@editTicketClass');
+            Route::post('classes/{slug}/update', 'TicketTypesController@updateTicketClass');
+            Route::get('create-ticket-class', 'TicketTypesController@createTicketClass');
+            Route::get('delete-ticket-class', 'TicketTypesController@deleteTicketClass');
+            Route::post('submit-ticket-class', 'TicketTypesController@submitTicketClass');
+            Route::get('create', 'TicketTypesController@create');
+            Route::post('submit', 'TicketTypesController@submit');
+            Route::get('getScreenRows', 'TicketTypesController@getScreenRows');
+            Route::get('getSequenceNumber', 'TicketTypesController@getSequenceNumber');
+            Route::get('{slug}/edit', 'TicketTypesController@editTicketType');
+            Route::post('{slug}/update', 'TicketTypesController@updateTicketType');
+            Route::get('delete', 'TicketTypesController@deleteTicketType');
+        });
+//    Route for box office ticket types
 });
