@@ -2,7 +2,7 @@
 
 @section('main-body')
     <section class="content">
-        <div class="screen-list" style="width: 80%; margin: 5% 10%;">
+        <div class="screen-list" style="width: 90%; margin: 5% 5%;">
             <a href="{{url('admin/box-office/price-card-management/create')}}">Add New Price Card</a>
             @if(\Illuminate\Support\Facades\Session::has('message'))
                 <div class="alert alert-success">
@@ -13,15 +13,15 @@
             <table class="table table-responsive table-bordered">
                 <thead>
                 <th>Name</th>
-                <th>Screens</th>
+                <th width="100">Screens</th>
                 <th>Ticket Types</th>
                 <th>Days</th>
-                <th>Time Range</th>
+                <th width="300">Time Range</th>
                 <th>Sequence</th>
                 <th>Price</th>
                 <th>Status</th>
                 <th>Created On</th>
-                <th width="100">Action</th>
+                <th width="200">Action</th>
                 </thead>
 
                 <tbody>
@@ -43,8 +43,8 @@
                             </td>
                             <td>{{implode(',', json_decode($pc->selected_days, true))}}</td>
                             <td>{{$pc->time_range}}</td>
-                            <td>{{$pc->sequence}}</td>
-                            <td>{{$pc->price}}</td>
+                            <td>{{implode(',', json_decode($pc->sequences, true))}}</td>
+                            <td>{{implode(',', json_decode($pc->prices, true))}}</td>
                             <td>{{$pc->status}}</td>
                             <td>{{date('M d, Y', strtotime($pc->created_at))}}</td>
                             <td>
@@ -78,7 +78,7 @@
             alertify.confirm("Delete this price card ?",
                 function () {
                     $.ajax({
-                        url: baseurl + '/admin/box-office/price-card-management/delete?pcid=' + pcid,
+                        url: baseurl + '/admin/box-office/price-card-management/delete?pcid='+pcid,
                         type: 'get',
                         success: function (data) {
                             if (data == 'true') {

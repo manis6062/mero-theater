@@ -97,6 +97,9 @@ Route::group(['prefix'=>'admin','middleware'=> 'admin'], function(){
         Route::get('/', 'PriceCardController@index');
         Route::get('create', 'PriceCardController@create');
         Route::post('submit', 'PriceCardController@submit');
+        Route::get('{slug}/edit', 'PriceCardController@edit');
+        Route::post('{slug}/update', 'PriceCardController@update');
+        Route::get('delete', 'PriceCardController@delete');
     });
     //    Route for box office PCM
 });

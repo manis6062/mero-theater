@@ -125,8 +125,8 @@
 @section('main-body')
     <section class="content">
         <div class="row create-price-card-div">
-            <p class="info-span">Create New Price Card</p>
-            <form action="{{url('admin/box-office/price-card-management/submit')}}" class="form-horizontal"
+            <p class="info-span">Edit Price Card</p>
+            <form action="{{url('admin/box-office/price-card-management/'.$slug.'/update')}}" class="form-horizontal"
                   id="create-form"
                   method="post"
                   enctype="multipart/form-data">
@@ -134,7 +134,7 @@
 
                 <div class="form-group">
                     <span>Name <small>*</small></span>
-                    <input type="text" name="name" value="{{old('name')}}" class="form-control"
+                    <input type="text" name="name" value="{{$priceCard->name}}" class="form-control"
                            id="name"
                            onfocus="removeError('name');" placeholder="Enter Price Card Name">
                     @if($errors->has('name'))
@@ -149,13 +149,21 @@
 
                 <div class="form-group">
                     <span>Screens <small>*</small></span>
+                    @php $screenArray = json_decode($priceCard->screen_ids, true); @endphp
                     <div class="screen-span-div">
                         @if(isset($screens) && $screens->count() > 0)
+                            @php $screenArray1 = $screens->pluck('id')->toArray(); @endphp
                             @foreach($screens as $s)
-                                <span onclick="removeError('screen-id');" class="screen-span"
+                                <span onclick="removeError('screen-id');"
+                                      class="screen-span {{in_array($s->id, $screenArray) ? 'screen-selected' : ''}}"
                                       data-screenid="{{$s->id}}">{{$s->name}}</span>
+                                @if(in_array($s->id, $screenArray))
+                                    <input name="screen_id[]" value="{{$s->id}}" class="screen-ids screenid-{{$s->id}}"
+                                           type="hidden">
+                                @endif
                             @endforeach
-                            <span onclick="removeError('screen-id');" class="screen-span screen-span-all"
+                            <span onclick="removeError('screen-id');"
+                                  class="screen-span screen-span-all {{$screenArray == $screenArray1 ? 'screen-selected' : ''}}"
                                   data-screenid="all">All</span>
                         @endif
                     </div>
@@ -171,15 +179,46 @@
 
                 <div class="form-group">
                     <span>Days <small>*</small></span>
+                    @php $days = json_decode($priceCard->selected_days, true); @endphp
+                    @php $daysAr = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']; @endphp
                     <div class="day-span-div">
-                        <span onclick="removeError('days');" class="day-span">Sun</span>
-                        <span onclick="removeError('days');" class="day-span">Mon</span>
-                        <span onclick="removeError('days');" class="day-span">Tue</span>
-                        <span onclick="removeError('days');" class="day-span">Wed</span>
-                        <span onclick="removeError('days');" class="day-span">Thu</span>
-                        <span onclick="removeError('days');" class="day-span">Fri</span>
-                        <span onclick="removeError('days');" class="day-span">Sat</span>
-                        <span onclick="removeError('days');" class="day-span day-span-all">Every Day</span>
+                        <span onclick="removeError('days');"
+                              class="day-span {{in_array('Sun', $days) ? 'day-selected' : ''}}">Sun</span>
+                        @if(in_array('Sun', $days))
+                            <input name="days[]" value="Sun" class="sel-days Sun" type="hidden">
+                        @endif
+                        <span onclick="removeError('days');"
+                              class="day-span {{in_array('Mon', $days) ? 'day-selected' : ''}}">Mon</span>
+                        @if(in_array('Mon', $days))
+                            <input name="days[]" value="Mon" class="sel-days Mon" type="hidden">
+                        @endif
+                        <span onclick="removeError('days');"
+                              class="day-span {{in_array('Tue', $days) ? 'day-selected' : ''}}">Tue</span>
+                        @if(in_array('Tue', $days))
+                            <input name="days[]" value="Tue" class="sel-days Tue" type="hidden">
+                        @endif
+                        <span onclick="removeError('days');"
+                              class="day-span {{in_array('Wed', $days) ? 'day-selected' : ''}}">Wed</span>
+                        @if(in_array('Wed', $days))
+                            <input name="days[]" value="Wed" class="sel-days Wed" type="hidden">
+                        @endif
+                        <span onclick="removeError('days');"
+                              class="day-span {{in_array('Thu', $days) ? 'day-selected' : ''}}">Thu</span>
+                        @if(in_array('Thu', $days))
+                            <input name="days[]" value="Thu" class="sel-days Thu" type="hidden">
+                        @endif
+                        <span onclick="removeError('days');"
+                              class="day-span {{in_array('Fri', $days) ? 'day-selected' : ''}}">Fri</span>
+                        @if(in_array('Fri', $days))
+                            <input name="days[]" value="Fri" class="sel-days Fri" type="hidden">
+                        @endif
+                        <span onclick="removeError('days');"
+                              class="day-span {{in_array('Sat', $days) ? 'day-selected' : ''}}">Sat</span>
+                        @if(in_array('Sat', $days))
+                            <input name="days[]" value="Sat" class="sel-days Sat" type="hidden">
+                        @endif
+                        <span onclick="removeError('days');"
+                              class="day-span day-span-all {{$daysAr == $days ? 'day-selected' : ''}}">Every Day</span>
                     </div>
                     @if($errors->has('days'))
                         <span class="help-block error">
@@ -193,7 +232,13 @@
 
                 <div class="form-group">
                     <span>Time Range <small>*</small></span>
-                    <span class="time-range-span">Choose Time Range</span>
+                    <input name="time_range" class="time-range-input sel-time-range" value="{{$priceCard->time_range}}"
+                           type="hidden">
+                    <input name="min_time_range" class="" value="{{$priceCard->min_time_range}}"
+                           type="hidden">
+                    <input name="max_time_range" class="" value="{{$priceCard->max_time_range}}"
+                           type="hidden">
+                    <span class="time-range-span">{{$priceCard->time_range}}</span>
                     <div id="slider-range"></div>
                     @if($errors->has('time_range'))
                         <span class="help-block error">
@@ -208,8 +253,9 @@
                 <div class="form-group">
                     <span>Status <small>*</small></span>
                     <select name="status" id="status" class="form-control">
-                        <option value="active">Active</option>
-                        <option value="inactive">Inactive</option>
+                        <option value="active" {{$priceCard->status == 'active' ? 'selected' : ''}}>Active</option>
+                        <option value="inactive" {{$priceCard->status == 'inactive' ? 'selected' : ''}}>Inactive
+                        </option>
                     </select>
                     @if($errors->has('status'))
                         <span class="help-block error">
@@ -241,17 +287,50 @@
                             </thead>
                             <tbody>
                             @if(isset($ticketTypes) && $ticketTypes->count() > 0)
+                                @php $ttTypes = json_decode($priceCard->ticket_types_ids, true); @endphp
                                 @foreach($ticketTypes as $ts)
                                     <tr>
                                         <td><input onclick="removeError('ticket-type');" type="checkbox" name=""
-                                                   class="tic-type-ids" data-ticketid="{{$ts->id}}"></td>
+                                                   class="tic-type-ids"
+                                                   data-ticketid="{{$ts->id}}" {{in_array($ts->id, $ttTypes) ? 'checked' : ''}}>
+                                        </td>
+                                        @if(in_array($ts->id, $ttTypes))
+                                            <input name="ticket_types_id[]" class="tic_types_id_{{$ts->id}}"
+                                                   value="{{$ts->id}}"
+                                                   type="hidden">
+                                        @endif
                                         <td>{{$ts->label}}</td>
                                         <td>{{$ts->ticket_class}}</td>
                                         <td>{{$ts->ticket_type}}</td>
-                                        <td><input data-ttid="{{$ts->id}}" onfocus="removeError('ticket-type');" type="text" class="sequence-input sequence-{{$ts->id}}"
-                                                   value="{{$ts->display_sequence}}"></td>
-                                        <td><input data-ttid="{{$ts->id}}" onfocus="removeError('ticket-type');" type="text" class="price-input price-{{$ts->id}}"
-                                                   value="{{$ts->default_price}}"></td>
+                                        <td>
+                                            @if(in_array($ts->id, $ttTypes))
+                                                @php $sqArr = json_decode($priceCard->sequences, true); @endphp
+                                                @php $seqkey = array_search($ts->id, $ttTypes); @endphp
+                                                <input data-ttid="{{$ts->id}}" onfocus="removeError('ticket-type');" type="text"
+                                                       class="sequence-input sequence-{{$ts->id}}"
+                                                       value="{{$sqArr[$seqkey]}}">
+                                                <input name="ticket_types_sequence[]" class="tic_types_sequence_{{$ts->id}}" value="{{$sqArr[$seqkey]}}" type="hidden">
+                                            @else
+                                                <input data-ttid="{{$ts->id}}" onfocus="removeError('ticket-type');" type="text"
+                                                       class="sequence-input sequence-{{$ts->id}}"
+                                                       value="{{$ts->display_sequence}}">
+                                            @endif
+                                        </td>
+
+                                        <td>
+                                            @if(in_array($ts->id, $ttTypes))
+                                                @php $prArr = json_decode($priceCard->prices, true); @endphp
+                                                @php $seqkey1 = array_search($ts->id, $ttTypes); @endphp
+                                                <input data-ttid="{{$ts->id}}" onfocus="removeError('ticket-type');" type="text"
+                                                       class="price-input price-{{$ts->id}}"
+                                                       value="{{$prArr[$seqkey1]}}">
+                                                <input name="ticket_types_price[]" class="tic_types_price_{{$ts->id}}" value="{{$prArr[$seqkey1]}}" type="hidden">
+                                            @else
+                                                <input data-ttid="{{$ts->id}}" onfocus="removeError('ticket-type');" type="text"
+                                                       class="price-input price-{{$ts->id}}"
+                                                       value="{{$ts->default_price}}">
+                                            @endif
+                                        </td>
                                     </tr>
                                 @endforeach
                             @else
@@ -267,7 +346,7 @@
 
 
                 <div class="form-group">
-                    <input type="submit" class="btn btn-primary subBtn" value="Create">
+                    <input type="submit" class="btn btn-primary subBtn" value="Update">
                 </div>
             </form>
         </div>
@@ -280,8 +359,7 @@
     <script>
         $('.day-span').on('click', function () {
             var day = $(this).text();
-            if(day == 'Every Day')
-            {
+            if (day == 'Every Day') {
                 $(document).find('span.day-span').addClass('day-selected');
                 $(document).find('input.sel-days').remove();
                 $(document).find('form').append('<input name="days[]" value="Sun" type="hidden" class="sel-days Sun">');
@@ -292,7 +370,7 @@
                 $(document).find('form').append('<input name="days[]" value="Fri" type="hidden" class="sel-days Fri">');
                 $(document).find('form').append('<input name="days[]" value="Sat" type="hidden" class="sel-days Sat">');
 
-            }else{
+            } else {
                 $(document).find('span.day-span-all').removeClass('day-selected');
                 if ($(this).hasClass('day-selected')) {
                     $(document).find('input.' + day + '').remove();
@@ -331,13 +409,13 @@
             min: 0,
             max: 1440,
             step: 15,
-            values: [0, 1440],
+            values: ["{{isset($priceCard->min_time_range) ? $priceCard->min_time_range : 0}}", "{{isset($priceCard->max_time_range) ? $priceCard->max_time_range : 0}}"],
             slide: function (event, ui) {
                 removeError('time-range');
                 $(document).find('input[name=min_time_range]').remove();
                 $(document).find('input[name=max_time_range]').remove();
-                $(document).find('form').append('<input type="hidden" name="min_time_range" value="'+ui.values[0]+'">');
-                $(document).find('form').append('<input type="hidden" name="max_time_range" value="'+ui.values[1]+'">');
+                $(document).find('form').append('<input type="hidden" name="min_time_range" value="' + ui.values[0] + '">');
+                $(document).find('form').append('<input type="hidden" name="max_time_range" value="' + ui.values[1] + '">');
                 var hours1 = Math.floor(ui.values[0] / 60);
                 var minutes1 = ui.values[0] - (hours1 * 60);
                 var hours2 = Math.floor(ui.values[1] / 60);
@@ -471,12 +549,9 @@
             }
 
             if (ticSequenceCheck == 0 && ticPriceCheck == 0 && ticTypeCheck == 1) {
-                for(var i = 0; i < seqVal.length; i++)
-                {
-                    for(var j = i+1; j < seqVal.length; j++)
-                    {
-                        if(seqVal[i] == seqVal[j])
-                        {
+                for (var i = 0; i < seqVal.length; i++) {
+                    for (var j = i + 1; j < seqVal.length; j++) {
+                        if (seqVal[i] == seqVal[j]) {
                             e.preventDefault();
                             $('.ticket-type-error').html('<strong>Sequence numbers must be unique.</strong>');
                         }
@@ -489,21 +564,20 @@
 
         $(document).find('input.tic-type-ids').on('click', function () {
             var ticTypeId = $(this).data('ticketid');
-            var ticTypeSequence = $('input.sequence-'+ticTypeId).val();
-            var ticTypePrice = $('input.price-'+ticTypeId).val();
-            if(ticTypeSequence == '' || ticTypePrice == '')
-            {
+            var ticTypeSequence = $('input.sequence-' + ticTypeId).val();
+            var ticTypePrice = $('input.price-' + ticTypeId).val();
+            if (ticTypeSequence == '' || ticTypePrice == '') {
                 $(this).prop('checked', false);
                 $('.ticket-type-error').html('<strong>Please fill all the fields.</strong>');
-            }else{
+            } else {
                 if ($(this).is(':checked')) {
-                    $(document).find('form').append('<input type="hidden" name="ticket_types_id[]" class="tic_types_id_'+ticTypeId+'" value="'+ticTypeId+'">');
-                    $(document).find('form').append('<input type="hidden" name="ticket_types_sequence[]" class="tic_types_sequence_'+ticTypeId+'" value="'+ticTypeSequence+'">');
-                    $(document).find('form').append('<input type="hidden" name="ticket_types_price[]" class="tic_types_price_'+ticTypeId+'" value="'+ticTypePrice+'">');
-                }else{
-                    $(document).find('input.tic_types_id_'+ticTypeId).remove();
-                    $(document).find('input.tic_types_sequence_'+ticTypeId).remove();
-                    $(document).find('input.tic_types_price_'+ticTypeId).remove();
+                    $(document).find('form').append('<input type="hidden" name="ticket_types_id[]" class="tic_types_id_' + ticTypeId + '" value="' + ticTypeId + '">');
+                    $(document).find('form').append('<input type="hidden" name="ticket_types_sequence[]" class="tic_types_sequence_' + ticTypeId + '" value="' + ticTypeSequence + '">');
+                    $(document).find('form').append('<input type="hidden" name="ticket_types_price[]" class="tic_types_price_' + ticTypeId + '" value="' + ticTypePrice + '">');
+                } else {
+                    $(document).find('input.tic_types_id_' + ticTypeId).remove();
+                    $(document).find('input.tic_types_sequence_' + ticTypeId).remove();
+                    $(document).find('input.tic_types_price_' + ticTypeId).remove();
                 }
             }
         });
@@ -597,7 +671,6 @@
             var ttid = $(this).data('ttid');
             $(document).find('input.tic_types_price_'+ttid).val(sqVal);
         });
-
 
     </script>
 @stop

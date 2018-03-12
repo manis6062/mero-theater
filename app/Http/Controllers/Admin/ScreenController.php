@@ -80,7 +80,7 @@ class ScreenController extends Controller
 
     public function lists()
     {
-        $screens = Screen::orderBy('id', 'DESC')->get();
+        $screens = Screen::orderBy('id', 'ASC')->get();
         return view('admin.screen.list', compact('screens'));
     }
 
