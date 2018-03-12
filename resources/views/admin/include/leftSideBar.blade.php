@@ -21,11 +21,18 @@
                     </span>
                 </a>
                 <ul class="treeview-menu">
-                    <li {{(\Illuminate\Support\Facades\Request::is('admin/movies'))? 'class=active' : ''}}><a
-                                href="{{ url('admin/movies') }}"><i class="fa fa-circle-o"></i> Manage Films</a>
+
+                    <li {{(\Illuminate\Support\Facades\Request::is('admin/box-office/artist'))? 'class=active' : ''}}><a
+                                href="{{ url('admin/box-office/artist') }}"><i class="fa fa-circle-o"></i> Manage Artists</a>
                     </li>
-                    <li {{(\Illuminate\Support\Facades\Request::is('admin/tickets'))? 'class=active' : ''}}><a
-                                href="{{ url('admin/tickets') }}"><i class="fa fa-circle-o"></i>Tickets</a></li>
+
+                    <li {{(\Illuminate\Support\Facades\Request::is('admin/box-office/movies'))? 'class=active' : ''}}><a
+                                href="{{ url('admin/box-office/movies') }}"><i class="fa fa-circle-o"></i> Manage Films</a>
+                    </li>
+
+                    <li {{(\Illuminate\Support\Facades\Request::is('admin/box-office/tickets'))? 'class=active' : ''}}><a
+                                href="{{ url('admin/tickets') }}"><i class="fa fa-circle-o"></i>Tickets</a>
+                    </li>
                 </ul>
             </li>
             <!-- Side bar for Box Office End -->

@@ -37,18 +37,4 @@ class MovieModel extends Model
     		return true;
     	return false;
     }
-
-    public function newstatus($movieid)
-    {
-    	$moviestatus = $this->getrequestedmovie($movieid);
-    	if($moviestatus->status=="active")
-    	{
-    		$data['status'] = "inactive"; 
-    	}
-    	$newstatuschanged = DB::table('movie_tbl')->where('id',$movieid)->update($data);
-    	if($newstatuschanged)
-    		return true;
-
-    	return false;
-    }
 }

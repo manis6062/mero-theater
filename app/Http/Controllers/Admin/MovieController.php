@@ -6,20 +6,32 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\MovieModel;
+use App\ArtistsModel;
 
 class MovieController extends Controller
 {	
 	protected $movie;
+    protected $artist;
 
 	public function __construct()
 	{
 		$this->movie = new  MovieModel();
+        $this->artist = new ArtistsModel();
 	}
 
-	public function movieslist()
+	public function movieslist(Request $request)
 	{  
         $data = $this->movie->listofmovies();
-		return view('admin.movies.movielist',compact('data'));
+        if (isset($request->status) && $request->status == 'successfully-updated')
+            return view('admin.movies.movielist', compact('data'))->with('alertify', 'successfully-updated');
+        elseif (isset($request->status) && $request->status == 'error-updating') {
+            return view('admin.movies.movielist', compact('data'))->with('alertify', 'error-updating');
+        }elseif (isset($request->status) && $request->status == 'successfully-deleted') {
+            return view('admin.movies.movielist', compact('data'))->with('alertify', 'successfully-deleted');
+        }
+        else{
+            return view('admin.movies.movielist',compact('data'));
+        }
 	}
 
 	public function createmovie()
@@ -29,6 +41,7 @@ class MovieController extends Controller
 
 	public function submit(Request $request)
 	{
+
 		$this->validate($request, [
             'movieTitle' => 'required',
             'movieShortName' => 'required',
@@ -38,8 +51,8 @@ class MovieController extends Controller
             'duration' => 'required|numeric',
             'displaysequence' => 'required|numeric',
             'filmformat' =>'required',
-            'image' => 'required|mimes:jpeg,jpg,bmp,png,svg',
-            'bannerimage' => 'required|mimes:jpeg,jpg,bmp,png,svg',
+            'image' => 'sometimes|required|mimes:jpeg,jpg,bmp,png,svg',
+            'bannerimage' => 'sometimes|required|mimes:jpeg,jpg,bmp,png,svg',
             'trailerurl' => 'nullable|url',
         ]);
 
@@ -56,7 +69,8 @@ class MovieController extends Controller
             'displaysequence'=>$request->displaysequence,
             'filmformat'=>$request->filmformat,
             'trailerurl'=>$request->trailerurl,
-            'status'=>$request->status
+            'status'=>$request->status,
+            'direct_artist'=>$request->directartist
             );
 
         if ($request->hasFile('image')) {
@@ -67,7 +81,23 @@ class MovieController extends Controller
             $data['image'] = $filename;
         }
 
-         if ($request->hasFile('bannerimage')) {
+        if($request->has('artist'))
+        {
+            $artistDataArr = [];
+             for($i = 0; $i < count($request->artist); $i++)
+            {
+                $artistData = [
+                    'artist_id' => $request->artist[$i],
+                    'artist_role' => $request->artistrole[$i]
+                ];
+                $artistDataArr[] = $artistData;
+            }
+
+            $data['artists_from_db'] = json_encode($artistDataArr);
+        }
+
+         if ($request->hasFile('bannerimage')) 
+         {
             $image = $request->file('bannerimage');
             $filename = time() . uniqid() . '.' . $image->getClientOriginalExtension();
             $path = public_path('movies/bannerimage');
@@ -75,15 +105,36 @@ class MovieController extends Controller
             $data['banner_image'] = $filename;
         }
 
+
         $this->movie->store($data);
-        return  redirect('admin/movies');
+        return  redirect('admin/box-office/movies');
 
 	}
 
     public function editmovie($movieid)
     {   
+        $artists = $this->artist->listofartists();
         $editdata = $this->movie->getrequestedmovie($movieid);
-        return view('admin.movies.editmovie',compact('editdata'));
+        if(isset($editdata->artists_from_db) && $editdata->artists_from_db != null)
+        {
+            $artistsFromDb = json_decode($editdata->artists_from_db, true);
+        }else{
+            $artistsFromDb = null;
+        }
+        return view('admin.movies.editmovie',compact('editdata','artists', 'artistsFromDb'));
+    }
+
+    public function viewmovie($movieid)
+    {   
+        $artists = $this->artist->listofartists();
+        $editdata = $this->movie->getrequestedmovie($movieid);
+         if(isset($editdata->artists_from_db) && $editdata->artists_from_db != null)
+        {
+            $artistsFromDb = json_decode($editdata->artists_from_db, true);
+        }else{
+            $artistsFromDb = null;
+        }
+        return view('admin.movies.viewmovie',compact('editdata','artists','artistsFromDb'));
     }
 
     public function update(Request $request,$movieid)
@@ -115,8 +166,24 @@ class MovieController extends Controller
             'displaysequence'=>$request->displaysequence,
             'filmformat'=>$request->filmformat,
             'trailerurl'=>$request->trailerurl,
-            'status'=>$request->status
+            'status'=>$request->status,
+            'direct_artist'=>$request->directartist
             );
+
+        if($request->has('artist'))
+        {  
+            $artistDataArr = [];
+             for($i = 0; $i < count($request->artist); $i++)
+            {
+                $artistData = [
+                    'artist_id' => $request->artist[$i],
+                    'artist_role' => $request->artistrole[$i]
+                ];
+
+                $artistDataArr[] = $artistData;
+            }
+            $data['artists_from_db'] = json_encode($artistDataArr);
+        }
 
         if ($request->hasFile('image')) {
             $image = $request->file('image');
@@ -136,23 +203,30 @@ class MovieController extends Controller
 
        $updated = $this->movie->updatedata($data,$movieid);
        if($updated)
-          return redirect('admin/movies');
+          return redirect('admin/box-office/movies?status=successfully-updated');
 
-      return redirect('admin/movies');
+      return redirect('admin/box-office/movies?status=error-updating');
     }
 
     public function deletemovie($movieid)
     {
        $deleted = $this->movie->deletedata($movieid);
        if($deleted)
-        return redirect('admin/movies');
+        return redirect('admin/box-office/movies?status=successfully-deleted');
     }
 
-    public function changemoviestatus($movieid)
-    {   
-        // dd($movieid);
-         $statuschanged = $this->movie->newstatus($movieid);
-         if($statuschanged)
-            return true;
+    public function addartistformovie()
+    {
+        $artistslist = $this->artist->listofartists();
+        if($artistslist)
+        {   
+            $table = '<tr><td><select name="artist[]" class="artist-select"><option value="">Select Artist</option>';
+            foreach($artistslist as $alist)
+            {
+                $table .='<option value="'.$alist->id.'">'.$alist->artists_name.'</option>';
+            }
+            $table .= '</td><td><select name="artistrole[]" class="artist-role-select"><option value="">Select Role</option><option value="actor">Actor</option><option value="actress">Actress</option><option value="producer">Producer</option><option value="director">Director</option><option value="writer">Writer</option><select></td></tr>'; 
+            return $table;
+        }
     }
 }

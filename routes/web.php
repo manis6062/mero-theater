@@ -29,15 +29,31 @@ Route::group(['prefix'=>'admin','middleware'=> 'admin'], function(){
 	Route::get('logout', 'Admin\LoginController@logout');
 
 	// Route for movies
-	Route::group(['prefix'=>'movies'], function(){
+	Route::group(['prefix'=>'box-office/movies'], function(){
 	   Route::get('/', 'Admin\MovieController@movieslist');
 	   Route::get('/create','Admin\MovieController@createmovie');
 	   Route::post('/submit','Admin\MovieController@submit');
 	   Route::get('{movieid}/edit','Admin\MovieController@editmovie');
+       Route::get('{movieid}/view','Admin\MovieController@viewmovie');
 	   Route::post('update/{movieid}','Admin\MovieController@update');
 	   Route::get('delete/{movieid}','Admin\MovieController@deletemovie');
-	   Route::get('statuschange/{movieid}','Admin\MovieController@changemoviestatus');
+       Route::get('addmovieartists','Admin\MovieController@addartistformovie');
 	});
+    // Route for movies end
+
+    // Route for Artists
+    Route::group(['prefix'=>'box-office/artist'], function(){
+       Route::get('/', 'Admin\ArtistsController@artistslist');
+       Route::get('/create','Admin\ArtistsController@createartist');
+       Route::post('/submit','Admin\ArtistsController@submit');
+       Route::get('{artistsid}/edit','Admin\ArtistsController@editartist');
+       Route::get('{artistsid}/view','Admin\ArtistsController@viewartist');
+       Route::post('update/{artistsid}','Admin\ArtistsController@update');
+       Route::get('delete/{artistsid}','Admin\ArtistsController@deleteartist');
+    });
+    // Route for artists end
+
+
 
 
 //	Route for screens

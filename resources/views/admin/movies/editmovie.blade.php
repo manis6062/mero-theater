@@ -17,7 +17,7 @@
         <!-- Small boxes (Stat box) -->
         <div class="row">
             <hr>
-            <form method="post" action="{{url('admin/movies/update/'.$editdata->id)}}" enctype="multipart/form-data" id="submitmovie">
+            <form method="post" action="{{url('admin/box-office/movies/update/'.$editdata->id)}}" enctype="multipart/form-data" id="submitmovie">
                 {{csrf_field()}}
 
                 <div class="form-group row">
@@ -238,6 +238,12 @@
                     </div>
                 </div>
 
+                <div class="form-group row">
+                    <label class="col-sm-2 control-label text-right" for="directartist">Movie Artists</label>
+                    <div class="col-sm-10">
+                        <input type="text" name="directartist" class="form-control" value="{{isset($editdata->direct_artist)?$editdata->direct_artist:old('directartist')}}">
+                    </div>
+                </div>
                 <hr>
 
                 <section class="content-header">
@@ -249,19 +255,50 @@
 
                 <table class="table table-bordered table-responsive table-striped">
                     <tr class="success">
-                        <td>SN</td>
                         <td>Name</td>
                         <td>Role</td>
                     </tr>
+                    @if(isset($artistsFromDb))
+                    @foreach($artistsFromDb as $afdb)
                     <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                </table>
-                <!-- <button class="btn btn-primary" id="addmorebtn">Add</button> -->
+                        <td>
+                            @php $artistId = $afdb['artist_id']; @endphp
+                            <!-- @php $artistRole = $afdb['artist_role']; @endphp -->
+                            <select name="artist[]">
+                                @foreach($artists as $ar)
+                                <option value="{{$ar->id}}" {{$ar->id == $artistId ? 'selected' : ''}}>{{$ar->artists_name}}</option>
+                                @endforeach
+                            </select>
+                    
+                        </td>
+                        <td>
 
+                            @php $artistRole = $afdb['artist_role']; @endphp
+                            <select name="artistrole[]">
+                                <option value="actress"  {{$artistRole == "actress"  ? 'selected' : ''}}>Actress</option>
+                                <option value="actor" {{$artistRole == 'actor'  ? 'selected' : ''}} >Actor</option>
+                                <option value="producer" {{$artistRole == "producer"  ? 'selected' : ''}}>Producer</option>
+                                <option value="director" {{$artistRole == "director"  ? 'selected' : ''}}>Director</option>
+                                <option value="writer" {{$artistRole == "writer"  ? 'selected' : ''}}>Writer</option>
+
+                            </select>
+                            <button type="button" class="close" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                        </td>
+                    </tr>
+                    @endforeach
+                    @endif
+                    <tbody class="newrow">
+                        
+                    </tbody>
+                </table>
+                <div class="artisterror"></div>
+                <br>
+                <button class="btn btn-default" id="addmorebtn">Add Artist</button>
+                <br><br>
                 <button type="submit" class="btn btn-danger subBtn">Submit</button>
+                
             </form>
         </div>
     </section>
@@ -323,91 +360,116 @@
                 $('.duration-error').html('<strong>Please enter the Movie Format.</strong>');
             }
 
-            $('#image').on('change', function () {
-                var fileOrg = '';
-                var widthOfImg = '';
-                var heightOfImg = '';
-                var file = $('input#image').val();
-                if (file != '') {
-                    var fileSize = $('input#image')[0].files[0].size;
-                    if (fileSize > 2097152) {
+            if($(document).find('tbody.newrow').html() != '')
+            {
+                var empty = 0;
+                $(document).find('select.artist-select').each(function(){
+                    if($(this).val() == '')
+                    {
+                        empty = 1;
+                    }
+                });
+
+                $(document).find('select.artist-role-select').each(function(){
+                    if($(this).val() == '')
+                    {
+                        empty = 1;
+                    }
+                });
+
+                if(empty == 1)
+                {
+                    e.preventDefault();
+                    $('.artisterror').html("Movie Artists Required");
+                    // alert('do validate');
+                }
+            }
+
+        });
+
+        $('#image').on('change', function () {
+            var fileOrg = '';
+            var widthOfImg = '';
+            var heightOfImg = '';
+            var file = $('input#image').val();
+            if (file != '') {
+                var fileSize = $('input#image')[0].files[0].size;
+                if (fileSize > 2097152) {
+                    $('.subBtn').prop('disabled', true);
+                    $('.image-error').html('<strong style="color: red;">Max size 2 mb only !</strong>');
+                } else {
+                    var ext = $('input#image').val().split('.').pop().toLowerCase();
+                    if ($.inArray(ext, ['jpeg', 'jpg', 'png', 'bmp', 'gif', 'svg']) == -1) {
                         $('.subBtn').prop('disabled', true);
-                        $('.image-error').html('<strong style="color: red;">Max size 2 mb only !</strong>');
+                        $('.image-error').html('<strong style="color: red;">Invalid Image Format !</strong>');
                     } else {
-                        var ext = $('input#image').val().split('.').pop().toLowerCase();
-                        if ($.inArray(ext, ['jpeg', 'jpg', 'png', 'bmp', 'gif', 'svg']) == -1) {
-                            $('.subBtn').prop('disabled', true);
-                            $('.image-error').html('<strong style="color: red;">Invalid Image Format !</strong>');
-                        } else {
-                            var fileInput = $(this)[0],
-                                fileOrg = fileInput.files && fileInput.files[0];
+                        var fileInput = $(this)[0],
+                            fileOrg = fileInput.files && fileInput.files[0];
 
-                            if (fileOrg) {
-                                var img = new Image();
+                        if (fileOrg) {
+                            var img = new Image();
 
-                                img.src = window.URL.createObjectURL(fileOrg);
+                            img.src = window.URL.createObjectURL(fileOrg);
 
-                                img.onload = function () {
-                                    widthOfImg = img.naturalWidth;
-                                    heightOfImg = img.naturalHeight;
+                            img.onload = function () {
+                                widthOfImg = img.naturalWidth;
+                                heightOfImg = img.naturalHeight;
 
-                                    if (widthOfImg != 420 && heightOfImg != 200) {
-                                        $('.image-error').html('<strong style="color: red;">Invalid Image Dimension !</strong>');
-                                        $('.subBtn').prop('disabled', true);
-                                    } else {
-                                        $('.image-error').html('');
-                                        $('.subBtn').prop('disabled', false);
-                                    }
-                                };
-                            }
+                                if (widthOfImg != 420 && heightOfImg != 200) {
+                                    $('.image-error').html('<strong style="color: red;">Invalid Image Dimension !</strong>');
+                                    $('.subBtn').prop('disabled', true);
+                                } else {
+                                    $('.image-error').html('');
+                                    $('.subBtn').prop('disabled', false);
+                                }
+                            };
                         }
                     }
                 }
-            });
+            }
+        });
 
-            $('#bannerimage').on('change', function () {
-                var fileOrg = '';
-                var widthOfImg = '';
-                var heightOfImg = '';
-                var file = $('input#bannerimage').val();
-                if (file != '') {
-                    var fileSize = $('input#bannerimage')[0].files[0].size;
-                    if (fileSize > 2097152) {
+        $('#bannerimage').on('change', function () {
+            var fileOrg = '';
+            var widthOfImg = '';
+            var heightOfImg = '';
+            var file = $('input#bannerimage').val();
+            if (file != '') {
+                var fileSize = $('input#bannerimage')[0].files[0].size;
+                if (fileSize > 2097152) {
+                    $('.subBtn').prop('disabled', true);
+                    $('.bannerimage-error').html('<strong style="color: red;">Max size 2 mb only !</strong>');
+                } else {
+                    var ext = $('input#bannerimage').val().split('.').pop().toLowerCase();
+                    if ($.inArray(ext, ['jpeg', 'jpg', 'png', 'bmp', 'gif', 'svg']) == -1) {
                         $('.subBtn').prop('disabled', true);
-                        $('.bannerimage-error').html('<strong style="color: red;">Max size 2 mb only !</strong>');
+                        $('.bannerimage-error').html('<strong style="color: red;">Invalid Image Format !</strong>');
                     } else {
-                        var ext = $('input#bannerimage').val().split('.').pop().toLowerCase();
-                        if ($.inArray(ext, ['jpeg', 'jpg', 'png', 'bmp', 'gif', 'svg']) == -1) {
-                            $('.subBtn').prop('disabled', true);
-                            $('.bannerimage-error').html('<strong style="color: red;">Invalid Image Format !</strong>');
-                        } else {
-                            var fileInput = $(this)[0],
-                                fileOrg = fileInput.files && fileInput.files[0];
+                        var fileInput = $(this)[0],
+                            fileOrg = fileInput.files && fileInput.files[0];
 
-                            if (fileOrg) {
-                                var img = new Image();
+                        if (fileOrg) {
+                            var img = new Image();
 
-                                img.src = window.URL.createObjectURL(fileOrg);
+                            img.src = window.URL.createObjectURL(fileOrg);
 
-                                img.onload = function () {
-                                    widthOfImg = img.naturalWidth;
-                                    heightOfImg = img.naturalHeight;
+                            img.onload = function () {
+                                widthOfImg = img.naturalWidth;
+                                heightOfImg = img.naturalHeight;
 
-                                    if (widthOfImg != 1280 && heightOfImg != 490) {
-                                        $('.bannerimage-error').html('<strong style="color: red;">Invalid Image Dimension !</strong>');
-                                        $('.subBtn').prop('disabled', true);
-                                    } else {
-                                        $('.bannerimage-error').html('');
-                                        $('.subBtn').prop('disabled', false);
-                                    }
-                                };
-                            }
-
+                                if (widthOfImg != 1280 && heightOfImg != 490) {
+                                    $('.bannerimage-error').html('<strong style="color: red;">Invalid Image Dimension !</strong>');
+                                    $('.subBtn').prop('disabled', true);
+                                } else {
+                                    $('.bannerimage-error').html('');
+                                    $('.subBtn').prop('disabled', false);
+                                }
+                            };
                         }
+
                     }
                 }
-            });
-
+            }
         });
 
         $(window).on('load', function(){
@@ -422,10 +484,37 @@
 
             var statusdata = "{{$editdata->status}}";
             $(document).find('select[name=status]').val(statusdata);
+
         });
 
+    $('#addmorebtn').on('click',function(e){
+        e.preventDefault();
+            $.ajax({
+                url:baseurl+'/admin/box-office/movies/addmovieartists',
+                type:'get',
+                success:function(data)
+                {
+                    $('.newrow').append(data);
+                    $(document).find('select.artist-select').on('focus', function(){
+                        $('.artisterror').html('');
+                    });
 
-        
+                    $(document).find('select.artist-role-select').on('focus', function(){
+                       $('.artisterror').html('');
+                    });
+                }
+            });
+        });
+      
+
+    $('.close').on('click',function(){
+        $(this).parent().parent().remove();
+    });
     </script>
+    <style type="text/css">
+        .artisterror{
+            color:red;
+        }
+    </style>
 @stop
 
