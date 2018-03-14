@@ -1,4 +1,4 @@
-@extends('admin.layout.master')
+@extends('admin.layout.master1')
 
 @section('styles')
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
@@ -127,269 +127,360 @@
 
 
 @section('main-body')
-    <section class="content">
-        <div class="row create-price-card-div">
-            <p class="info-span">Edit Price Card</p>
-            <form action="{{url('admin/box-office/price-card-management/'.$slug.'/update')}}" class="form-horizontal"
-                  id="create-form"
-                  method="post"
-                  enctype="multipart/form-data">
-                {{csrf_field()}}
-
-                <div class="form-group">
-                    <span>Name <small>*</small></span>
-                    <input type="text" name="name" value="{{$priceCard->name}}" class="form-control"
-                           id="name"
-                           onfocus="removeError('name');" placeholder="Enter Price Card Name">
-                    @if($errors->has('name'))
-                        <span class="help-block error">
-                    <strong>
-                        {{$errors->first('name')}}
-                    </strong>
-                </span>
-                    @endif
-                    <span class="name-error error help-block"></span>
-                </div>
-
-                <div class="form-group">
-                    <span>Screens <small>*</small></span>
-                    @php $screenArray = json_decode($priceCard->screen_ids, true); @endphp
-                    <div class="screen-span-div">
-                        @if(isset($screens) && $screens->count() > 0)
-                            @php $screenArray1 = $screens->pluck('id')->toArray(); @endphp
-                            @foreach($screens as $s)
-                                <span onclick="removeError('screen-id');"
-                                      class="{{$s->screenSeats != null ? 'screen-span' : 'screen-span-not'}} {{in_array($s->id, $screenArray) ? 'screen-selected' : ''}} screen-span-{{$s->id}}"
-                                      data-screenid="{{$s->id}}">{{$s->name}}</span>
-                                @if(in_array($s->id, $screenArray))
-                                    <input name="screen_id[]" value="{{$s->id}}" class="screen-ids screenid-{{$s->id}}"
-                                           type="hidden">
-                                @endif
-                            @endforeach
-                            @if(count($screenArray1) > 1)
-                                <span onclick="removeError('screen-id');"
-                                      class="screen-span screen-span-all {{$screenArray == $screenArray1 ? 'screen-selected' : ''}}"
-                                      data-screenid="all">All</span>
-                            @endif
-                            <span class="pease-wait" style="display: none;"><i class="fa fa-spinner fa-spin"></i> Please Wait ...</span>
-                        @endif
-                    </div>
-                    @if($errors->has('screen_id'))
-                        <span class="help-block error">
-                    <strong>
-                        {{$errors->first('screen_id')}}
-                    </strong>
-                </span>
-                    @endif
-                    <span class="screen-id-error error help-block"></span>
-                </div>
-
-
-                <div class="seat-category-div">
-                    @if(isset($sendData) && count($sendData) > 0)
-                        <div class="form-group">
-                            <span>Seat Categories <small>*</small></span>
-                            <div class="category-div">
-                                @foreach($sendData as $sd)
-                                    <span class="category-span {{in_array($sd, $seatCategoriesArr) ? 'category-selected' : ''}}"
-                                          data-name="{{$sd}}">{{$sd}}</span>
-                                    @if(in_array($sd, $seatCategoriesArr))
-                                        <input name="seat_categories[]"
-                                               class="seat-category seat-category-{{str_replace(' ', '', $sd)}}"
-                                               value="{{$sd}}" type="hidden">
-                                    @endif
-                                @endforeach
-                                @if(count($sendData) > 1)
-                                    <span class="category-span-all {{$seatCategoriesArr == $sendData ? 'category-selected' : ''}}"
-                                          data-name="all">All</span>
-                                @endif
-                            </div>
-                            <span class="seat-category-error error help-block"></span>
+    <!-- BEGIN .app-main -->
+    <div class="app-main">
+        <!-- BEGIN .main-heading -->
+        <header class="main-heading">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8">
+                        <div class="page-icon">
+                            <i class="icon-border_outer"></i>
                         </div>
-                    @endif
-                </div>
-
-                <div class="form-group">
-                    <span>Days <small>*</small></span>
-                    @php $days = json_decode($priceCard->selected_days, true); @endphp
-                    @php $daysAr = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']; @endphp
-                    <div class="day-span-div">
-                        <span onclick="removeError('days');"
-                              class="day-span {{in_array('Sun', $days) ? 'day-selected' : ''}}">Sun</span>
-                        @if(in_array('Sun', $days))
-                            <input name="days[]" value="Sun" class="sel-days Sun" type="hidden">
-                        @endif
-                        <span onclick="removeError('days');"
-                              class="day-span {{in_array('Mon', $days) ? 'day-selected' : ''}}">Mon</span>
-                        @if(in_array('Mon', $days))
-                            <input name="days[]" value="Mon" class="sel-days Mon" type="hidden">
-                        @endif
-                        <span onclick="removeError('days');"
-                              class="day-span {{in_array('Tue', $days) ? 'day-selected' : ''}}">Tue</span>
-                        @if(in_array('Tue', $days))
-                            <input name="days[]" value="Tue" class="sel-days Tue" type="hidden">
-                        @endif
-                        <span onclick="removeError('days');"
-                              class="day-span {{in_array('Wed', $days) ? 'day-selected' : ''}}">Wed</span>
-                        @if(in_array('Wed', $days))
-                            <input name="days[]" value="Wed" class="sel-days Wed" type="hidden">
-                        @endif
-                        <span onclick="removeError('days');"
-                              class="day-span {{in_array('Thu', $days) ? 'day-selected' : ''}}">Thu</span>
-                        @if(in_array('Thu', $days))
-                            <input name="days[]" value="Thu" class="sel-days Thu" type="hidden">
-                        @endif
-                        <span onclick="removeError('days');"
-                              class="day-span {{in_array('Fri', $days) ? 'day-selected' : ''}}">Fri</span>
-                        @if(in_array('Fri', $days))
-                            <input name="days[]" value="Fri" class="sel-days Fri" type="hidden">
-                        @endif
-                        <span onclick="removeError('days');"
-                              class="day-span {{in_array('Sat', $days) ? 'day-selected' : ''}}">Sat</span>
-                        @if(in_array('Sat', $days))
-                            <input name="days[]" value="Sat" class="sel-days Sat" type="hidden">
-                        @endif
-                        <span onclick="removeError('days');"
-                              class="day-span day-span-all {{$daysAr == $days ? 'day-selected' : ''}}">Every Day</span>
+                        <div class="page-title">
+                            <h5>Edit Price Card</h5>
+                            <h6 class="sub-heading">Welcome to Merotheatre Admin</h6>
+                        </div>
                     </div>
-                    @if($errors->has('days'))
-                        <span class="help-block error">
-                    <strong>
-                        {{$errors->first('days')}}
-                    </strong>
-                </span>
-                    @endif
-                    <span class="days-error error help-block"></span>
-                </div>
-
-                <div class="form-group">
-                    <span>Time Range <small>*</small></span>
-                    <input name="time_range" class="time-range-input sel-time-range" value="{{$priceCard->time_range}}"
-                           type="hidden">
-                    <input name="min_time_range" class="" value="{{$priceCard->min_time_range}}"
-                           type="hidden">
-                    <input name="max_time_range" class="" value="{{$priceCard->max_time_range}}"
-                           type="hidden">
-                    <span class="time-range-span">{{$priceCard->time_range}}</span>
-                    <div id="slider-range"></div>
-                    @if($errors->has('time_range'))
-                        <span class="help-block error">
-                    <strong>
-                        {{$errors->first('time_range')}}
-                    </strong>
-                </span>
-                    @endif
-                    <span class="time-range-error error help-block"></span>
-                </div>
-
-                <div class="form-group">
-                    <span>Status <small>*</small></span>
-                    <select name="status" id="status" class="form-control">
-                        <option value="active" {{$priceCard->status == 'active' ? 'selected' : ''}}>Active</option>
-                        <option value="inactive" {{$priceCard->status == 'inactive' ? 'selected' : ''}}>Inactive
-                        </option>
-                    </select>
-                    @if($errors->has('status'))
-                        <span class="help-block error">
-                    <strong>
-                        {{$errors->first('status')}}
-                    </strong>
-                </span>
-                    @endif
-                    <span class="status-error error help-block"></span>
-                </div>
-
-
-                <div class="form-group">
-
-                    <div class="include-ticket-type">
-                        <span class="include-ticket-header">Included Tickets</span>
-                        <span class="include-ticket-body">Click the include box to include a ticket in your price card</span>
-
-                        <table id="example" class="display" width="100%" cellspacing="0">
-                            <thead>
-                            <tr>
-                                <th>Include</th>
-                                <th>Ticket Name</th>
-                                <th>Ticket Class</th>
-                                <th>Ticket Type</th>
-                                <th>Sequence</th>
-                                <th>Price</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            @if(isset($ticketTypes) && $ticketTypes->count() > 0)
-                                @php $ttTypes = json_decode($priceCard->ticket_types_ids, true); @endphp
-                                @foreach($ticketTypes as $ts)
-                                    <tr>
-                                        <td><input onclick="removeError('ticket-type');" type="checkbox" name=""
-                                                   class="tic-type-ids"
-                                                   data-ticketid="{{$ts->id}}" {{in_array($ts->id, $ttTypes) ? 'checked' : ''}}>
-                                        </td>
-                                        @if(in_array($ts->id, $ttTypes))
-                                            <input name="ticket_types_id[]" class="tic_types_id_{{$ts->id}}"
-                                                   value="{{$ts->id}}"
-                                                   type="hidden">
-                                        @endif
-                                        <td>{{$ts->label}}</td>
-                                        <td>{{$ts->ticket_class}}</td>
-                                        <td>{{$ts->ticket_type}}</td>
-                                        <td>
-                                            @if(in_array($ts->id, $ttTypes))
-                                                @php $sqArr = json_decode($priceCard->sequences, true); @endphp
-                                                @php $seqkey = array_search($ts->id, $ttTypes); @endphp
-                                                <input data-ttid="{{$ts->id}}" onfocus="removeError('ticket-type');"
-                                                       type="text"
-                                                       class="sequence-input sequence-{{$ts->id}}"
-                                                       value="{{$sqArr[$seqkey]}}">
-                                                <input name="ticket_types_sequence[]"
-                                                       class="tic_types_sequence_{{$ts->id}}"
-                                                       value="{{$sqArr[$seqkey]}}" type="hidden">
-                                            @else
-                                                <input data-ttid="{{$ts->id}}" onfocus="removeError('ticket-type');"
-                                                       type="text"
-                                                       class="sequence-input sequence-{{$ts->id}}"
-                                                       value="{{$ts->display_sequence}}">
-                                            @endif
-                                        </td>
-
-                                        <td>
-                                            @if(in_array($ts->id, $ttTypes))
-                                                @php $prArr = json_decode($priceCard->prices, true); @endphp
-                                                @php $seqkey1 = array_search($ts->id, $ttTypes); @endphp
-                                                <input data-ttid="{{$ts->id}}" onfocus="removeError('ticket-type');"
-                                                       type="text"
-                                                       class="price-input price-{{$ts->id}}"
-                                                       value="{{$prArr[$seqkey1]}}">
-                                                <input name="ticket_types_price[]" class="tic_types_price_{{$ts->id}}"
-                                                       value="{{$prArr[$seqkey1]}}" type="hidden">
-                                            @else
-                                                <input data-ttid="{{$ts->id}}" onfocus="removeError('ticket-type');"
-                                                       type="text"
-                                                       class="price-input price-{{$ts->id}}"
-                                                       value="{{$ts->default_price}}">
-                                            @endif
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            @else
-                                <tr>
-                                    <td colspan="6">No Ticket Types Found !</td>
-                                </tr>
-                            @endif
-                            </tbody>
-                        </table>
+                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4">
+                        <div class="right-actions">
+                            <span class="last-login">Last Login: 2 hours ago</span>
+                        </div>
                     </div>
-                    <span class="ticket-type-error error help-block"></span>
                 </div>
+            </div>
+        </header>
+        <!-- END: .main-heading -->
+        <!-- BEGIN .main-content -->
+        <div class="main-content">
+
+            <!-- Row start -->
+            <div class="row gutters form-wrapper">
+                <div class=" col-md-12 col-sm-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="artist-form">
+                                        <form action="{{url('admin/box-office/price-card-management/'.$slug.'/update')}}"
+                                              class="form" role="form" autocomplete="off"
+                                              id="create-form"
+                                              method="post"
+                                              enctype="multipart/form-data">
+                                            {{csrf_field()}}
+
+                                            <div class="form-group row">
+                                                <label class="col-lg-3 col-form-label form-control-label">Name <span
+                                                            class="req">*</span></label>
+                                                <div class="col-lg-9">
+                                                    <input type="text" name="name" value="{{$priceCard->name}}"
+                                                           class="form-control"
+                                                           id="name"
+                                                           onfocus="removeError('name');"
+                                                           placeholder="Enter Price Card Name">
+                                                    @if($errors->has('name'))
+                                                        <span class="help-block error">
+                                                            <strong>
+                                                                {{$errors->first('name')}}
+                                                            </strong>
+                                                        </span>
+                                                    @endif
+                                                    <span class="name-error error help-block"></span>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group row">
+                                                <label class="col-lg-3 col-form-label form-control-label">Screens <span
+                                                            class="req">*</span></label>
+                                                <div class="col-lg-9">
+                                                    @php $screenArray = json_decode($priceCard->screen_ids, true); @endphp
+                                                    <div class="screen-span-div">
+                                                        @if(isset($screens) && $screens->count() > 0)
+                                                            @php $screenArray1 = $screens->pluck('id')->toArray(); @endphp
+                                                            @foreach($screens as $s)
+                                                                <span onclick="removeError('screen-id');"
+                                                                      class="{{$s->screenSeats != null ? 'screen-span' : 'screen-span-not'}} {{in_array($s->id, $screenArray) ? 'screen-selected' : ''}} screen-span-{{$s->id}}"
+                                                                      data-screenid="{{$s->id}}">{{$s->name}}</span>
+                                                                @if(in_array($s->id, $screenArray))
+                                                                    <input name="screen_id[]" value="{{$s->id}}"
+                                                                           class="screen-ids screenid-{{$s->id}}"
+                                                                           type="hidden">
+                                                                @endif
+                                                            @endforeach
+                                                            @if(count($screenArray1) > 1)
+                                                                <span onclick="removeError('screen-id');"
+                                                                      class="screen-span screen-span-all {{$screenArray == $screenArray1 ? 'screen-selected' : ''}}"
+                                                                      data-screenid="all">All</span>
+                                                            @endif
+                                                            <span class="pease-wait" style="display: none;"><i
+                                                                        class="fa fa-spinner fa-spin"></i> Please Wait ...</span>
+                                                        @endif
+                                                    </div>
+                                                    @if($errors->has('screen_id'))
+                                                        <span class="help-block error">
+                                                            <strong>
+                                                                {{$errors->first('screen_id')}}
+                                                            </strong>
+                                                        </span>
+                                                    @endif
+                                                    <span class="screen-id-error error help-block"></span>
+                                                </div>
+                                            </div>
 
 
-                <div class="form-group">
-                    <input type="submit" class="btn btn-primary subBtn" value="Update">
+                                            <div class="seat-category-div">
+                                                @if(isset($sendData) && count($sendData) > 0)
+                                                    <div class="form-group row">
+                                                        <label class="col-lg-3 col-form-label form-control-label">Seat
+                                                            Categories <span class="req">*</span></label>
+                                                        <div class="col-lg-9">
+                                                            <div class="category-div">
+                                                                @foreach($sendData as $sd)
+                                                                    <span class="category-span {{in_array($sd, $seatCategoriesArr) ? 'category-selected' : ''}}"
+                                                                          data-name="{{$sd}}">{{$sd}}</span>
+                                                                    @if(in_array($sd, $seatCategoriesArr))
+                                                                        <input name="seat_categories[]"
+                                                                               class="seat-category seat-category-{{str_replace(' ', '', $sd)}}"
+                                                                               value="{{$sd}}" type="hidden">
+                                                                    @endif
+                                                                @endforeach
+                                                                @if(count($sendData) > 1)
+                                                                    <span class="category-span-all {{$seatCategoriesArr == $sendData ? 'category-selected' : ''}}"
+                                                                          data-name="all">All</span>
+                                                                @endif
+                                                            </div>
+                                                            <span class="seat-category-error error help-block"></span>
+                                                        </div>
+                                                    </div>
+                                                @endif
+                                            </div>
+
+                                            <div class="form-group row">
+                                                <label class="col-lg-3 col-form-label form-control-label">Days <span
+                                                            class="req">*</span></label>
+                                                <div class="col-lg-9">
+                                                    @php $days = json_decode($priceCard->selected_days, true); @endphp
+                                                    @php $daysAr = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']; @endphp
+                                                    <div class="day-span-div">
+                                                        <span onclick="removeError('days');"
+                                                              class="day-span {{in_array('Sun', $days) ? 'day-selected' : ''}}">Sun</span>
+                                                        @if(in_array('Sun', $days))
+                                                            <input name="days[]" value="Sun" class="sel-days Sun"
+                                                                   type="hidden">
+                                                        @endif
+                                                        <span onclick="removeError('days');"
+                                                              class="day-span {{in_array('Mon', $days) ? 'day-selected' : ''}}">Mon</span>
+                                                        @if(in_array('Mon', $days))
+                                                            <input name="days[]" value="Mon" class="sel-days Mon"
+                                                                   type="hidden">
+                                                        @endif
+                                                        <span onclick="removeError('days');"
+                                                              class="day-span {{in_array('Tue', $days) ? 'day-selected' : ''}}">Tue</span>
+                                                        @if(in_array('Tue', $days))
+                                                            <input name="days[]" value="Tue" class="sel-days Tue"
+                                                                   type="hidden">
+                                                        @endif
+                                                        <span onclick="removeError('days');"
+                                                              class="day-span {{in_array('Wed', $days) ? 'day-selected' : ''}}">Wed</span>
+                                                        @if(in_array('Wed', $days))
+                                                            <input name="days[]" value="Wed" class="sel-days Wed"
+                                                                   type="hidden">
+                                                        @endif
+                                                        <span onclick="removeError('days');"
+                                                              class="day-span {{in_array('Thu', $days) ? 'day-selected' : ''}}">Thu</span>
+                                                        @if(in_array('Thu', $days))
+                                                            <input name="days[]" value="Thu" class="sel-days Thu"
+                                                                   type="hidden">
+                                                        @endif
+                                                        <span onclick="removeError('days');"
+                                                              class="day-span {{in_array('Fri', $days) ? 'day-selected' : ''}}">Fri</span>
+                                                        @if(in_array('Fri', $days))
+                                                            <input name="days[]" value="Fri" class="sel-days Fri"
+                                                                   type="hidden">
+                                                        @endif
+                                                        <span onclick="removeError('days');"
+                                                              class="day-span {{in_array('Sat', $days) ? 'day-selected' : ''}}">Sat</span>
+                                                        @if(in_array('Sat', $days))
+                                                            <input name="days[]" value="Sat" class="sel-days Sat"
+                                                                   type="hidden">
+                                                        @endif
+                                                        <span onclick="removeError('days');"
+                                                              class="day-span day-span-all {{$daysAr == $days ? 'day-selected' : ''}}">Every Day</span>
+                                                    </div>
+                                                    @if($errors->has('days'))
+                                                        <span class="help-block error">
+                                                            <strong>
+                                                                {{$errors->first('days')}}
+                                                            </strong>
+                                                        </span>
+                                                    @endif
+                                                    <span class="days-error error help-block"></span>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group row">
+                                                <label class="col-lg-3 col-form-label form-control-label">Time Range
+                                                    <span class="req">*</span></label>
+                                                <div class="col-lg-9">
+                                                    <input name="time_range" class="time-range-input sel-time-range"
+                                                           value="{{$priceCard->time_range}}"
+                                                           type="hidden">
+                                                    <input name="min_time_range" class=""
+                                                           value="{{$priceCard->min_time_range}}"
+                                                           type="hidden">
+                                                    <input name="max_time_range" class=""
+                                                           value="{{$priceCard->max_time_range}}"
+                                                           type="hidden">
+                                                    <span class="time-range-span">{{$priceCard->time_range}}</span>
+                                                    <div id="slider-range"></div>
+                                                    @if($errors->has('time_range'))
+                                                        <span class="help-block error">
+                                                            <strong>
+                                                                {{$errors->first('time_range')}}
+                                                            </strong>
+                                                        </span>
+                                                    @endif
+                                                    <span class="time-range-error error help-block"></span>
+                                                </div>
+                                            </div>
+
+
+
+
+                                            <div class="form-group row">
+                                                <label class="col-lg-3 col-form-label form-control-label">Status
+                                                    <span class="req">*</span></label>
+                                                <div class="col-lg-9">
+                                                    <select name="status" id="status" class="custom-select">
+                                                        <option value="active" {{$priceCard->status == 'active' ? 'selected' : ''}}>
+                                                            Active
+                                                        </option>
+                                                        <option value="inactive" {{$priceCard->status == 'inactive' ? 'selected' : ''}}>
+                                                            Inactive
+                                                        </option>
+                                                    </select>
+                                                    @if($errors->has('status'))
+                                                        <span class="help-block error">
+                                                        <strong>
+                                                            {{$errors->first('status')}}
+                                                        </strong>
+                                                    </span>
+                                                    @endif
+                                                    <span class="status-error error help-block"></span>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <div class="include-ticket-type">
+                                                    <span class="include-ticket-header">Included Tickets</span>
+                                                    <span class="include-ticket-body">Click the include box to include a ticket in your price card</span>
+
+                                                    <table id="example" class="display" width="95%" cellspacing="0">
+                                                        <thead>
+                                                        <tr>
+                                                            <th>Include</th>
+                                                            <th>Ticket Name</th>
+                                                            <th>Ticket Class</th>
+                                                            <th>Ticket Type</th>
+                                                            <th>Sequence</th>
+                                                            <th>Price</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        @if(isset($ticketTypes) && $ticketTypes->count() > 0)
+                                                            @php $ttTypes = json_decode($priceCard->ticket_types_ids, true); @endphp
+                                                            @foreach($ticketTypes as $ts)
+                                                                <tr>
+                                                                    <td><input onclick="removeError('ticket-type');"
+                                                                               type="checkbox" name=""
+                                                                               class="tic-type-ids"
+                                                                               data-ticketid="{{$ts->id}}" {{in_array($ts->id, $ttTypes) ? 'checked' : ''}}>
+                                                                    </td>
+                                                                    @if(in_array($ts->id, $ttTypes))
+                                                                        <input name="ticket_types_id[]"
+                                                                               class="tic_types_id_{{$ts->id}}"
+                                                                               value="{{$ts->id}}"
+                                                                               type="hidden">
+                                                                    @endif
+                                                                    <td>{{$ts->label}}</td>
+                                                                    <td>{{$ts->ticket_class}}</td>
+                                                                    <td>{{$ts->ticket_type}}</td>
+                                                                    <td>
+                                                                        @if(in_array($ts->id, $ttTypes))
+                                                                            @php $sqArr = json_decode($priceCard->sequences, true); @endphp
+                                                                            @php $seqkey = array_search($ts->id, $ttTypes); @endphp
+                                                                            <input data-ttid="{{$ts->id}}"
+                                                                                   onfocus="removeError('ticket-type');"
+                                                                                   type="text"
+                                                                                   class="sequence-input sequence-{{$ts->id}}"
+                                                                                   value="{{$sqArr[$seqkey]}}">
+                                                                            <input name="ticket_types_sequence[]"
+                                                                                   class="tic_types_sequence_{{$ts->id}}"
+                                                                                   value="{{$sqArr[$seqkey]}}"
+                                                                                   type="hidden">
+                                                                        @else
+                                                                            <input data-ttid="{{$ts->id}}"
+                                                                                   onfocus="removeError('ticket-type');"
+                                                                                   type="text"
+                                                                                   class="sequence-input sequence-{{$ts->id}}"
+                                                                                   value="{{$ts->display_sequence}}">
+                                                                        @endif
+                                                                    </td>
+
+                                                                    <td>
+                                                                        @if(in_array($ts->id, $ttTypes))
+                                                                            @php $prArr = json_decode($priceCard->prices, true); @endphp
+                                                                            @php $seqkey1 = array_search($ts->id, $ttTypes); @endphp
+                                                                            <input data-ttid="{{$ts->id}}"
+                                                                                   onfocus="removeError('ticket-type');"
+                                                                                   type="text"
+                                                                                   class="price-input price-{{$ts->id}}"
+                                                                                   value="{{$prArr[$seqkey1]}}">
+                                                                            <input name="ticket_types_price[]"
+                                                                                   class="tic_types_price_{{$ts->id}}"
+                                                                                   value="{{$prArr[$seqkey1]}}"
+                                                                                   type="hidden">
+                                                                        @else
+                                                                            <input data-ttid="{{$ts->id}}"
+                                                                                   onfocus="removeError('ticket-type');"
+                                                                                   type="text"
+                                                                                   class="price-input price-{{$ts->id}}"
+                                                                                   value="{{$ts->default_price}}">
+                                                                        @endif
+                                                                    </td>
+                                                                </tr>
+                                                            @endforeach
+                                                        @else
+                                                            <tr>
+                                                                <td colspan="6">No Ticket Types Found !</td>
+                                                            </tr>
+                                                        @endif
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                                <span class="ticket-type-error error help-block"></span>
+                                            </div>
+
+
+                                            <div class="form-group row">
+                                                <div class="col-lg-12">
+                                                    <button type="submit" class="btn btn-primary">Update</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </form>
+            </div>
+            <!-- Row end -->
+
         </div>
-    </section>
+        <!-- END: .main-content -->
+    </div>
+    <!-- END: .app-main -->
 @stop
 
 @section('scripts')
@@ -450,8 +541,9 @@ $('span.pease-wait').show();
                     success: function (data) {
                         if (data != 'empty') {
                             var html = '';
-                            html += '<div class="form-group">';
-                            html += '<span>Seat Categories <small>*</small></span>';
+                            html += '<div class="form-group row">';
+                            html += '<label class="col-lg-3 col-form-label form-control-label">Seat Categories<span class="req">*</span></label>';
+                            html += '<div class="col-lg-9">';
                             html += '<div class="category-div">';
                             for (var i = 0; i < data.length; i++) {
                                 html += '<span class="category-span" data-name="' + data[i] + '">' + data[i] + '</span>';
@@ -462,11 +554,12 @@ $('span.pease-wait').show();
                             html += '</div>';
                             html += '<span class="seat-category-error error help-block"></span>';
                             html += '</div>';
+                            html += '</div>';
 
                             $('div.seat-category-div').html(html);
                             $('span.pease-wait').hide();
                         } else {
-                            $('div.seat-category-div').html('<div class="form-group"><span>Seat Categories <small>*</small></span><div class="category-div"><strong>No any categories matched for selected screens !!!</strong></div><span class="seat-category-error error help-block"></span></div>');
+                            $('div.seat-category-div').html('<div class="form-group row"><label class="col-lg-3 col-form-label form-control-label">Seat Categories<span class="req">*</span></label><div class="col-lg-9"><div class="category-div"><strong>No any categories matched for selected screens !!!</strong></div><span class="seat-category-error error help-block"></span></div></div>');
                             $('span.pease-wait').hide();
                         }
 
@@ -501,8 +594,9 @@ $('span.pease-wait').show();
                                 if (data != 'empty') {
                                     console.log(data);
                                     var html = '';
-                                    html += '<div class="form-group">';
-                                    html += '<span>Seat Categories <small>*</small></span>';
+                                    html += '<div class="form-group row">';
+                                    html += '<label class="col-lg-3 col-form-label form-control-label">Seat Categories<span class="req">*</span></label>';
+                                    html += '<div class="col-lg-9">';
                                     html += '<div class="category-div">';
                                     for (var i = 0; i < data.length; i++) {
                                         html += '<span class="category-span" data-name="' + data[i] + '">' + data[i] + '</span>';
@@ -514,11 +608,12 @@ $('span.pease-wait').show();
                                     html += '</div>';
                                     html += '<span class="seat-category-error error help-block"></span>';
                                     html += '</div>';
+                                    html += '</div>';
 
                                     $('div.seat-category-div').html(html);
                                     $('span.pease-wait').hide();
                                 } else {
-                                    $('div.seat-category-div').html('<div class="form-group"><span>Seat Categories <small>*</small></span><div class="category-div"><strong>No any categories matched for selected screens !!!</strong></div><span class="seat-category-error error help-block"></span></div>');
+                                    $('div.seat-category-div').html('<div class="form-group row"><label class="col-lg-3 col-form-label form-control-label">Seat Categories<span class="req">*</span></label><div class="col-lg-9"><div class="category-div"><strong>No any categories matched for selected screens !!!</strong></div><span class="seat-category-error error help-block"></span></div></div>');
                                     $('span.pease-wait').hide();
                                 }
 
@@ -552,8 +647,9 @@ $('span.pease-wait').show();
                             if (data != 'empty') {
                                 console.log(data);
                                 var html = '';
-                                html += '<div class="form-group">';
-                                html += '<span>Seat Categories <small>*</small></span>';
+                                html += '<div class="form-group row">';
+                                html += '<label class="col-lg-3 col-form-label form-control-label">Seat Categories<span class="req">*</span></label>';
+                                html += '<div class="col-lg-9">';
                                 html += '<div class="category-div">';
                                 for (var i = 0; i < data.length; i++) {
                                     html += '<span class="category-span" data-name="' + data[i] + '">' + data[i] + '</span>';
@@ -564,12 +660,13 @@ $('span.pease-wait').show();
                                 html += '</div>';
                                 html += '<span class="seat-category-error error help-block"></span>';
                                 html += '</div>';
+                                html += '</div>';
 
                                 $('div.seat-category-div').html(html);
                                 $('span.pease-wait').hide();
                                 flag++;
                             } else {
-                                $('div.seat-category-div').html('<div class="form-group"><span>Seat Categories <small>*</small></span><div class="category-div"><strong>No any categories matched for selected screens !!!</strong></div><span class="seat-category-error error help-block"></span></div>');
+                                $('div.seat-category-div').html('<div class="form-group row"><label class="col-lg-3 col-form-label form-control-label">Seat Categories<span class="req">*</span></label><div class="col-lg-9"><div class="category-div"><strong>No any categories matched for selected screens !!!</strong></div><span class="seat-category-error error help-block"></span></div></div>');
                                 $('span.pease-wait').hide();
                             }
 

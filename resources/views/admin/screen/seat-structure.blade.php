@@ -1,11 +1,19 @@
 <style>
+    .help-block {
+        display: block !important;
+        color: red !important;
+        font-size: 15px !important;
+        font-weight: 500 !important;
+    }
+
     #place {
         margin: 0 auto;
     }
 
     div.content {
         border: 1px solid #ddd;
-        margin: 0 10%;
+        /*margin: 0 10%;*/
+        padding: 1%;
         margin-top: 20px;
     }
 
@@ -201,17 +209,17 @@
             <input type="hidden" name="seatDirection" value="{{$seatDirection}}">
             <input type="hidden" name="alphabetDirection" value="{{$alphaDirection}}">
             <div class="form-group">
-                <select onfocus="rErr('seat-categories');" name="seat_categories" id="seat-categories" class="form-control" style="width: 50%;">
+                <select onfocus="rErr('seat-categories');" name="seat_categories" id="seat-categories" class="custom-select" style="width: 40%; margin-top: 10px;">
                     <option value="">-- Select Number Of Seat Categories --</option>
                     @for($i = 1; $i <= 10; $i++)
                         <option value="{{$i}}">{{$i}}</option>
                     @endfor
                 </select>
-                <span class="seat-categories-error"></span>
+                <span class="seat-categories-error help-block"></span>
             </div>
 
             <div class="category-div"></div>
-            <input type="submit" value="Submit" class="btn btn-lg btn-success ajaxSubmitButton">
+            <button type="submit" class="btn btn-primary ajaxSubmitButton">Submit</button>
         </form>
     </div>
 </div>
@@ -324,10 +332,10 @@
             {
                 html += '<tr>';
                 html += '<td>';
-                html += '<input type="text" class="form-control category-name category-name-'+i+'" name="category_name[]" placeholder="Enter Category Name">';
+                html += '<input type="text" class="form-control category-name category-name-'+i+'" data-id="'+i+'" name="category_name[]" placeholder="Enter Category Name">';
                 html += '</td>';
                 html += '<td>';
-                html += '<select name="category_from_row[]" class="form-control category-from-row category-from-row-'+i+'">';
+                html += '<select name="category_from_row[]" data-id="'+i+'" class="custom-select category-from-row category-from-row-'+i+'">';
                 html += '<option value="">-- Select From Row --</option>';
                 for(var k = 0; k < alphabets.length; k++)
                 {
@@ -336,7 +344,7 @@
                 html += '</select>';
                 html += '</td>';
                 html += '<td>';
-                html += '<select name="category_to_row[]" class="form-control category-to-row category-to-row-'+i+'">';
+                html += '<select name="category_to_row[]" data-id="'+i+'" class="custom-select category-to-row category-to-row-'+i+'">';
                 html += '<option value="">-- Select To Row --</option>';
                 for(var k = 0; k < alphabets.length; k++)
                 {
@@ -347,7 +355,7 @@
                 html += '</tr>';
             }
             html += '<tr>';
-            html += '<td colspan="3" class="text-center"><span class="category-name-error"></span></td>';
+            html += '<td colspan="3" class="text-center"><span class="category-name-error help-block"></span></td>';
             html += '<tr>';
             html += '</tbody>';
             html += '</table>';

@@ -1,4 +1,4 @@
-@extends('admin.layout.master')
+@extends('admin.layout.master1')
 
 @section('styles')
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
@@ -20,6 +20,7 @@
             color: red;
             font-size: 15px;
             font-weight: 500;
+            margin-top: 5px;
         }
 
         .info-span {
@@ -127,161 +128,233 @@
 
 
 @section('main-body')
-    <section class="content">
-        <div class="row create-price-card-div">
-            <p class="info-span">Create New Price Card</p>
-            <form action="{{url('admin/box-office/price-card-management/submit')}}" class="form-horizontal"
-                  id="create-form"
-                  method="post"
-                  enctype="multipart/form-data">
-                {{csrf_field()}}
-
-                <div class="form-group">
-                    <span>Name <small>*</small></span>
-                    <input type="text" name="name" value="{{old('name')}}" class="form-control"
-                           id="name"
-                           onfocus="removeError('name');" placeholder="Enter Price Card Name">
-                    @if($errors->has('name'))
-                        <span class="help-block error">
-                    <strong>
-                        {{$errors->first('name')}}
-                    </strong>
-                </span>
-                    @endif
-                    <span class="name-error error help-block"></span>
-                </div>
-
-                <div class="form-group">
-                    <span>Screens <small>*</small></span>
-                    <div class="screen-span-div">
-                        @if(isset($screens) && $screens->count() > 0)
-                            @foreach($screens as $s)
-                                <span onclick="removeError('screen-id');"
-                                      class="{{$s->screenSeats != null ? 'screen-span' : 'screen-span-not'}} screen-span-{{$s->id}}"
-                                      data-screenid="{{$s->id}}">{{$s->name}}</span>
-                            @endforeach
-                            <span onclick="removeError('screen-id');" class="screen-span screen-span-all"
-                                  data-screenid="all">All</span>
-                            <span class="pease-wait" style="display: none;"><i class="fa fa-spinner fa-spin"></i> Please Wait ...</span>
-                        @endif
+    <!-- BEGIN .app-main -->
+    <div class="app-main">
+        <!-- BEGIN .main-heading -->
+        <header class="main-heading">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8">
+                        <div class="page-icon">
+                            <i class="icon-border_outer"></i>
+                        </div>
+                        <div class="page-title">
+                            <h5>Create Price Card</h5>
+                            <h6 class="sub-heading">Welcome to Merotheatre Admin</h6>
+                        </div>
                     </div>
-                    @if($errors->has('screen_id'))
-                        <span class="help-block error">
-                    <strong>
-                        {{$errors->first('screen_id')}}
-                    </strong>
-                </span>
-                    @endif
-                    <span class="screen-id-error error help-block"></span>
-                </div>
-
-                <div class="seat-category-div"></div>
-
-                <div class="form-group">
-                    <span>Days <small>*</small></span>
-                    <div class="day-span-div">
-                        <span onclick="removeError('days');" class="day-span">Sun</span>
-                        <span onclick="removeError('days');" class="day-span">Mon</span>
-                        <span onclick="removeError('days');" class="day-span">Tue</span>
-                        <span onclick="removeError('days');" class="day-span">Wed</span>
-                        <span onclick="removeError('days');" class="day-span">Thu</span>
-                        <span onclick="removeError('days');" class="day-span">Fri</span>
-                        <span onclick="removeError('days');" class="day-span">Sat</span>
-                        <span onclick="removeError('days');" class="day-span day-span-all">Every Day</span>
+                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4">
+                        <div class="right-actions">
+                            <span class="last-login">Last Login: 2 hours ago</span>
+                        </div>
                     </div>
-                    @if($errors->has('days'))
-                        <span class="help-block error">
-                    <strong>
-                        {{$errors->first('days')}}
-                    </strong>
-                </span>
-                    @endif
-                    <span class="days-error error help-block"></span>
                 </div>
+            </div>
+        </header>
+        <!-- END: .main-heading -->
+        <!-- BEGIN .main-content -->
+        <div class="main-content">
 
-                <div class="form-group">
-                    <span>Time Range <small>*</small></span>
-                    <span class="time-range-span">Choose Time Range</span>
-                    <div id="slider-range"></div>
-                    @if($errors->has('time_range'))
-                        <span class="help-block error">
-                    <strong>
-                        {{$errors->first('time_range')}}
-                    </strong>
-                </span>
-                    @endif
-                    <span class="time-range-error error help-block"></span>
-                </div>
+            <!-- Row start -->
+            <div class="row gutters form-wrapper">
+                <div class=" col-md-12 col-sm-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="artist-form">
+                                        <form action="{{url('admin/box-office/price-card-management/submit')}}"
+                                              class="form" role="form" autocomplete="off"
+                                              id="create-form"
+                                              method="post"
+                                              enctype="multipart/form-data">
+                                            {{csrf_field()}}
 
-                <div class="form-group">
-                    <span>Status <small>*</small></span>
-                    <select name="status" id="status" class="form-control">
-                        <option value="active">Active</option>
-                        <option value="inactive">Inactive</option>
-                    </select>
-                    @if($errors->has('status'))
-                        <span class="help-block error">
-                    <strong>
-                        {{$errors->first('status')}}
-                    </strong>
-                </span>
-                    @endif
-                    <span class="status-error error help-block"></span>
-                </div>
+                                            <div class="form-group row">
+                                                <label class="col-lg-3 col-form-label form-control-label">Name <span
+                                                            class="req">*</span></label>
+                                                <div class="col-lg-9">
+                                                    <input type="text" name="name" value="{{old('name')}}"
+                                                           class="form-control"
+                                                           id="name"
+                                                           onfocus="removeError('name');"
+                                                           placeholder="Enter Price Card Name">
+                                                    @if($errors->has('name'))
+                                                        <span class="help-block error">
+                                                            <strong>
+                                                                {{$errors->first('name')}}
+                                                            </strong>
+                                                        </span>
+                                                    @endif
+                                                    <span class="name-error error help-block"></span>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group row">
+                                                <label class="col-lg-3 col-form-label form-control-label">Screens <span
+                                                            class="req">*</span></label>
+                                                <div class="col-lg-9">
+                                                    <div class="screen-span-div">
+                                                        @if(isset($screens) && $screens->count() > 0)
+                                                            @foreach($screens as $s)
+                                                                <span onclick="removeError('screen-id');"
+                                                                      class="{{$s->screenSeats != null ? 'screen-span' : 'screen-span-not'}} screen-span-{{$s->id}}"
+                                                                      data-screenid="{{$s->id}}">{{$s->name}}</span>
+                                                            @endforeach
+                                                            <span onclick="removeError('screen-id');"
+                                                                  class="screen-span screen-span-all"
+                                                                  data-screenid="all">All</span>
+                                                            <span class="pease-wait" style="display: none;"><i
+                                                                        class="fa fa-spinner fa-spin"></i> Please Wait ...</span>
+                                                        @endif
+                                                    </div>
+                                                    @if($errors->has('screen_id'))
+                                                        <span class="help-block error">
+                                                            <strong>
+                                                                {{$errors->first('screen_id')}}
+                                                            </strong>
+                                                        </span>
+                                                    @endif
+                                                    <span class="screen-id-error error help-block"></span>
+                                                </div>
+                                            </div>
+
+                                            <div class="seat-category-div"></div>
+
+                                            <div class="form-group row">
+                                                <label class="col-lg-3 col-form-label form-control-label">Days <span
+                                                            class="req">*</span></label>
+                                                <div class="col-lg-9">
+                                                    <div class="day-span-div">
+                                                        <span onclick="removeError('days');" class="day-span">Sun</span>
+                                                        <span onclick="removeError('days');" class="day-span">Mon</span>
+                                                        <span onclick="removeError('days');" class="day-span">Tue</span>
+                                                        <span onclick="removeError('days');" class="day-span">Wed</span>
+                                                        <span onclick="removeError('days');" class="day-span">Thu</span>
+                                                        <span onclick="removeError('days');" class="day-span">Fri</span>
+                                                        <span onclick="removeError('days');" class="day-span">Sat</span>
+                                                        <span onclick="removeError('days');"
+                                                              class="day-span day-span-all">Every Day</span>
+                                                    </div>
+                                                    @if($errors->has('days'))
+                                                        <span class="help-block error">
+                                                    <strong>
+                                                        {{$errors->first('days')}}
+                                                    </strong>
+                                                </span>
+                                                    @endif
+                                                    <span class="days-error error help-block"></span>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group row">
+                                                <label class="col-lg-3 col-form-label form-control-label">Time Range
+                                                    <span class="req">*</span></label>
+                                                <div class="col-lg-9">
+                                                    <span class="time-range-span">Choose Time Range</span>
+                                                    <div id="slider-range"></div>
+                                                    @if($errors->has('time_range'))
+                                                        <span class="help-block error">
+                                                            <strong>
+                                                                {{$errors->first('time_range')}}
+                                                            </strong>
+                                                        </span>
+                                                    @endif
+                                                    <span class="time-range-error error help-block"></span>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group row">
+                                                <label class="col-lg-3 col-form-label form-control-label">Status
+                                                    <span class="req">*</span></label>
+                                                <div class="col-lg-9">
+                                                    <select name="status" id="status" class="custom-select">
+                                                        <option value="active">Active</option>
+                                                        <option value="inactive">Inactive</option>
+                                                    </select>
+                                                    @if($errors->has('status'))
+                                                        <span class="help-block error">
+                                                        <strong>
+                                                            {{$errors->first('status')}}
+                                                        </strong>
+                                                    </span>
+                                                    @endif
+                                                    <span class="status-error error help-block"></span>
+                                                </div>
+                                            </div>
 
 
-                <div class="form-group">
+                                            <div class="form-group">
 
-                    <div class="include-ticket-type">
-                        <span class="include-ticket-header">Included Tickets</span>
-                        <span class="include-ticket-body">Click the include box to include a ticket in your price card</span>
+                                                <div class="include-ticket-type">
+                                                    <span class="include-ticket-header">Included Tickets</span>
+                                                    <span class="include-ticket-body">Click the include box to include a ticket in your price card</span>
 
-                        <table id="example" class="display" width="100%" cellspacing="0">
-                            <thead>
-                            <tr>
-                                <th>Include</th>
-                                <th>Ticket Name</th>
-                                <th>Ticket Class</th>
-                                <th>Ticket Type</th>
-                                <th>Sequence</th>
-                                <th>Price</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            @if(isset($ticketTypes) && $ticketTypes->count() > 0)
-                                @foreach($ticketTypes as $ts)
-                                    <tr>
-                                        <td><input onclick="removeError('ticket-type');" type="checkbox" name=""
-                                                   class="tic-type-ids" data-ticketid="{{$ts->id}}"></td>
-                                        <td>{{$ts->label}}</td>
-                                        <td>{{$ts->ticket_class}}</td>
-                                        <td>{{$ts->ticket_type}}</td>
-                                        <td><input data-ttid="{{$ts->id}}" onfocus="removeError('ticket-type');"
-                                                   type="text" class="sequence-input sequence-{{$ts->id}}"
-                                                   value="{{$ts->display_sequence}}"></td>
-                                        <td><input data-ttid="{{$ts->id}}" onfocus="removeError('ticket-type');"
-                                                   type="text" class="price-input price-{{$ts->id}}"
-                                                   value="{{$ts->default_price}}"></td>
-                                    </tr>
-                                @endforeach
-                            @else
-                                <tr>
-                                    <td colspan="6">No Ticket Types Found !</td>
-                                </tr>
-                            @endif
-                            </tbody>
-                        </table>
+                                                    <table id="example" class="display" width="95%" cellspacing="0">
+                                                        <thead>
+                                                        <tr>
+                                                            <th>Include</th>
+                                                            <th>Ticket Name</th>
+                                                            <th>Ticket Class</th>
+                                                            <th>Ticket Type</th>
+                                                            <th>Sequence</th>
+                                                            <th>Price</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        @if(isset($ticketTypes) && $ticketTypes->count() > 0)
+                                                            @foreach($ticketTypes as $ts)
+                                                                <tr>
+                                                                    <td><input onclick="removeError('ticket-type');"
+                                                                               type="checkbox" name=""
+                                                                               class="tic-type-ids"
+                                                                               data-ticketid="{{$ts->id}}"></td>
+                                                                    <td>{{$ts->label}}</td>
+                                                                    <td>{{$ts->ticket_class}}</td>
+                                                                    <td>{{$ts->ticket_type}}</td>
+                                                                    <td><input data-ttid="{{$ts->id}}"
+                                                                               onfocus="removeError('ticket-type');"
+                                                                               type="text"
+                                                                               class="sequence-input sequence-{{$ts->id}}"
+                                                                               value="{{$ts->display_sequence}}"></td>
+                                                                    <td><input data-ttid="{{$ts->id}}"
+                                                                               onfocus="removeError('ticket-type');"
+                                                                               type="text"
+                                                                               class="price-input price-{{$ts->id}}"
+                                                                               value="{{$ts->default_price}}"></td>
+                                                                </tr>
+                                                            @endforeach
+                                                        @else
+                                                            <tr>
+                                                                <td colspan="6">No Ticket Types Found !</td>
+                                                            </tr>
+                                                        @endif
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                                <span class="ticket-type-error error help-block"></span>
+                                            </div>
+
+
+                                            <div class="form-group row">
+                                                <div class="col-lg-12">
+                                                    <button type="submit" class="btn btn-primary">Create</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <span class="ticket-type-error error help-block"></span>
                 </div>
+            </div>
+            <!-- Row end -->
 
-
-                <div class="form-group">
-                    <input type="submit" class="btn btn-primary subBtn" value="Create">
-                </div>
-            </form>
         </div>
-    </section>
+        <!-- END: .main-content -->
+    </div>
+    <!-- END: .app-main -->
 @stop
 
 @section('scripts')
@@ -339,32 +412,31 @@ $('span.pease-wait').show();
                     flag++;
                 });
                 var sendParam = JSON.stringify(screenIds);
-
                 $.ajax({
                     url: baseurl + '/admin/box-office/price-card-management/get-seat-categories?params=' + sendParam + '&flag=' + flag,
                     type: 'get',
                     success: function (data) {
-                        if(data != 'empty')
-                        {
+                        if (data != 'empty') {
                             var html = '';
-                            html += '<div class="form-group">';
-                            html += '<span>Seat Categories <small>*</small></span>';
+                            html += '<div class="form-group row">';
+                            html += '<label class="col-lg-3 col-form-label form-control-label">Seat Categories<span class="req">*</span></label>';
+                            html += '<div class="col-lg-9">';
                             html += '<div class="category-div">';
                             for (var i = 0; i < data.length; i++) {
                                 html += '<span class="category-span" data-name="' + data[i] + '">' + data[i] + '</span>';
                             }
-                            if(data.length > 1)
-                            {
+                            if (data.length > 1) {
                                 html += '<span class="category-span-all" data-name="all">All</span>';
                             }
                             html += '</div>';
                             html += '<span class="seat-category-error error help-block"></span>';
                             html += '</div>';
+                            html += '</div>';
 
                             $('div.seat-category-div').html(html);
                             $('span.pease-wait').hide();
-                        }else{
-                            $('div.seat-category-div').html('<div class="form-group"><span>Seat Categories <small>*</small></span><div class="category-div"><strong>No any categories matched for selected screens !!!</strong></div><span class="seat-category-error error help-block"></span></div>');
+                        } else {
+                            $('div.seat-category-div').html('<div class="form-group row"><label class="col-lg-3 col-form-label form-control-label">Seat Categories<span class="req">*</span></label><div class="col-lg-9"><div class="category-div"><strong>No any categories matched for selected screens !!!</strong></div><span class="seat-category-error error help-block"></span></div></div>');
                             $('span.pease-wait').hide();
                         }
 
@@ -396,29 +468,29 @@ $('span.pease-wait').show();
                             url: baseurl + '/admin/box-office/price-card-management/get-seat-categories?params=' + sendParam + '&flag=' + flag,
                             type: 'get',
                             success: function (data) {
-                                if(data != 'empty')
-                                {
+                                if (data != 'empty') {
                                     console.log(data);
                                     var html = '';
-                                    html += '<div class="form-group">';
-                                    html += '<span>Seat Categories <small>*</small></span>';
+                                    html += '<div class="form-group row">';
+                                    html += '<label class="col-lg-3 col-form-label form-control-label">Seat Categories<span class="req">*</span></label>';
+                                    html += '<div class="col-lg-9">';
                                     html += '<div class="category-div">';
                                     for (var i = 0; i < data.length; i++) {
                                         html += '<span class="category-span" data-name="' + data[i] + '">' + data[i] + '</span>';
                                     }
-                                    if(data.length > 1)
-                                    {
+                                    if (data.length > 1) {
                                         html += '<span class="category-span-all" data-name="all">All</span>';
                                     }
 
                                     html += '</div>';
                                     html += '<span class="seat-category-error error help-block"></span>';
                                     html += '</div>';
+                                    html += '</div>';
 
                                     $('div.seat-category-div').html(html);
                                     $('span.pease-wait').hide();
-                                }else{
-                                    $('div.seat-category-div').html('<div class="form-group"><span>Seat Categories <small>*</small></span><div class="category-div"><strong>No any categories matched for selected screens !!!</strong></div><span class="seat-category-error error help-block"></span></div>');
+                                } else {
+                                    $('div.seat-category-div').html('<div class="form-group row"><label class="col-lg-3 col-form-label form-control-label">Seat Categories<span class="req">*</span></label><div class="col-lg-9"><div class="category-div"><strong>No any categories matched for selected screens !!!</strong></div><span class="seat-category-error error help-block"></span></div></div>');
                                     $('span.pease-wait').hide();
                                 }
 
@@ -449,29 +521,29 @@ $('span.pease-wait').show();
                         url: baseurl + '/admin/box-office/price-card-management/get-seat-categories?params=' + sendParam + '&flag=' + flag,
                         type: 'get',
                         success: function (data) {
-                            if(data != 'empty')
-                            {
+                            if (data != 'empty') {
                                 console.log(data);
                                 var html = '';
-                                html += '<div class="form-group">';
-                                html += '<span>Seat Categories <small>*</small></span>';
+                                html += '<div class="form-group row">';
+                                html += '<label class="col-lg-3 col-form-label form-control-label">Seat Categories<span class="req">*</span></label>';
+                                html += '<div class="col-lg-9">';
                                 html += '<div class="category-div">';
                                 for (var i = 0; i < data.length; i++) {
                                     html += '<span class="category-span" data-name="' + data[i] + '">' + data[i] + '</span>';
                                 }
-                                if(data.length > 1)
-                                {
+                                if (data.length > 1) {
                                     html += '<span class="category-span-all" data-name="all">All</span>';
                                 }
                                 html += '</div>';
                                 html += '<span class="seat-category-error error help-block"></span>';
                                 html += '</div>';
+                                html += '</div>';
 
                                 $('div.seat-category-div').html(html);
                                 $('span.pease-wait').hide();
                                 flag++;
-                            }else{
-                                $('div.seat-category-div').html('<div class="form-group"><span>Seat Categories <small>*</small></span><div class="category-div"><strong>No any categories matched for selected screens !!!</strong></div><span class="seat-category-error error help-block"></span></div>');
+                            } else {
+                                $('div.seat-category-div').html('<div class="form-group row"><label class="col-lg-3 col-form-label form-control-label">Seat Categories<span class="req">*</span></label><div class="col-lg-9"><div class="category-div"><strong>No any categories matched for selected screens !!!</strong></div><span class="seat-category-error error help-block"></span></div></div>');
                                 $('span.pease-wait').hide();
                             }
 
@@ -645,8 +717,7 @@ $('span.pease-wait').show();
             }
 
             if ($(document).find('div.seat-category-div').is(':visible') && $(document).find('div.seat-category-div').html() != '') {
-                if($(document).find('input.seat-category').length == 0)
-                {
+                if ($(document).find('input.seat-category').length == 0) {
                     e.preventDefault();
                     $('.seat-category-error').html('<strong>Please choose the screen seat categories.</strong>');
                 }
@@ -771,11 +842,11 @@ $('span.pease-wait').show();
             if ($(this).hasClass('category-selected')) {
                 $(this).removeClass('category-selected');
                 var name = $(this).data('name');
-                $(document).find('input.seat-category-'+name.replace(/\s/g, '')).remove();
+                $(document).find('input.seat-category-' + name.replace(/\s/g, '')).remove();
             } else {
                 $(this).addClass('category-selected');
                 var name = $(this).data('name');
-                $(document).find('form').append('<input type="hidden" name="seat_categories[]" class="seat-category seat-category-'+name.replace(/\s/g, '')+'" value="'+name+'">');
+                $(document).find('form').append('<input type="hidden" name="seat_categories[]" class="seat-category seat-category-' + name.replace(/\s/g, '') + '" value="' + name + '">');
             }
         });
 
@@ -786,7 +857,7 @@ $('span.pease-wait').show();
             $(document).find('span.category-span').addClass('category-selected');
             $(document).find('span.category-span').each(function () {
                 var name = $(this).data('name');
-                $(document).find('form').append('<input type="hidden" name="seat_categories[]" class="seat-category seat-category-'+name.replace(/\s/g, '')+'" value="'+name+'">');
+                $(document).find('form').append('<input type="hidden" name="seat_categories[]" class="seat-category seat-category-' + name.replace(/\s/g, '') + '" value="' + name + '">');
             });
         });
     </script>

@@ -52,5 +52,18 @@
 
     @include('admin.include.footer1')
 </div>
+
+@yield('scripts')
+<script>
+    var baseurl = "<?php echo URL::to('/') ?>";
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+    $('.closeResponseMessageDiv').on('click', function () {
+        $('.responseMessageDiv').hide();
+    });
+</script>
 </body>
 </html>

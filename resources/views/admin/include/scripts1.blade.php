@@ -34,3 +34,7 @@
 
 <!-- Common JS -->
 <script src="{{asset('admins/theme/js/common.js')}}"></script>
+
+
+{{--alertify--}}
+<script src="{{asset('admins/plugins/alertify/alertify.min.js')}}"></script>

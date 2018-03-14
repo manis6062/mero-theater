@@ -111,8 +111,8 @@ class ScreenController extends Controller
                 if(in_array($screenId, $screenIdsArray))
                 {
                     $arr = array_diff($screenIdsArray, [$screenId]);
+                    PriceCard::find($pc->id)->update(['screen_ids' => json_encode($arr)]);
                 }
-                PriceCard::find($pc->id)->update(['screen_ids' => json_encode($arr)]);
             }
             return 'true';
         }

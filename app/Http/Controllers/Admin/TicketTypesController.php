@@ -24,7 +24,7 @@ class TicketTypesController extends Controller
     public function create()
     {
         if (TicketClass::count() == 0) {
-            return redirect('admin/box-office/ticket-types/create-ticket-class')->with('message', 'ticket-class-not-found');
+            return redirect('admin/box-office/ticket-types/classes/create')->with('message', 'ticket-class-not-found');
         }
 
         $sequenceNumbers = TicketType::where('admin_id', Auth::guard('admin')->user()->id)->pluck('display_sequence');
@@ -209,8 +209,8 @@ class TicketTypesController extends Controller
                 if(in_array($ttid, $ttArray))
                 {
                     $arr = array_diff($ttArray, [$ttid]);
+                    PriceCard::find($pc->id)->update(['ticket_types_ids' => json_encode($arr)]);
                 }
-                PriceCard::find($pc->id)->update(['ticket_types_ids' => json_encode($arr)]);
             }
             return 'true';
         }

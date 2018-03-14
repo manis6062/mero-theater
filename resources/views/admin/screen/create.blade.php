@@ -1,4 +1,4 @@
-@extends('admin.layout.master')
+@extends('admin.layout.master1')
 
 @section('styles')
     <style>
@@ -42,136 +42,206 @@
         small{
             color: red;
         }
+
+        span.note{
+            font-size: 11px;
+            margin: 0;
+            padding: 0;
+        }
     </style>
 @stop
 
 
 @section('main-body')
-    <section class="content">
-    <div class="create-form">
-        <p class="info-span">Create New Screen</p>
-        <form action="{{url('admin/seat-management/screens/submit')}}" class="form-horizontal" id="create-form" method="post"
-              enctype="multipart/form-data">
-            {{csrf_field()}}
-
-            <div class="form-group">
-                <span>Screen Name <small>*</small></span>
-                <input type="text" name="name" value="{{old('name')}}" class="form-control" id="screen-name"
-                       onfocus="removeError();" placeholder="Enter Screen Name">
-                @if($errors->has('name'))
-                    <span class="help-block">
-                    <strong>
-                        {{$errors->first('name')}}
-                    </strong>
-                </span>
-                @endif
-                <span class="screen-name-error error help-block"></span>
+    <!-- BEGIN .app-main -->
+    <div class="app-main">
+        <!-- BEGIN .main-heading -->
+        <header class="main-heading">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8">
+                        <div class="page-icon">
+                            <i class="icon-border_outer"></i>
+                        </div>
+                        <div class="page-title">
+                            <h5>Create New Screen</h5>
+                            <h6 class="sub-heading">Welcome to Merotheatre Admin</h6>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4">
+                        <div class="right-actions">
+                            <span class="last-login">Last Login: 2 hours ago</span>
+                        </div>
+                    </div>
+                </div>
             </div>
+        </header>
+        <!-- END: .main-heading -->
+        <!-- BEGIN .main-content -->
+        <div class="main-content">
 
-            <div class="form-group">
-                <span>Screen Number <small>*</small></span>
-                <input type="text" name="screen_number" value="{{old('screen_number')}}" class="form-control" id="screen-number"
-                       onfocus="removeError();" placeholder="Enter Screen Number">
-                @if($errors->has('screen_number'))
-                    <span class="help-block">
-                    <strong>
-                        {{$errors->first('screen_number')}}
-                    </strong>
-                </span>
-                @endif
-                <span class="screen-number-error error help-block"></span>
+            <!-- Row start -->
+            <div class="row gutters form-wrapper">
+                <div class=" col-md-12 col-sm-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="artist-form">
+                                        <form action="{{url('admin/seat-management/screens/submit')}}" class="form-horizontal" id="create-form" method="post"
+                                              enctype="multipart/form-data">
+                                            {{csrf_field()}}
+
+                                            <div class="form-group row">
+                                                <label class="col-lg-3 col-form-label form-control-label">Screen Name
+                                                    <span class="req">*</span></label>
+                                                <div class="col-lg-9">
+                                                <input type="text" name="name" value="{{old('name')}}" class="form-control" id="screen-name"
+                                                       onfocus="removeError();" placeholder="Enter Screen Name">
+                                                @if($errors->has('name'))
+                                                    <span class="help-block">
+                                                        <strong>
+                                                            {{$errors->first('name')}}
+                                                        </strong>
+                                                    </span>
+                                                @endif
+                                                <span class="screen-name-error error help-block"></span>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group row">
+                                                <label class="col-lg-3 col-form-label form-control-label">Screen Number
+                                                    <span class="req">*</span></label>
+                                                <div class="col-lg-9">
+                                                <input type="text" name="screen_number" value="{{old('screen_number')}}" class="form-control" id="screen-number"
+                                                       onfocus="removeError();" placeholder="Enter Screen Number">
+                                                @if($errors->has('screen_number'))
+                                                    <span class="help-block">
+                                                        <strong>
+                                                            {{$errors->first('screen_number')}}
+                                                        </strong>
+                                                    </span>
+                                                @endif
+                                                <span class="screen-number-error error help-block"></span>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group row">
+                                                <label class="col-lg-3 col-form-label form-control-label">House Seats</label>
+                                                <div class="col-lg-9">
+                                                    <input type="text" name="house_seats" value="{{old('house_seats')}}" class="form-control" id="house-seats"
+                                                           onfocus="removeError();" placeholder="Enter House Seats Value (Optional)">
+                                                    @if($errors->has('house_seats'))
+                                                        <span class="help-block">
+                                                            <strong>
+                                                                {{$errors->first('house_seats')}}
+                                                            </strong>
+                                                        </span>
+                                                    @endif
+                                                    <span class="house-seats-error error help-block"></span>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group row">
+                                                <label class="col-lg-3 col-form-label form-control-label">Wheel Chair Seats</label>
+                                                <div class="col-lg-9">
+                                                <input type="text" name="wheel_chair_seats" value="{{old('wheel_chair_seats')}}" class="form-control" id="wheel-chair-seats"
+                                                       onfocus="removeError();" placeholder="Enter Wheel Chair Seats Value (Optional)">
+                                                @if($errors->has('wheel_chair_seats'))
+                                                    <span class="help-block">
+                                                        <strong>
+                                                            {{$errors->first('wheel_chair_seats')}}
+                                                        </strong>
+                                                    </span>
+                                                @endif
+                                                <span class="wheel-chair-seats-error error help-block"></span>
+                                                </div>
+                                            </div>
+
+
+                                            <div class="form-group row">
+                                                <label class="col-lg-3 col-form-label form-control-label">Available Seat Image <span class="note">(Dimension 25x25 | Max Size 2mb | Format jpeg, jpg, png, bmp, svg)</span> <span class="req">*</span></label>
+                                                <div class="col-lg-9">
+                                                <input type="file" id="available_seat" name="available_seat" onclick="removeError();">
+                                                @if($errors->has('available_seat'))
+                                                    <span class="help-block error">
+                                                        <strong>
+                                                            {{$errors->first('available_seat')}}
+                                                        </strong>
+                                                    </span>
+                                                @endif
+                                                <span class="available-seat-error error help-block"></span>
+                                                </div>
+                                            </div>
+
+
+                                            <div class="form-group row">
+                                                <label class="col-lg-3 col-form-label form-control-label">Selected Seat Image <span class="note">(Dimension 25x25 | Max Size 2mb | Format jpeg, jpg, png, bmp, svg)</span> <span class="req">*</span></label>
+                                                <div class="col-md-9">
+                                                    <input type="file" id="selected_seat" name="selected_seat" onclick="removeError();">
+                                                    @if($errors->has('selected_seat'))
+                                                        <span class="help-block error">
+                                                            <strong>
+                                                                {{$errors->first('selected_seat')}}
+                                                            </strong>
+                                                        </span>
+                                                    @endif
+                                                    <span class="selected-seat-error error help-block"></span>
+                                                </div>
+                                            </div>
+
+
+                                            <div class="form-group row">
+                                                <label class="col-lg-3 col-form-label form-control-label">Reserved Seat Image <span class="note">(Dimension 25x25 | Max Size 2mb | Format jpeg, jpg, png, bmp, svg)</span> <span class="req">*</span></label>
+                                                <div class="col-lg-9">
+                                                    <input type="file" id="reserved_seat" name="reserved_seat" onclick="removeError();">
+                                                    @if($errors->has('reserved_seat'))
+                                                        <span class="help-block error">
+                                                            <strong>
+                                                                {{$errors->first('reserved_seat')}}
+                                                            </strong>
+                                                        </span>
+                                                    @endif
+                                                    <span class="reserved-seat-error error help-block"></span>
+                                                </div>
+                                            </div>
+
+
+                                            <div class="form-group row">
+                                                <label class="col-lg-3 col-form-label form-control-label">Sold Seat Image <span class="note">(Dimension 25x25 | Max Size 2mb | Format jpeg, jpg, png, bmp, svg)</span> <span class="req">*</span></label>
+                                                <div class="col-md-9">
+                                                    <input type="file" id="sold_seat" name="sold_seat" onclick="removeError();">
+                                                    @if($errors->has('sold_seat'))
+                                                        <span class="help-block error">
+                                                            <strong>
+                                                                {{$errors->first('sold_seat')}}
+                                                            </strong>
+                                                        </span>
+                                                    @endif
+                                                    <span class="sold-seat-error error help-block"></span>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group row">
+                                                <label class="col-lg-3 col-form-label form-control-label"></label>
+                                                <div class="col-lg-9">
+                                                    <button type="submit" class="btn btn-primary">Create</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
+            <!-- Row end -->
 
-            <div class="form-group">
-                <span>House Seats</span>
-                <input type="text" name="house_seats" value="{{old('house_seats')}}" class="form-control" id="house-seats"
-                       onfocus="removeError();" placeholder="Enter House Seats Value (Optional)">
-                @if($errors->has('house_seats'))
-                    <span class="help-block">
-                    <strong>
-                        {{$errors->first('house_seats')}}
-                    </strong>
-                </span>
-                @endif
-                <span class="house-seats-error error help-block"></span>
-            </div>
-
-            <div class="form-group">
-                <span>Wheel Chair Seats</span>
-                <input type="text" name="wheel_chair_seats" value="{{old('wheel_chair_seats')}}" class="form-control" id="wheel-chair-seats"
-                       onfocus="removeError();" placeholder="Enter Wheel Chair Seats Value (Optional)">
-                @if($errors->has('wheel_chair_seats'))
-                    <span class="help-block">
-                    <strong>
-                        {{$errors->first('wheel_chair_seats')}}
-                    </strong>
-                </span>
-                @endif
-                <span class="wheel-chair-seats-error error help-block"></span>
-            </div>
-
-
-            <div class="form-group">
-                <span id="seatImageSpan">Available Seat Image <small>*</small> (Dimension 25x25 | Max Size 2mb | Format jpeg, jpg, png, bmp, svg)</span>
-                <input type="file" id="available_seat" name="available_seat" onclick="removeError();">
-                @if($errors->has('available_seat'))
-                    <span class="help-block error">
-                    <strong>
-                        {{$errors->first('available_seat')}}
-                    </strong>
-                </span>
-                @endif
-                <span class="available-seat-error error help-block"></span>
-            </div>
-
-
-            <div class="form-group">
-                <span id="seatImageSpan">Selected Seat Image <small>*</small> (Dimension 25x25 | Max Size 2mb | Format jpeg, jpg, png, bmp, svg)</span>
-                <input type="file" id="selected_seat" name="selected_seat" onclick="removeError();">
-                @if($errors->has('selected_seat'))
-                    <span class="help-block error">
-                    <strong>
-                        {{$errors->first('selected_seat')}}
-                    </strong>
-                </span>
-                @endif
-                <span class="selected-seat-error error help-block"></span>
-            </div>
-
-
-            <div class="form-group">
-                <span id="seatImageSpan">Reserved Seat Image <small>*</small> (Dimension 25x25 | Max Size 2mb | Format jpeg, jpg, png, bmp, svg)</span>
-                <input type="file" id="reserved_seat" name="reserved_seat" onclick="removeError();">
-                @if($errors->has('reserved_seat'))
-                    <span class="help-block error">
-                    <strong>
-                        {{$errors->first('reserved_seat')}}
-                    </strong>
-                </span>
-                @endif
-                <span class="reserved-seat-error error help-block"></span>
-            </div>
-
-
-            <div class="form-group">
-                <span id="seatImageSpan">Sold Seat Image <small>*</small> (Dimension 25x25 | Max Size 2mb | Format jpeg, jpg, png, bmp, svg)</span>
-                <input type="file" id="sold_seat" name="sold_seat" onclick="removeError();">
-                @if($errors->has('sold_seat'))
-                    <span class="help-block error">
-                    <strong>
-                        {{$errors->first('sold_seat')}}
-                    </strong>
-                </span>
-                @endif
-                <span class="sold-seat-error error help-block"></span>
-            </div>
-
-            <div class="form-group">
-            <input type="submit" class="btn btn-primary subBtn" value="Create">
-            </div>
-        </form>
+        </div>
+        <!-- END: .main-content -->
     </div>
-    </section>
+    <!-- END: .app-main -->
 @stop
 
 @section('scripts')

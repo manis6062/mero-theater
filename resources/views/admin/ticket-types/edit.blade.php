@@ -1,4 +1,4 @@
-@extends('admin.layout.master')
+@extends('admin.layout.master1')
 
 @section('styles')
     <style>
@@ -41,160 +41,217 @@
 
 
 @section('main-body')
-    <section class="content">
-        <div class="row create-ticket-div">
-            <p class="info-span">Edit Ticket Type</p>
-            <form action="{{url('admin/box-office/ticket-types/'.$ticketType->slug.'/update')}}" class="form-horizontal" id="create-form"
-                  method="post"
-                  enctype="multipart/form-data">
-                {{csrf_field()}}
-
-                <div class="form-group">
-                    <span>Description <small>*</small></span>
-                    <input type="text" name="description" value="{{$ticketType->description}}" class="form-control"
-                           id="description"
-                           onfocus="removeError();" placeholder="Enter Ticket Description">
-                    @if($errors->has('description'))
-                        <span class="help-block error">
-                    <strong>
-                        {{$errors->first('description')}}
-                    </strong>
-                </span>
-                    @endif
-                    <span class="description-error error help-block"></span>
+    <!-- BEGIN .app-main -->
+    <div class="app-main">
+        <!-- BEGIN .main-heading -->
+        <header class="main-heading">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8">
+                        <div class="page-icon">
+                            <i class="icon-border_outer"></i>
+                        </div>
+                        <div class="page-title">
+                            <h5>Edit Ticket Type</h5>
+                            <h6 class="sub-heading">Welcome to Merotheatre Admin</h6>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4">
+                        <div class="right-actions">
+                            <span class="last-login">Last Login: 2 hours ago</span>
+                        </div>
+                    </div>
                 </div>
+            </div>
+        </header>
+        <!-- END: .main-heading -->
+        <!-- BEGIN .main-content -->
+        <div class="main-content">
 
-                <div class="form-group">
-                    <span>Label <small>*</small></span>
-                    <input type="text" name="label" value="{{$ticketType->label}}" class="form-control" id="label"
-                           onfocus="removeError();" placeholder="Enter Ticket Label">
-                    @if($errors->has('label'))
-                        <span class="help-block error">
-                    <strong>
-                        {{$errors->first('label')}}
-                    </strong>
-                </span>
-                    @endif
-                    <span class="label-error error help-block"></span>
+            <!-- Row start -->
+            <div class="row gutters form-wrapper">
+                <div class=" col-md-12 col-sm-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="artist-form">
+                                        <form action="{{url('admin/box-office/ticket-types/'.$ticketType->slug.'/update')}}" class="form" role="form" autocomplete="off"  id="create-form"
+                                              method="post" enctype="multipart/form-data">
+                                            {{csrf_field()}}
+                                            <div class="form-group row">
+                                                <label class="col-lg-3 col-form-label form-control-label">Description <span class="req">*</span></label>
+                                                <div class="col-lg-9">
+                                                    <textarea name="description" id="description" onfocus="removeError('description');" placeholder="Enter Ticket Description" class="form-control" type="text" rows="5">{{$ticketType->description}}</textarea>
+                                                    @if($errors->has('description'))
+                                                        <span class="help-block error">
+                                                            <strong>
+                                                                {{$errors->first('description')}}
+                                                            </strong>
+                                                        </span>
+                                                    @endif
+                                                    <span class="description-error error help-block"></span>
+                                                </div>
+                                            </div>
+
+
+                                            <div class="form-group row">
+                                                <label class="col-lg-3 col-form-label form-control-label">Label <span class="req">*</span></label>
+                                                <div class="col-lg-9">
+                                                    <input type="text" name="label" value="{{$ticketType->label}}" class="form-control" id="label"
+                                                           onfocus="removeError('label');" placeholder="Enter Ticket Label">
+                                                    @if($errors->has('label'))
+                                                        <span class="help-block error">
+                                                            <strong>
+                                                                {{$errors->first('label')}}
+                                                            </strong>
+                                                        </span>
+                                                    @endif
+                                                    <span class="label-error error help-block"></span>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group row">
+                                                <label class="col-lg-3 col-form-label form-control-label">Select Ticket Class <span class="req">*</span></label>
+                                                <div class="col-lg-9">
+                                                    <select name="ticket_class_id" id="ticket_class_id" class="custom-select" onfocus="removeError('ticket-class');">
+                                                        <option value="">-- Select Ticket Class --</option>
+                                                        @if(isset($ticketClasses) && $ticketClasses->count() > 0)
+                                                            @foreach($ticketClasses as $tc)
+                                                                <option value="{{$tc->id}}" {{$ticketType->ticket_class_id == $tc->id ? 'selected' : ''}}>{{$tc->class_name}}</option>
+                                                            @endforeach
+                                                        @endif
+                                                    </select>
+                                                    @if($errors->has('ticket_class_id'))
+                                                        <span class="help-block error">
+                                                            <strong>
+                                                                {{$errors->first('ticket_class_id')}}
+                                                            </strong>
+                                                        </span>
+                                                    @endif
+                                                    <span class="ticket-class-error error help-block"></span>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group row">
+                                                <label class="col-lg-3 col-form-label form-control-label">Default Price <span class="req">*</span></label>
+                                                <div class="col-lg-9">
+                                                    <input type="text" name="default_price" value="{{$ticketType->default_price}}"
+                                                           class="form-control" id="default_price"
+                                                           onfocus="removeError('default-price');" placeholder="Enter Default Price">
+                                                    @if($errors->has('default_price'))
+                                                        <span class="help-block error">
+                                                            <strong>
+                                                                {{$errors->first('default_price')}}
+                                                            </strong>
+                                                        </span>
+                                                    @endif
+                                                    <span class="default-price-error error help-block"></span>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group row">
+                                                <label class="col-lg-3 col-form-label form-control-label">Display Sequence <span class="req">*</span></label>
+                                                <div class="col-lg-9">
+                                                    <input type="text" name="display_sequence" value="{{$ticketType->display_sequence}}"
+                                                           class="form-control" id="display_sequence"
+                                                           onfocus="removeError('display-sequence');" placeholder="Enter Display Sequence">
+                                                    @if($errors->has('display_sequence'))
+                                                        <span class="help-block error">
+                                                            <strong>
+                                                                {{$errors->first('display_sequence')}}
+                                                            </strong>
+                                                        </span>
+                                                    @endif
+                                                    @if(isset($sequenceNumbers) && $sequenceNumbers->count() > 0)
+                                                        @php $sequenceNumbers = $sequenceNumbers->toArray(); @endphp
+                                                        @foreach($sequenceNumbers as $sq)
+                                                            <input type="hidden" class="usedSqNum" value="{{$sq}}">
+                                                        @endforeach
+                                                        <span class="info-msg"><i class="fa fa-info"></i> Display sequence {{implode(',',$sequenceNumbers)}} is already used !</span>
+                                                    @endif
+                                                    <span class="display-sequence-error-exists help-block"></span>
+                                                    <span class="display-sequence-error error help-block"></span>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group row">
+                                                <label class="col-lg-3 col-form-label form-control-label">Voucher Identifier</label>
+                                                <div class="col-lg-9">
+                                                    <input type="text" name="voucher_identifier" value="{{$ticketType->voucher_identifier}}"
+                                                           class="form-control" id="voucher_identifier"
+                                                           onfocus="removeError('voucher-identifier');" placeholder="Enter Voucher Identifier">
+                                                    @if($errors->has('voucher_identifier'))
+                                                        <span class="help-block error">
+                                                            <strong>
+                                                                {{$errors->first('voucher_identifier')}}
+                                                            </strong>
+                                                        </span>
+                                                    @endif
+                                                    <span class="voucher-identifier-error error help-block"></span>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group row">
+                                                <label class="col-lg-3 col-form-label form-control-label">Sales Via</label>
+                                                <div class="col-lg-9">
+                                                    <select name="sales_via" class="custom-select" onfocus="removeError('sales-via');">
+                                                        <option value="">-- Choose Sales Via --</option>
+                                                        <option value="web" {{$ticketType->sales_via == 'web' ? 'selected' : ''}}>WEB</option>
+                                                        <option value="pos" {{$ticketType->sales_via == 'pos' ? 'selected' : ''}}>POS</option>
+                                                        <option value="kiosk" {{$ticketType->sales_via == 'kiosk' ? 'selected' : ''}}>KIOSK</option>
+                                                    </select>
+                                                    @if($errors->has('sales_via'))
+                                                        <span class="help-block error">
+                                                            <strong>
+                                                                {{$errors->first('sales_via')}}
+                                                            </strong>
+                                                        </span>
+                                                    @endif
+                                                    <span class="sales-via-error error help-block"></span>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group row">
+                                                <label class="col-lg-3 col-form-label form-control-label">Ticket Type</label>
+                                                <div class="col-lg-9">
+                                                    <select name="ticket_type" class="custom-select" onfocus="removeError('ticket-type');">
+                                                        <option value="">-- Choose Ticket Type --</option>
+                                                        <option value="standard" {{$ticketType->ticket_type == 'standard' ? 'selected' : ''}}>Standard</option>
+                                                        <option value="complimentary" {{$ticketType->ticket_type == 'complimentary' ? 'selected' : ''}}>Complimentary</option>
+                                                    </select>
+                                                    @if($errors->has('ticket_type'))
+                                                        <span class="help-block error">
+                                                            <strong>
+                                                                {{$errors->first('ticket_type')}}
+                                                            </strong>
+                                                        </span>
+                                                    @endif
+                                                    <span class="ticket-type-error error help-block"></span>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group row">
+                                                <label class="col-lg-3 col-form-label form-control-label"></label>
+                                                <div class="col-lg-9">
+                                                    <button type="submit" class="btn btn-primary">Update</button>
+                                                </div>
+                                            </div>
+                                        </form>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+            </div>
+            <!-- Row end -->
 
-                <div class="form-group">
-                    <span>Ticket Class <small>*</small></span>
-                    <select name="ticket_class_id" id="ticket_class_id" class="form-control" onfocus="removeError();">
-                        <option value="">-- Select Ticket Class --</option>
-                        @if(isset($ticketClasses) && $ticketClasses->count() > 0)
-                            @foreach($ticketClasses as $tc)
-                                <option value="{{$tc->id}}" {{$ticketType->ticket_class_id == $tc->id ? 'selected' : ''}}>{{$tc->class_name}}</option>
-                            @endforeach
-                        @endif
-                    </select>
-                    @if($errors->has('ticket_class_id'))
-                        <span class="help-block error">
-                    <strong>
-                        {{$errors->first('ticket_class_id')}}
-                    </strong>
-                </span>
-                    @endif
-                    <span class="ticket-class-error error help-block"></span>
-                </div>
-
-                <div class="form-group">
-                    <span>Default Price <small>*</small></span>
-                    <input type="text" name="default_price" value="{{$ticketType->default_price}}"
-                           class="form-control" id="default_price"
-                           onfocus="removeError();" placeholder="Enter Default Price">
-                    @if($errors->has('default_price'))
-                        <span class="help-block error">
-                    <strong>
-                        {{$errors->first('default_price')}}
-                    </strong>
-                </span>
-                    @endif
-                    <span class="default-price-error error help-block"></span>
-                </div>
-
-
-                <div class="form-group">
-                    <span>Display Sequence <small>*</small></span>
-                    <input type="text" name="display_sequence" value="{{$ticketType->display_sequence}}"
-                           class="form-control" id="display_sequence"
-                           onfocus="removeError();" placeholder="Enter Display Sequence">
-                    @if($errors->has('display_sequence'))
-                        <span class="help-block error">
-                    <strong>
-                        {{$errors->first('display_sequence')}}
-                    </strong>
-                </span>
-                    @endif
-                    @if(isset($sequenceNumbers) && $sequenceNumbers->count() > 0)
-                        @php $sequenceNumbers = $sequenceNumbers->toArray(); @endphp
-                        @foreach($sequenceNumbers as $sq)
-                            <input type="hidden" class="usedSqNum" value="{{$sq}}">
-                        @endforeach
-                        <span class="info-msg"><i
-                                    class="fa fa-info"></i> Display sequence {{implode(',',$sequenceNumbers)}} is already used !</span>
-                    @endif
-                    <span class="display-sequence-error-exists help-block"></span>
-                    <span class="display-sequence-error error help-block"></span>
-                </div>
-
-                <div class="form-group">
-                    <span>Voucher Identifier</span>
-                    <input type="text" name="voucher_identifier" value="{{$ticketType->voucher_identifier}}"
-                           class="form-control" id="voucher_identifier"
-                           onfocus="removeError();" placeholder="Enter Voucher Identifier">
-                    @if($errors->has('voucher_identifier'))
-                        <span class="help-block error">
-                    <strong>
-                        {{$errors->first('voucher_identifier')}}
-                    </strong>
-                </span>
-                    @endif
-                    <span class="voucher-identifier-error error help-block"></span>
-                </div>
-
-
-                <div class="form-group">
-                    <span>Sales Via</span>
-                    <select name="sales_via" class="form-control" onfocus="removeError();">
-                        <option value="">-- Choose Sales Via --</option>
-                        <option value="web" {{$ticketType->sales_via == 'web' ? 'selected' : ''}}>WEB</option>
-                        <option value="pos" {{$ticketType->sales_via == 'pos' ? 'selected' : ''}}>POS</option>
-                        <option value="kiosk" {{$ticketType->sales_via == 'kiosk' ? 'selected' : ''}}>KIOSK</option>
-                    </select>
-                    @if($errors->has('sales_via'))
-                        <span class="help-block error">
-                    <strong>
-                        {{$errors->first('sales_via')}}
-                    </strong>
-                </span>
-                    @endif
-                    <span class="sales-via-error error help-block"></span>
-                </div>
-
-                <div class="form-group">
-                    <span>Ticket Type</span>
-                    <select name="ticket_type" class="form-control" onfocus="removeError();">
-                        <option value="">-- Choose Ticket Type --</option>
-                        <option value="standard" {{$ticketType->ticket_type == 'standard' ? 'selected' : ''}}>Standard</option>
-                        <option value="complimentary" {{$ticketType->ticket_type == 'complimentary' ? 'selected' : ''}}>Complimentary</option>
-                    </select>
-                    @if($errors->has('ticket_type'))
-                        <span class="help-block error">
-                    <strong>
-                        {{$errors->first('ticket_type')}}
-                    </strong>
-                </span>
-                    @endif
-                    <span class="ticket-type-error error help-block"></span>
-                </div>
-
-                <div class="form-group">
-                    <input type="submit" class="btn btn-primary subBtn" value="Update">
-                </div>
-            </form>
         </div>
-    </section>
+        <!-- END: .main-content -->
+    </div>
+    <!-- END: .app-main -->
 @stop
 
 @section('scripts')
@@ -296,8 +353,8 @@
             }
         });
 
-        function removeError() {
-            $('.error').html('');
+        function removeError(text) {
+            $('.'+text+'-error').html('');
         }
 
         $(document).find('#ticket_class_id').on('change', function () {

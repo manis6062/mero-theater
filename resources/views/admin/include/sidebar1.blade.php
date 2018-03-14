@@ -76,7 +76,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="ticket-class.html">
+                            <a href="{{url('admin/box-office/ticket-types/classes')}}">
 										<span class="has-icon">
 											<i class="icon-ticket"></i>
 										</span>
@@ -84,7 +84,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="ticket-type.html">
+                            <a href="{{url('admin/box-office/ticket-types')}}">
 										<span class="has-icon">
 											<i class="icon-ticket2"></i>
 										</span>
@@ -92,7 +92,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="price-manage.html">
+                            <a href="{{url('admin/box-office/price-card-management')}}">
 										<span class="has-icon">
 											<i class="icon-folder"></i>
 										</span>
@@ -102,7 +102,7 @@
                     </ul>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="{{url('admin/seat-management/screens')}}">
 								<span class="has-icon">
 									<i class="icon-airline_seat_individual_suite"></i>
 								</span>
