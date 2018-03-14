@@ -54,6 +54,89 @@ Route::group(['prefix'=>'admin','middleware'=> 'admin'], function(){
     // Route for artists end
 
 
+    // Route for Content Management
+        Route::group(['prefix'=>'content-management'],function(){
+
+            Route::get('inquiry','Admin\InquiryController@index');
+            Route::get('inquiry/delete','Admin\InquiryController@delete');
+
+
+            Route::get('promotional-banner','Admin\PromotionalBannerController@index');
+            Route::get('promotional-banner/create','Admin\PromotionalBannerController@add');
+            Route::post('promotional-banner/submit','Admin\PromotionalBannerController@submit');
+            Route::get('promotional-banner/{id}/edit','Admin\PromotionalBannerController@edit');
+            Route::post('promotional-banner/update/{id}','Admin\PromotionalBannerController@update');
+            Route::get('promotional-banner/delete','Admin\PromotionalBannerController@delete');
+
+
+            Route::get('social-media','Admin\SocialMediaController@index');
+            Route::get('social-media/create','Admin\SocialMediaController@create');
+            Route::post('social-media/submit','Admin\SocialMediaController@store');
+            Route::get('social-media/{id}/edit','Admin\SocialMediaController@edit');
+            Route::post('social-media/update/{id}','Admin\SocialMediaController@update');
+            Route::get('social-media/delete','Admin\SocialMediaController@destroy');
+
+
+            Route::get('contact-us','Admin\ContactUsController@index');
+            Route::get('contact-us/create','Admin\ContactUsController@create');
+            Route::post('contact-us/submit','Admin\ContactUsController@store');
+            Route::get('contact-us/{id}/edit','Admin\ContactUsController@edit');
+            Route::post('contact-us/update/{id}','Admin\ContactUsController@update');
+            Route::get('contact-us/delete','Admin\ContactUsController@destroy');
+
+
+            Route::get('manage-pages','Admin\ManagePagesController@index');
+            Route::get('manage-pages/create','Admin\ManagePagesController@create');
+            Route::post('manage-pages/submit','Admin\ManagePagesController@store');
+            Route::get('manage-pages/{id}/edit','Admin\ManagePagesController@edit');
+            Route::post('manage-pages/update/{id}','Admin\ManagePagesController@update');
+            Route::get('manage-pages/delete','Admin\ManagePagesController@destroy');
+
+            // Route For Manage News
+            Route::group(['prefix'=>'manage-news'],function(){
+
+                Route::get('manage-category','Admin\ManageCategoryController@index');
+                Route::get('manage-category/create','Admin\ManageCategoryController@create');
+                Route::post('manage-category/submit','Admin\ManageCategoryController@store');
+                Route::get('manage-category/{id}/edit','Admin\ManageCategoryController@edit');
+                Route::post('manage-category/update/{id}','Admin\ManageCategoryController@update');
+                Route::get('manage-category/delete','Admin\ManageCategoryController@destroy');
+
+                Route::get('news','Admin\NewsController@index');
+                Route::get('news/create','Admin\NewsController@create');
+                Route::post('news/submit','Admin\NewsController@store');
+                Route::get('news/{id}/edit','Admin\NewsController@edit');
+                Route::post('news/update/{id}','Admin\NewsController@update');
+                Route::get('news/delete','Admin\NewsController@destroy');
+            });
+            // Route For Manage News End
+
+            Route::get('notification/footer','Admin\NotificationController@index');
+            Route::get('notification/footer/create','Admin\NotificationController@create');
+            Route::post('notification/footer/submit','Admin\NotificationController@store');
+            Route::get('notification/footer/{id}/edit','Admin\NotificationController@edit');
+            Route::post('notification/footer/update/{id}','Admin\NotificationController@update');
+            Route::get('notification/footer/delete','Admin\NotificationController@destroy');
+            Route::get('notification/message','Admin\NotificationController@message');
+
+
+            Route::get('movie-banner','Admin\MovieBannerController@index');
+            Route::get('movie-banner/create','Admin\MovieBannerController@create');
+            Route::post('movie-banner/submit','Admin\MovieBannerController@store');
+            Route::get('movie-banner/{id}/edit','Admin\MovieBannerController@edit');
+            Route::post('movie-banner/update/{id}','Admin\MovieBannerController@update');
+            Route::get('movie-banner/delete','Admin\MovieBannerController@destroy');
+
+            Route::get('payment-gateway','Admin\PaymentController@index');
+            Route::get('payment-gateway/create','Admin\PaymentController@create');
+            Route::post('payment-gateway/submit','Admin\PaymentController@store');
+            Route::get('payment-gateway/{id}/edit','Admin\PaymentController@edit');
+            Route::post('payment-gateway/update/{id}','Admin\PaymentController@update');
+            Route::get('payment-gateway/delete','Admin\PaymentController@destroy');
+
+        });
+    // Route for Content Management Ends
+
 
 
 //	Route for screens

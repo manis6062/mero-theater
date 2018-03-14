@@ -45,5 +45,17 @@
             window.location = baseurl+"/admin/box-office/artist/delete/"+argument;
            }
        }
+
+       @if(isset($alertify) && $alertify == 'successfully-updated')
+            alertify.success('Artist successfully updated.');
+        @endif
+
+        @if(isset($alertify) && $alertify == 'error-updating')
+            alertify.success('Artist error in updating.');
+        @endif
+
+        @if(isset($alertify) && $alertify == 'successfully-deleted')
+            alertify.success('Artist successfully deleted .');
+        @endif
     </script>
 @stop

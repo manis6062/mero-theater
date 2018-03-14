@@ -62,7 +62,7 @@
                     <label for="Genre" class="col-sm-2 text-right"><span class="req">*</span>Genre:</label>
                     <div class="col-sm-2">
                         <select name="genre" class="form-control">
-                            <option value="">Select Genre</option>
+                           <option value="">Select Genre</option>
                             <option value="3D">3D</option>
                             <option value="action">Action</option>
                             <option value="adventure">Adventure</option>
@@ -74,6 +74,38 @@
                             <option value="blackcomedy">Black Comedy</option>
                             <option value="children">Children</option>
                             <option value="classic">Classic</option>
+                            <option value="comedy">Comedy</option>
+                            <option value="concert">Concert</option>
+                            <option value="crime">Crime</option>
+                            <option value="dance">Dance</option>
+                            <option value="docu-drama">Docu-Drama</option>
+                            <option value="documentary">Documentary</option>
+                            <option value="drama">Drama</option>
+                            <option value="family">Family</option>
+                            <option value="fantasy">Fantasy</option>
+                            <option value="festival">Festival</option>
+                            <option value="Foreign">Foreign</option>
+                            <option value="horror">Horror</option>
+                            <option value="liveconcert">Live Concert</option>
+                            <option value="liveshow">Live Show</option>
+                            <option value="livesportsbroadcast">Live Sports Broadcast</option>
+                            <option value="livetheatre">Live Theatre</option>
+                            <option value="marshalarts">Marshal Arts</option>
+                            <option value="Musicall">Musical</option>
+                            <option value="mystery">Mystery</option>
+                            <option value="opera">Opera</option>
+                            <option value="periodrama">Period Drama</option>
+                            <option value="romance">Romance</option>
+                            <option value="sciencefiction">Science Fiction</option>
+                            <option value="shortfilm">Short Film</option>
+                            <option value="sports">Sports</option>
+                            <option value="supernatural">Supernatural</option>
+                            <option value="suspense">Suspense</option>
+                            <option value="teens">Teen</option>
+                            <option value="thriller">Thriller</option>
+                            <option value="unknown">Unknown</option>
+                            <option value="war">War</option>
+                            <option value="western">Western</option>
                         </select>
                          @if($errors->has('genre'))
                             <span class="help-block">
@@ -417,7 +449,6 @@
 
                                 if (widthOfImg != 420 && heightOfImg != 200) {
                                     $('.image-error').html('<strong style="color: red;">Invalid Image Dimension !</strong>');
-                                    $('.subBtn').prop('disabled', true);
                                 } else {
                                     $('.image-error').html('');
                                     $('.subBtn').prop('disabled', false);
@@ -510,7 +541,9 @@
     $('.close').on('click',function(){
         $(this).parent().parent().remove();
     });
+
     </script>
+    
     <style type="text/css">
         .artisterror{
             color:red;

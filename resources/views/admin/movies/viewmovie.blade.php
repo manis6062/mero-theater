@@ -20,56 +20,56 @@
                 <div class="form-group row">
                     <label for="movieTitle" class="col-sm-2 text-right">Title: </label>
                     <div class="col-sm-4">
-                        {{isset($editdata->movie_title)?$editdata->movie_title:'' }}
+                        {!! isset($editdata->movie_title)?$editdata->movie_title:''  !!}
                     </div>
                 </div>
 
                 <div class="form-group row">
                     <label for="movieShortName" class="col-sm-2 text-right">Short Name:</label>
                     <div class="col-sm-4">
-                       {{ isset($editdata->movie_short_name)?$editdata->movie_short_name:'' }}
+                       {!! isset($editdata->movie_short_name)?$editdata->movie_short_name:'' !!}
                     </div>
                 </div>
 
                 <div class="form-group row">
                     <label for="Synopsis" class="col-sm-2 text-right">Synopsis:</label>
                     <div class="col-sm-10">
-                        {{ isset($editdata->synopsis)?$editdata->synopsis:'' }}
+                        {!! isset($editdata->synopsis)?$editdata->synopsis:'' !!}
                     </div>
                 </div>
 
                 <div class="form-group row">
                     <label for="Genre" class="col-sm-2 text-right">Genre:</label>
                     <div class="col-sm-2">
-                       {{ isset($editdata->genre)?$editdata->genre:'' }}
+                       {!! isset($editdata->genre)?$editdata->genre:'' !!}
                     </div>
                 </div>
 
                 <div class="form-group row">
                     <label for="distributor" class="col-sm-2 text-right">Distributor:</label>
                     <div class="col-sm-2">
-                       {{ isset($editdata->distributor)?$editdata->distributor:'' }}
+                       {!! isset($editdata->distributor)?$editdata->distributor:'' !!}
                     </div>
                 </div>
 
                 <div class="form-group row">
                     <label for="openingdate" class="col-sm-2 text-right">Opening Date:</label>
                     <div class="col-sm-4">
-                        {{ isset($editdata->openingdate)?$editdata->openingdate:'' }}
+                        {!! isset($editdata->openingdate)?$editdata->openingdate:'' !!}
                     </div>
                 </div>
 
                 <div class="form-group row">
                     <label for="content" class="col-sm-2 text-right">Content:</label>
                     <div class="col-sm-4">
-                        {{ isset($editdata->content)?$editdata->content:'' }}
+                        {!! isset($editdata->content)?$editdata->content:'' !!}
                     </div>
                 </div>
 
                 <div class="form-group row">
                     <label for="duration" class="col-sm-2 text-right">Duration:</label>
                     <div class="col-sm-4">
-                        {{ isset($editdata->duration)?$editdata->duration:'' }}
+                        {!! isset($editdata->duration)?$editdata->duration:'' !!}
                     </div>
                 </div>
 
@@ -88,21 +88,21 @@
                 <div class="form-group row">
                     <label for="displaysequence" class="col-sm-2 text-right">Display Sequence:</label>
                     <div class="col-sm-4">
-                        {{ isset($editdata->displaysequence)?$editdata->displaysequence:'' }}
+                        {!! isset($editdata->displaysequence)?$editdata->displaysequence:'' !!}
                     </div>
                 </div>
 
                 <div class="form-group row">
                     <label for="filmformat" class="col-sm-2 text-right">Film Format:</label>
                     <div class="col-sm-2">
-                        {{ isset($editdata->filmformat)?$editdata->filmformat:'' }}
+                        {!! isset($editdata->filmformat)?$editdata->filmformat:'' !!}
                     </div>
                 </div>
 
                 <div class="form-group row">
                     <label for="trailerurl" class="col-sm-2 text-right">Trailer URL:</label>
                     <div class="col-sm-4">
-                       {{ isset($editdata->trailerurl)?$editdata->trailerurl:'' }}
+                       {!! isset($editdata->trailerurl)?$editdata->trailerurl:'' !!}
                     </div>
                 </div>
 
@@ -127,14 +127,14 @@
                 <div class="form-group row">
                     <label for="Status" class="col-sm-2 text-right">Status:</label>
                     <div class="col-sm-2">
-                       {{ isset($editdata->status)?$editdata->status:'' }}
+                       {!! isset($editdata->status)?$editdata->status:'' !!}
                     </div>
                 </div>
 
                 <div class="form-group row">
                     <label class="col-sm-2 control-label text-right" for="directartist">Movie Artists</label>
                     <div class="col-sm-10">
-                        {{ isset($editdata->directartist)?$editdata->directartist:'' }}
+                        {!! isset($editdata->directartist)?$editdata->directartist:'' !!}
                     </div>
                 </div>
                 <hr>

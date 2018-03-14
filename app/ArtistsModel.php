@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class ArtistsModel extends Model
 {
+    protected $table = 'artists_tbl';
+    protected $guarded = ['id'];
+
     public function store($data)
     {
     	DB::table('artists_tbl')->insert($data);

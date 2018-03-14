@@ -7,6 +7,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\MovieModel;
 use App\ArtistsModel;
+use Illuminate\Support\Facades\DB;
+
 
 class MovieController extends Controller
 {	
@@ -185,7 +187,11 @@ class MovieController extends Controller
             $data['artists_from_db'] = json_encode($artistDataArr);
         }
 
+        $detail = MovieModel::where('id',$movieid)->first();
+
         if ($request->hasFile('image')) {
+            if (file_exists(public_path('movies/posterimage/' . $detail->image)))
+                unlink(public_path('movies/posterimage/' . $detail->image));
             $image = $request->file('image');
             $filename = time() . uniqid() . '.' . $image->getClientOriginalExtension();
             $path = public_path('movies/posterimage');
@@ -194,6 +200,8 @@ class MovieController extends Controller
         }
 
          if ($request->hasFile('bannerimage')) {
+            if (file_exists(public_path('movies/bannerimage/' . $detail->banner_image)))
+                unlink(public_path('movies/bannerimage/' . $detail->banner_image));
             $image = $request->file('bannerimage');
             $filename = time() . uniqid() . '.' . $image->getClientOriginalExtension();
             $path = public_path('movies/bannerimage');
@@ -202,10 +210,8 @@ class MovieController extends Controller
         }
 
        $updated = $this->movie->updatedata($data,$movieid);
-       if($updated)
-          return redirect('admin/box-office/movies?status=successfully-updated');
 
-      return redirect('admin/box-office/movies?status=error-updating');
+        return redirect('admin/box-office/movies?status=successfully-updated');
     }
 
     public function deletemovie($movieid)

@@ -16,10 +16,21 @@ class ArtistsController extends Controller
 		$this->artist = new  ArtistsModel();
 	}
 
-	public function artistslist()
+	public function artistslist(Request $request)
 	{  
         $data = $this->artist->listofartists();
-		return view('admin.artist.artistlist',compact('data'));
+        if(isset($request->status) && $request->status=='successfully-updated')
+        {
+            return view('admin.artist.artistlist',compact('data'))->with('alertify', 'successfully-updated');
+        }elseif(isset($request->status) && $request->status=='error-updating')
+        {
+            return view('admin.artist.artistlist',compact('data'))->with('alertify', 'error-updating');
+        }elseif(isset($request->status) && $request->status=='successfully-deleted')
+        {
+            return view('admin.artist.artistlist',compact('data'))->with('alertify', 'successfully-deleted');
+        }else{
+            return view('admin.artist.artistlist',compact('data'));
+        }
 	}
 
 	public function createartist()
@@ -100,15 +111,15 @@ class ArtistsController extends Controller
 
        $updated = $this->artist->updatedata($data,$artistid);
        if($updated)
-          return redirect('admin/box-office/artist');
+          return redirect('admin/box-office/artist?status=successfully-updated');
 
-      return redirect('admin/box-office/artist');
+      return redirect('admin/box-office/artist?status=error-updating');
     }
 
     public function deleteartist($artistid)
     {
        $deleted = $this->artist->deletedata($artistid);
        if($deleted)
-        return redirect('admin/box-office/artist');
+        return redirect('admin/box-office/artist?status=successfully-deleted');
     }
 }

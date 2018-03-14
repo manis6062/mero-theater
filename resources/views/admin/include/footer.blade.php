@@ -1,4 +1,4 @@
 <footer class="main-footer">
-    <strong>Copyright © 2017 .</strong> All rights
+    <strong>Copyright © 2018 .</strong> All rights
     reserved.
 </footer>

@@ -1,3 +1,5 @@
+
+
 @extends('admin.layout.master')
 
 @section('main-body')
@@ -5,12 +7,12 @@
     <section class="content-header">
         <h1>
             Dashboard
-            <small>View Artist</small>
+            <small>Artist Profile</small>
         </h1>
         <ol class="breadcrumb">
             <li><a href="{{url('admin/dashboard')}}"><i class="fa fa-dashboard"></i> Home</a></li>
-            <li><a href="{{url('box-office/artist')}}"><i class="fa fa-meh-o"></i> Artists</a></li>
-            <li class="active">view</li>
+            <li><a href="{{url('admin/box-office/artist')}}"><i class="fa fa-meh-o"></i> Artists</a></li>
+            <li class="active">Profile</li>
         </ol>
     </section>
 
@@ -19,49 +21,54 @@
         <!-- Small boxes (Stat box) -->
         <div class="row">
             <hr>
-            <div class="site-setting-general">
-                <div class="mws-panel grid_8">
-                    <div class="mws-panel-header">
-                        <span><i class="icol32-page-white-edit"></i> View Artist</span>
+
+            <div class="artist-profile-div">
+                <h1 class="text-center">{{$viewdata->artists_name}}</h1>
+
+
+                <div class="artist-profile-first-sec">
+                    <div class="col-md-12">
+                        <img src="{{asset('artists/'.$viewdata->artists_avatar)}}" alt="" class="img img-responsive">
                     </div>
-                    <div class="mws-panel-body no-padding">
-                            <div class="form-group">
-                                <label for="artistName">Name: <span class="req">*</span></label>
-                                <input type="text" id="artistName" name="artist_name" class="form-control"
-                                       value="{{$viewdata->artists_name}}">
-                            </div>
 
-                            <div class="form-group">
-                                <label for="artistExistingAvatar">Existing Avatar</label>
-                                <img src="{{asset('artists/'.$viewdata->artists_avatar)}}" alt="">
-                            </div>
+                    <div class="col-md-12 cur-st-div">
+                        {!! $viewdata->artists_current_status !!}
+                    </div>
+                </div>
 
-                            <div class="form-group">
-                                <label for="artistCurrentStatus">Current Status: <span class="req">*</span></label>
-                                <textarea name="artist_current_status" id="artistCurrentStatus" cols="30" rows="10" class="form-control ckeditor">{{$viewdata->artists_current_status}}</textarea>
-                            </div>
 
-                            <div class="form-group">
-                                <label for="artistEarlyLife">Early Life: <span class="req">*</span></label>
-                                <textarea name="artist_early_life" id="artistEarlyLife" cols="30" rows="10"
-                                          class="form-control ckeditor">{{$viewdata->artists_early_life}}</textarea>
-                            </div>
+                <div class="clearfix"></div>
 
-                            <div class="form-group">
-                                <label for="artistAchievements">Achievements: <span class="req">*</span></label>
-                                <textarea name="artist_achievements" id="artistAchievements" cols="30" rows="10"
-                                          class="form-control ckeditor">{{$viewdata->artists_achievements}}</textarea>
-                            </div>
 
-                            <div class="form-group">
-                                <label for="artistHashTags">Hash Tags: <span class="req">*</span></label>
-                                <input type="text" id="artistHashTags" name="artist_hash_tags"
-                                       value="{{$viewdata->hashtag}}" class="form-control">
-                            </div>
+                <div class="artist-profile-second-sec">
+                    <h1 class="text-center">Early Life</h1>
+                    <div class="col-md-12 ear-li-div">
+                        {!! $viewdata->artists_early_life !!}
+                    </div>
+                </div>
 
+
+                <div class="clearfix"></div>
+
+
+                <div class="artist-profile-second-sec">
+                    <h1 class="text-center">Achievements</h1>
+                    <div class="col-md-12 ear-li-div">
+                        {!! $viewdata->artists_achievements !!}
+                    </div>
+                </div>
+
+                <div class="clearfix"></div>
+
+
+                <div class="artist-profile-second-sec">
+                    <h1 class="text-center">Hash Tags</h1>
+                    <div class="col-md-12 ear-li-div">
+                        {!!$viewdata->hashtag !!}
                     </div>
                 </div>
             </div>
         </div>
     </section>
+
 @stop
