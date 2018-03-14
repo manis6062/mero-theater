@@ -265,6 +265,7 @@
                             </div>
                         @endif
                     @endif
+                        <div class="category-div"></div>
                 @else
                     <div class="seat-structure">
                         <span style="display: block;">No any seat structure defined for {{$screen->name}}</span>
@@ -284,5 +285,77 @@
         $(document).find('.closeMessage').on('click', function () {
             $(this).parent('div').remove();
         });
+
+        $(window).on('load', function(){
+                    @if(isset($seatData->num_of_seat_categories))
+            var val = "{{$seatData->num_of_seat_categories}}";
+            var html = "";
+            if(val != '')
+            {
+                var alphabets = [];
+                $(document).find('input.alphabets').each(function () {
+                    alphabets.push($(this).val());
+                });
+
+                alphabets = jQuery.unique( alphabets );
+                var html = '';
+                html += '<table class="table table-responsive table-bordered">';
+                html += '<thead>';
+                html += '<tr>';
+                html += '<th>Category Name</th>';
+                html += '<th>From Row</th>';
+                html += '<th>To Row</th>';
+                html += '<tr>';
+                html += '</thead>';
+                html += '<tbody>';
+                        @foreach($seatCategories as $dat)
+                var fr = "{{$dat->category_from_row}}";
+                var tr = "{{$dat->category_to_row}}";
+                html += '<tr>';
+                html += '<td>';
+                html += '<input value="{{$dat->category_name}}" type="text" class="form-control category-name" name="category_name[]" placeholder="Enter Category Name">';
+                html += '</td>';
+                html += '<td>';
+                html += '<select name="category_from_row[]" class="form-control category-from-row">';
+                html += '<option value="">-- Select From Row --</option>';
+                for(var k = 0; k < alphabets.length; k++)
+                {
+                    if(alphabets[k] == fr)
+                    {
+                        var attr = 'selected';
+                    }else{
+                        var attr = '';
+                    }
+                    html += '<option value="'+alphabets[k]+'" '+attr+'>'+alphabets[k]+'</option>';
+                }
+                html += '</select>';
+                html += '</td>';
+                html += '<td>';
+                html += '<select name="category_to_row[]" class="form-control category-to-row">';
+                html += '<option value="">-- Select To Row --</option>';
+                for(var k = 0; k < alphabets.length; k++)
+                {
+                    if(alphabets[k] == tr)
+                    {
+                        var attr = 'selected';
+                    }else{
+                        var attr = '';
+                    }
+                    html += '<option value="'+alphabets[k]+'" '+attr+'>'+alphabets[k]+'</option>';
+                }
+                html += '</select>';
+                html += '</td>';
+                html += '</tr>';
+                @endforeach
+                html += '</tbody>';
+                html += '</table>';
+                $(document).find('div.category-div').html(html);
+            }
+            $(document).find('input').prop('disabled', true);
+            $(document).find('select').prop('disabled', true);
+            @endif
+        });
+
+
     </script>
 @stop

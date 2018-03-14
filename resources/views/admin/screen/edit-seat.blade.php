@@ -454,6 +454,18 @@
                                 <input name="inactiveSeat[]" value="{{$pth}}" id="input{{$pth}}" type="hidden">
                             @endforeach
                         @endif
+
+                        <div class="form-group">
+                            <select onfocus="rErr('seat-categories');" name="seat_categories" id="seat-categories" class="form-control" style="width: 50%;">
+                                <option value="">-- Select Number Of Seat Categories --</option>
+                                @for($i = 1; $i <= 10; $i++)
+                                    <option value="{{$i}}" {{$i == $screenSeatData->num_of_seat_categories ? 'selected' : ''}}>{{$i}}</option>
+                                @endfor
+                            </select>
+                            <span class="seat-categories-error"></span>
+                        </div>
+
+                        <div class="category-div"></div>
                         <input type="submit" value="Update" class="btn btn-lg btn-success">
                     </form>
                 </div>
@@ -563,6 +575,231 @@
                 $(document).find('td[data-seatnum=' + seatNo + ']').removeClass('inactiveSeat').addClass('seat');
                 $(document).find('input#input' + seatNo + '').remove();
             }
+        }
+
+
+
+        $(document).find('#seatStructureForm').on('submit', function(e){
+            var emp = 0;
+            var chk = 0;
+            if($(document).find('select#seat-categories').val() == '')
+            {
+                e.preventDefault();
+                $(document).find('.seat-categories-error').html('<strong>Please choose a value !</strong>');
+            }
+
+            $(document).find('input.category-name').each(function () {
+                if($(this).val() == '')
+                {
+                    emp = 1;
+                }
+            });
+
+
+            $(document).find('select.category-from-row').each(function () {
+                if($(this).val() == '')
+                {
+                    emp = 1;
+                }
+            });
+
+
+            $(document).find('select.category-to-row').each(function () {
+                if($(this).val() == '')
+                {
+                    emp = 1;
+                }
+            });
+
+            if(emp == 1)
+            {
+                e.preventDefault();
+                $(document).find('.category-name-error').html('<strong>Please fill all required values !</strong>');
+            }
+
+            if(emp == 0)
+            {
+                var count = $(document).find('select#seat-categories').val();
+                var firstCategoryNameVal = $(document).find('input.category-name-1').val();
+                var firstFromRowVal = $(document).find('select.category-from-row-1').val();
+                var firstToRowVal = $(document).find('select.category-to-row-1').val();
+                for(var a = 2; a <= count; a++)
+                {
+                    var otherCategoryNameVal = $(document).find('input.category-name-'+a).val();
+                    var otherFromRowVal = $(document).find('select.category-from-row-'+a).val();
+                    var otherToRowVal = $(document).find('select.category-to-row-'+a).val();
+                    if(firstCategoryNameVal == otherCategoryNameVal)
+                    {
+                        chk = 1;
+                    }
+
+                    if(firstFromRowVal == otherFromRowVal)
+                    {
+                        chk = 1;
+                    }
+
+                    if(firstFromRowVal == otherToRowVal)
+                    {
+                        chk = 1;
+                    }
+
+                    if(firstToRowVal == otherFromRowVal)
+                    {
+                        chk = 1;
+                    }
+
+
+                    if(firstToRowVal == otherToRowVal)
+                    {
+                        chk = 1;
+                    }
+                }
+
+                if(chk == 1)
+                {
+                    e.preventDefault();
+                    $(document).find('.category-name-error').html('<strong>Errorous Values Found !</strong>');
+                }
+            }
+        });
+
+        $(document).find('select#seat-categories').on('change', function(){
+            var val = $(this).val();
+            if(val != '')
+            {
+                var alphabets = [];
+                $(document).find('input.alphabets').each(function () {
+                    alphabets.push($(this).val());
+                });
+
+                alphabets = jQuery.unique( alphabets );
+                var html = '';
+                html += '<table class="table table-responsive table-bordered">';
+                html += '<thead>';
+                html += '<tr>';
+                html += '<th>Category Name</th>';
+                html += '<th>From Row</th>';
+                html += '<th>To Row</th>';
+                html += '<tr>';
+                html += '</thead>';
+                html += '<tbody>';
+                for(var i = 0; i < val; i++)
+                {
+                    html += '<tr>';
+                    html += '<td>';
+                    html += '<input type="text" class="form-control category-name category-name-'+i+'" name="category_name[]" placeholder="Enter Category Name">';
+                    html += '</td>';
+                    html += '<td>';
+                    html += '<select name="category_from_row[]" class="form-control category-from-row category-from-row-'+i+'">';
+                    html += '<option value="">-- Select From Row --</option>';
+                    for(var k = 0; k < alphabets.length; k++)
+                    {
+                        html += '<option value="'+alphabets[k]+'">'+alphabets[k]+'</option>';
+                    }
+                    html += '</select>';
+                    html += '</td>';
+                    html += '<td>';
+                    html += '<select name="category_to_row[]" class="form-control category-to-row category-to-row-'+i+'">';
+                    html += '<option value="">-- Select To Row --</option>';
+                    for(var k = 0; k < alphabets.length; k++)
+                    {
+                        html += '<option value="'+alphabets[k]+'">'+alphabets[k]+'</option>';
+                    }
+                    html += '</select>';
+                    html += '</td>';
+                    html += '</tr>';
+                }
+                html += '<tr>';
+                html += '<td colspan="3" class="text-center"><span class="category-name-error"></span></td>';
+                html += '<tr>';
+                html += '</tbody>';
+                html += '</table>';
+                $(document).find('div.category-div').html(html);
+            }else{
+                $(document).find('div.category-div').html('');
+            }
+        });
+
+
+
+
+        $(window).on('load', function(){
+                    @if(isset($screenSeatData->num_of_seat_categories))
+            var val = "{{$screenSeatData->num_of_seat_categories}}";
+            var html = "";
+            if(val != '')
+            {
+                var alphabets = [];
+                $(document).find('input.alphabets').each(function () {
+                    alphabets.push($(this).val());
+                });
+
+                alphabets = jQuery.unique( alphabets );
+                var html = '';
+                html += '<table class="table table-responsive table-bordered">';
+                html += '<thead>';
+                html += '<tr>';
+                html += '<th>Category Name</th>';
+                html += '<th>From Row</th>';
+                html += '<th>To Row</th>';
+                html += '<tr>';
+                html += '</thead>';
+                html += '<tbody>';
+                var cnt = 0;
+                @foreach($screenCategoriesData as $dat)
+                    cnt ++;
+                    var fr = "{{$dat->category_from_row}}";
+                    var tr = "{{$dat->category_to_row}}";
+                    html += '<tr>';
+                    html += '<td>';
+                    html += '<input value="{{$dat->category_name}}" type="text" class="form-control category-name category-name-'+cnt+'" name="category_name[]" placeholder="Enter Category Name">';
+                    html += '</td>';
+                    html += '<td>';
+                    html += '<select name="category_from_row[]" class="form-control category-from-row category-from-row-'+cnt+'">';
+                    html += '<option value="">-- Select From Row --</option>';
+                    for(var k = 0; k < alphabets.length; k++)
+                    {
+                        if(alphabets[k] == fr)
+                        {
+                            var attr = 'selected';
+                        }else{
+                            var attr = '';
+                        }
+                        html += '<option value="'+alphabets[k]+'" '+attr+'>'+alphabets[k]+'</option>';
+                    }
+                    html += '</select>';
+                    html += '</td>';
+                    html += '<td>';
+                    html += '<select name="category_to_row[]" class="form-control category-to-row category-to-row-'+cnt+'">';
+                    html += '<option value="">-- Select To Row --</option>';
+                    for(var k = 0; k < alphabets.length; k++)
+                    {
+                        if(alphabets[k] == tr)
+                        {
+                            var attr = 'selected';
+                        }else{
+                            var attr = '';
+                        }
+                        html += '<option value="'+alphabets[k]+'" '+attr+'>'+alphabets[k]+'</option>';
+                    }
+                    html += '</select>';
+                    html += '</td>';
+                    html += '</tr>';
+                @endforeach
+                html += '<tr>';
+                html += '<td colspan="3" class="text-center"><span class="category-name-error"></span></td>';
+                html += '<tr>';
+                html += '</tbody>';
+                html += '</table>';
+                $(document).find('div.category-div').html(html);
+            }
+            @endif
+        });
+
+
+
+        function rErr(text) {
+            $('.'+text+'-error').html('');
         }
     </script>
 @stop

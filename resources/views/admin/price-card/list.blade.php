@@ -32,13 +32,17 @@
                             @php $scIds = json_decode($pc->screen_ids, true); @endphp
                             <td>
                                 @foreach($scIds as $scid)
-                                    <span style="display: block;">{{\App\Screen\Screen::find($scid)->name}}</span>
+                                    @if(\App\Screen\Screen::find($scid) != null)
+                                        <span style="display: block;">{{\App\Screen\Screen::find($scid)->name}}</span>
+                                    @endif
                                 @endforeach
                             </td>
                             @php $ttIds = json_decode($pc->ticket_types_ids, true); @endphp
                             <td>
                                 @foreach($ttIds as $ttId)
-                                    <span style="display: block;">{{\App\TicketTypeModel\TicketType::find($ttId)->label}}</span>
+                                    @if(\App\TicketTypeModel\TicketType::find($ttId) != null)
+                                        <span style="display: block;">{{\App\TicketTypeModel\TicketType::find($ttId)->label}}</span>
+                                    @endif
                                 @endforeach
                             </td>
                             <td>{{implode(',', json_decode($pc->selected_days, true))}}</td>
@@ -78,7 +82,7 @@
             alertify.confirm("Delete this price card ?",
                 function () {
                     $.ajax({
-                        url: baseurl + '/admin/box-office/price-card-management/delete?pcid='+pcid,
+                        url: baseurl + '/admin/box-office/price-card-management/delete?pcid=' + pcid,
                         type: 'get',
                         success: function (data) {
                             if (data == 'true') {

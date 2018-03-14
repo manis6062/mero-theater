@@ -58,6 +58,15 @@
                 </ul>
             </li>
 
+
+            {{--side bar for programming--}}
+            <li {{(\Illuminate\Support\Facades\Request::is('admin/programming') || \Illuminate\Support\Facades\Request::is('admin/programming/*'))? 'class=active' : ''}}>
+                <a href="{{ url('admin/programming') }}">
+                    <i class="fa fa-bars"></i> <span>Programming</span>
+
+                </a>
+            </li>
+
         </ul>
     </section>
     <!-- /.sidebar -->

@@ -100,6 +100,15 @@ Route::group(['prefix'=>'admin','middleware'=> 'admin'], function(){
         Route::get('{slug}/edit', 'PriceCardController@edit');
         Route::post('{slug}/update', 'PriceCardController@update');
         Route::get('delete', 'PriceCardController@delete');
+        Route::get('get-seat-categories', 'PriceCardController@getSeatCategories');
+    });
+    //    Route for box office PCM
+
+
+
+    //    Route for box office PCM
+    Route::group(['prefix'=>'programming', 'namespace' => 'Admin'], function() {
+        Route::get('/', 'ProgrammingController@index');
     });
     //    Route for box office PCM
 });

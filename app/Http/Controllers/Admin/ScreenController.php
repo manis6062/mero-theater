@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\PriceCardModel\PriceCard;
 use App\Screen\Screen;
 use App\Screen\ScreenSeat;
+use App\Screen\ScreenSeatCategories;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use View;
@@ -80,7 +82,7 @@ class ScreenController extends Controller
 
     public function lists()
     {
-        $screens = Screen::orderBy('id', 'ASC')->get();
+        $screens = Screen::orderBy('screen_number', 'ASC')->get();
         return view('admin.screen.list', compact('screens'));
     }
 
@@ -101,9 +103,17 @@ class ScreenController extends Controller
         if (file_exists(public_path('screen/sold-seat-image/' . $detail->sold_seat)))
             unlink(public_path('screen/sold-seat-image/' . $detail->sold_seat));
 
-        if (Screen::find($screenId)->delete())
-        {
+        if (Screen::find($screenId)->delete()) {
             ScreenSeat::where('screen_id', $screenId)->delete();
+            foreach (PriceCard::all() as $pc)
+            {
+                $screenIdsArray = json_decode($pc->screen_ids, true);
+                if(in_array($screenId, $screenIdsArray))
+                {
+                    $arr = array_diff($screenIdsArray, [$screenId]);
+                }
+                PriceCard::find($pc->id)->update(['screen_ids' => json_encode($arr)]);
+            }
             return 'true';
         }
 
@@ -210,7 +220,8 @@ class ScreenController extends Controller
     {
         $screen = Screen::where('slug', $slug)->first();
         $seatData = ScreenSeat::where('admin_id', Auth::guard('admin')->user()->id)->where('screen_id', $screen->id)->first();
-        return view('admin.screen.seat', compact('seatData', 'screen'));
+        $seatCategories = ScreenSeatCategories::where('screen_id', $screen->id)->get();
+        return view('admin.screen.seat', compact('seatData', 'screen', 'seatCategories'));
     }
 
     public function createSeat($slug)
@@ -238,6 +249,7 @@ class ScreenController extends Controller
             'num_columns' => $data['numOfColumns'],
             'seat_direction' => $data['seatDirection'],
             'alphabet_direction' => $data['alphabetDirection'],
+            'num_of_seat_categories' => $data['seat_categories'],
         ];
 
         $activeSeat = [];
@@ -267,12 +279,27 @@ class ScreenController extends Controller
         $dataToStore['total_seats'] = count($activeSeat);
 
         $result = ScreenSeat::create($dataToStore);
-        if ($result)
-        {
+        if ($result) {
             $hs = $screen->house_seats;
             $wcs = $screen->wheel_chair_seats;
             $ss = $dataToStore['total_seats'] - $hs - $wcs;
             Screen::find($screen->id)->update(['standard_seats' => $ss]);
+
+
+            if (isset($data['seat_categories'])) {
+                for ($m = 0; $m < $data['seat_categories']; $m++) {
+                    $screenSeatCategoryData = [
+                        'screen_id' => $screen->id,
+                        'category_name' => $data['category_name'][$m],
+                        'category_from_row' => $data['category_from_row'][$m],
+                        'category_to_row' => $data['category_to_row'][$m],
+                    ];
+
+                    ScreenSeatCategories::create($screenSeatCategoryData);
+                }
+            }
+
+
             return redirect('admin/seat-management/screens/' . $screen->slug . '/seat')->with('status', 'success');
         }
 
@@ -292,6 +319,7 @@ class ScreenController extends Controller
             'num_columns' => $data['numOfColumns'],
             'seat_direction' => $data['seatDirection'],
             'alphabet_direction' => $data['alphabetDirection'],
+            'num_of_seat_categories' => $data['seat_categories'],
         ];
 
         $activeSeat = [];
@@ -321,12 +349,26 @@ class ScreenController extends Controller
         $dataToStore['total_seats'] = count($activeSeat);
 
         $result = ScreenSeat::find($data['screenSeatDataId'])->update($dataToStore);
-        if ($result)
-        {
+        if ($result) {
             $hs = $screen->house_seats;
             $wcs = $screen->wheel_chair_seats;
             $ss = $dataToStore['total_seats'] - $hs - $wcs;
             Screen::find($screen->id)->update(['standard_seats' => $ss]);
+
+            if (isset($data['seat_categories'])) {
+                ScreenSeatCategories::where('screen_id', $screen->id)->delete();
+                for ($m = 0; $m < $data['seat_categories']; $m++) {
+                    $screenSeatCategoryData = [
+                        'screen_id' => $screen->id,
+                        'category_name' => $data['category_name'][$m],
+                        'category_from_row' => $data['category_from_row'][$m],
+                        'category_to_row' => $data['category_to_row'][$m],
+                    ];
+
+                    ScreenSeatCategories::create($screenSeatCategoryData);
+                }
+            }
+
             return redirect('admin/seat-management/screens/' . $screen->slug . '/seat')->with('status', 'success-update');
         }
 
@@ -337,6 +379,7 @@ class ScreenController extends Controller
     {
         $screen = Screen::where('slug', $slug)->first();
         $screenSeatData = ScreenSeat::where('screen_id', $screen->id)->first();
-        return view('admin.screen.edit-seat', compact('screen', 'screenSeatData'));
+        $screenCategoriesData = ScreenSeatCategories::where('screen_id', $screen->id)->get();
+        return view('admin.screen.edit-seat', compact('screen', 'screenSeatData', 'screenCategoriesData'));
     }
 }

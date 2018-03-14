@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\PriceCardModel\PriceCard;
 use App\Screen\Screen;
 use App\Screen\ScreenSeat;
 use App\TicketTypeModel\TicketClass;
@@ -201,7 +202,19 @@ class TicketTypesController extends Controller
     {
         $ttid = $request->ttid;
         if(TicketType::find($ttid)->delete())
+        {
+            foreach (PriceCard::all() as $pc)
+            {
+                $ttArray = json_decode($pc->ticket_types_ids, true);
+                if(in_array($ttid, $ttArray))
+                {
+                    $arr = array_diff($ttArray, [$ttid]);
+                }
+                PriceCard::find($pc->id)->update(['ticket_types_ids' => json_encode($arr)]);
+            }
             return 'true';
+        }
+
         return 'error';
     }
 

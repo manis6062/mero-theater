@@ -3,7 +3,7 @@
         margin: 0 auto;
     }
 
-    div.content{
+    div.content {
         border: 1px solid #ddd;
         margin: 0 10%;
         margin-top: 20px;
@@ -59,7 +59,7 @@
         padding: 5px;
     }
 
-    .span-info{
+    .span-info {
         font-size: 15px;
         color: #1155CC;
         font-weight: 600;
@@ -87,13 +87,14 @@
     .inactiveSeatLegend {
         float: left;
     }
+
     /*.seat-structure-main-div {*/
-        /*width: 80%;*/
-        /*margin-left: 10%;*/
-        /*margin-right: 10%;*/
-        /*padding: 1%;*/
-        /*border: 1px solid #ddd;*/
-        /*margin-top: 20px;*/
+    /*width: 80%;*/
+    /*margin-left: 10%;*/
+    /*margin-right: 10%;*/
+    /*padding: 1%;*/
+    /*border: 1px solid #ddd;*/
+    /*margin-top: 20px;*/
     /*}*/
 </style>
 <div class="">
@@ -124,14 +125,20 @@
                     @for ($i = 1; $i <= $noOfRows; $i++)
                         <tr>
                             <td>
-                                <input readonly value="{{$alphaDirection == 'top to bottom' ? $alphas[$i-1] : $alphas[$alpCount]}}" type="text" name="alphabets[]" class="alphabets">
+                                <input readonly
+                                       value="{{$alphaDirection == 'top to bottom' ? $alphas[$i-1] : $alphas[$alpCount]}}"
+                                       type="text" name="alphabets[]" class="alphabets">
                             </td>
                             @php $titleNum1 = 0; @endphp
                             @for ($j = 1; $j <= $noOfColumns; $j++)
-                                <td id="" class="seat" onclick="seatNum('{{$i.'-'.$j}}','{{$alphaDirection == 'top to bottom' ? $alphas[$i-1] : $alphas[$alpCount]}}');" data-seatnum="{{$i.'-'.$j}}"></td>
+                                <td id="" class="seat"
+                                    onclick="seatNum('{{$i.'-'.$j}}','{{$alphaDirection == 'top to bottom' ? $alphas[$i-1] : $alphas[$alpCount]}}');"
+                                    data-seatnum="{{$i.'-'.$j}}"></td>
                                 @if ($j == $noOfColumns)
                                     <td>
-                                        <input readonly style="float: right;" value="{{$alphaDirection == 'top to bottom' ? $alphas[$i-1] : $alphas[$alpCount]}}" type="text" class="alphabets">
+                                        <input readonly style="float: right;"
+                                               value="{{$alphaDirection == 'top to bottom' ? $alphas[$i-1] : $alphas[$alpCount]}}"
+                                               type="text" class="alphabets">
                                     </td>
                                 @endif
                             @endfor
@@ -159,14 +166,20 @@
                     @for ($i = 1; $i <= $noOfRows; $i++)
                         <tr>
                             <td>
-                                <input readonly value="{{$alphaDirection == 'top to bottom' ? $alphas[$i-1] : $alphas[$alpCount]}}" style="" oninput="" type="text" class="alphabets">
+                                <input readonly
+                                       value="{{$alphaDirection == 'top to bottom' ? $alphas[$i-1] : $alphas[$alpCount]}}"
+                                       style="" oninput="" type="text" class="alphabets">
                             </td>
 
                             @for ($j = $noOfColumns; $j >= 1; $j--)
-                                <td class="seat" data-seatnum="{{$i.'-'.$j}}" onclick="seatNum('{{$i.'-'.$j}}', '{{$alphaDirection == 'top to bottom' ? $alphas[$i-1] : $alphas[$alpCount]}}');"  style=""></td>
+                                <td class="seat" data-seatnum="{{$i.'-'.$j}}"
+                                    onclick="seatNum('{{$i.'-'.$j}}', '{{$alphaDirection == 'top to bottom' ? $alphas[$i-1] : $alphas[$alpCount]}}');"
+                                    style=""></td>
                                 @if ($j == 1)
                                     <td>
-                                        <input readonly value="{{$alphaDirection == 'top to bottom' ? $alphas[$i-1] : $alphas[$alpCount]}}" style="float: right;" type="text" class="alphabets">
+                                        <input readonly
+                                               value="{{$alphaDirection == 'top to bottom' ? $alphas[$i-1] : $alphas[$alpCount]}}"
+                                               style="float: right;" type="text" class="alphabets">
                                     </td>
                                 @endif
                             @endfor
@@ -180,13 +193,171 @@
             </div>
         @endif
         <span class="span-info">Click on the seats to select path.</span>
-        <form action="{{url('admin/seat-management/screens/'.$screen->slug.'/seat/submit')}}" method="post" id="seatStructureForm">
+        <form action="{{url('admin/seat-management/screens/'.$screen->slug.'/seat/submit')}}" method="post"
+              id="seatStructureForm">
             {{csrf_field()}}
             <input type="hidden" name="numOfRows" value="{{$noOfRows}}">
             <input type="hidden" name="numOfColumns" value="{{$noOfColumns}}">
             <input type="hidden" name="seatDirection" value="{{$seatDirection}}">
             <input type="hidden" name="alphabetDirection" value="{{$alphaDirection}}">
+            <div class="form-group">
+                <select onfocus="rErr('seat-categories');" name="seat_categories" id="seat-categories" class="form-control" style="width: 50%;">
+                    <option value="">-- Select Number Of Seat Categories --</option>
+                    @for($i = 1; $i <= 10; $i++)
+                        <option value="{{$i}}">{{$i}}</option>
+                    @endfor
+                </select>
+                <span class="seat-categories-error"></span>
+            </div>
+
+            <div class="category-div"></div>
             <input type="submit" value="Submit" class="btn btn-lg btn-success ajaxSubmitButton">
         </form>
     </div>
 </div>
+
+<script>
+    $(document).find('#seatStructureForm').on('submit', function(e){
+        var emp = 0;
+        var chk = 0;
+        if($(document).find('select#seat-categories').val() == '')
+        {
+            e.preventDefault();
+            $(document).find('.seat-categories-error').html('<strong>Please choose a value !</strong>');
+        }
+
+        $(document).find('input.category-name').each(function () {
+            if($(this).val() == '')
+            {
+                emp = 1;
+            }
+        });
+
+
+        $(document).find('select.category-from-row').each(function () {
+            if($(this).val() == '')
+            {
+                emp = 1;
+            }
+        });
+
+
+        $(document).find('select.category-to-row').each(function () {
+            if($(this).val() == '')
+            {
+                emp = 1;
+            }
+        });
+
+        if(emp == 1)
+        {
+            e.preventDefault();
+            $(document).find('.category-name-error').html('<strong>Please fill all required values !</strong>');
+        }
+
+        if(emp == 0)
+        {
+            var count = $(document).find('select#seat-categories').val();
+            var firstCategoryNameVal = $(document).find('input.category-name-1').val();
+            var firstFromRowVal = $(document).find('select.category-from-row-1').val();
+            var firstToRowVal = $(document).find('select.category-to-row-1').val();
+            for(var a = 2; a <= count; a++)
+            {
+                var otherCategoryNameVal = $(document).find('input.category-name-'+a).val();
+                var otherFromRowVal = $(document).find('select.category-from-row-'+a).val();
+                var otherToRowVal = $(document).find('select.category-to-row-'+a).val();
+                if(firstCategoryNameVal == otherCategoryNameVal)
+                {
+                    chk = 1;
+                }
+
+                if(firstFromRowVal == otherFromRowVal)
+                {
+                    chk = 1;
+                }
+
+                if(firstFromRowVal == otherToRowVal)
+                {
+                    chk = 1;
+                }
+
+                if(firstToRowVal == otherFromRowVal)
+                {
+                    chk = 1;
+                }
+
+                if(firstToRowVal == otherToRowVal)
+                {
+                    chk = 1;
+                }
+            }
+
+            if(chk == 1)
+            {
+                e.preventDefault();
+                $(document).find('.category-name-error').html('<strong>Errorous Values Found !</strong>');
+            }
+        }
+    });
+
+    $(document).find('select#seat-categories').on('change', function(){
+        var val = $(this).val();
+        if(val != '')
+        {
+            var alphabets = [];
+            $(document).find('input.alphabets').each(function () {
+                alphabets.push($(this).val());
+            });
+
+            alphabets = jQuery.unique( alphabets );
+            var html = '';
+            html += '<table class="table table-responsive table-bordered">';
+            html += '<thead>';
+            html += '<tr>';
+            html += '<th>Category Name</th>';
+            html += '<th>From Row</th>';
+            html += '<th>To Row</th>';
+            html += '<tr>';
+            html += '</thead>';
+            html += '<tbody>';
+            for(var i = 0; i < val; i++)
+            {
+                html += '<tr>';
+                html += '<td>';
+                html += '<input type="text" class="form-control category-name category-name-'+i+'" name="category_name[]" placeholder="Enter Category Name">';
+                html += '</td>';
+                html += '<td>';
+                html += '<select name="category_from_row[]" class="form-control category-from-row category-from-row-'+i+'">';
+                html += '<option value="">-- Select From Row --</option>';
+                for(var k = 0; k < alphabets.length; k++)
+                {
+                    html += '<option value="'+alphabets[k]+'">'+alphabets[k]+'</option>';
+                }
+                html += '</select>';
+                html += '</td>';
+                html += '<td>';
+                html += '<select name="category_to_row[]" class="form-control category-to-row category-to-row-'+i+'">';
+                html += '<option value="">-- Select To Row --</option>';
+                for(var k = 0; k < alphabets.length; k++)
+                {
+                    html += '<option value="'+alphabets[k]+'">'+alphabets[k]+'</option>';
+                }
+                html += '</select>';
+                html += '</td>';
+                html += '</tr>';
+            }
+            html += '<tr>';
+            html += '<td colspan="3" class="text-center"><span class="category-name-error"></span></td>';
+            html += '<tr>';
+            html += '</tbody>';
+            html += '</table>';
+            $(document).find('div.category-div').html(html);
+        }else{
+            $(document).find('div.category-div').html('');
+        }
+    });
+
+    function rErr(text) {
+        $('.'+text+'-error').html('');
+    }
+</script>

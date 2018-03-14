@@ -52,7 +52,7 @@
             box-shadow: 1px 1px;
         }
 
-        .screen-span {
+        .screen-span, .screen-span-not, .category-span, .category-span-all {
             padding: 5px 8px;
             background: #E3D6A6;
             color: #9b7502;
@@ -72,13 +72,17 @@
             margin-top: 10px;
         }
 
+        .category-div {
+            margin-top: 10px;
+        }
+
         .day-selected {
             color: #629221 !important;
             background: #CCFF00 !important;
             text-shadow: 1px 1px 1px #fff !important;
         }
 
-        .screen-selected {
+        .screen-selected, .category-selected {
             color: #629221 !important;
             background: #CCFF00 !important;
             text-shadow: 1px 1px 1px #fff !important;
@@ -155,16 +159,19 @@
                             @php $screenArray1 = $screens->pluck('id')->toArray(); @endphp
                             @foreach($screens as $s)
                                 <span onclick="removeError('screen-id');"
-                                      class="screen-span {{in_array($s->id, $screenArray) ? 'screen-selected' : ''}}"
+                                      class="{{$s->screenSeats != null ? 'screen-span' : 'screen-span-not'}} {{in_array($s->id, $screenArray) ? 'screen-selected' : ''}} screen-span-{{$s->id}}"
                                       data-screenid="{{$s->id}}">{{$s->name}}</span>
                                 @if(in_array($s->id, $screenArray))
                                     <input name="screen_id[]" value="{{$s->id}}" class="screen-ids screenid-{{$s->id}}"
                                            type="hidden">
                                 @endif
                             @endforeach
-                            <span onclick="removeError('screen-id');"
-                                  class="screen-span screen-span-all {{$screenArray == $screenArray1 ? 'screen-selected' : ''}}"
-                                  data-screenid="all">All</span>
+                            @if(count($screenArray1) > 1)
+                                <span onclick="removeError('screen-id');"
+                                      class="screen-span screen-span-all {{$screenArray == $screenArray1 ? 'screen-selected' : ''}}"
+                                      data-screenid="all">All</span>
+                            @endif
+                            <span class="pease-wait" style="display: none;"><i class="fa fa-spinner fa-spin"></i> Please Wait ...</span>
                         @endif
                     </div>
                     @if($errors->has('screen_id'))
@@ -175,6 +182,31 @@
                 </span>
                     @endif
                     <span class="screen-id-error error help-block"></span>
+                </div>
+
+
+                <div class="seat-category-div">
+                    @if(isset($sendData) && count($sendData) > 0)
+                        <div class="form-group">
+                            <span>Seat Categories <small>*</small></span>
+                            <div class="category-div">
+                                @foreach($sendData as $sd)
+                                    <span class="category-span {{in_array($sd, $seatCategoriesArr) ? 'category-selected' : ''}}"
+                                          data-name="{{$sd}}">{{$sd}}</span>
+                                    @if(in_array($sd, $seatCategoriesArr))
+                                        <input name="seat_categories[]"
+                                               class="seat-category seat-category-{{str_replace(' ', '', $sd)}}"
+                                               value="{{$sd}}" type="hidden">
+                                    @endif
+                                @endforeach
+                                @if(count($sendData) > 1)
+                                    <span class="category-span-all {{$seatCategoriesArr == $sendData ? 'category-selected' : ''}}"
+                                          data-name="all">All</span>
+                                @endif
+                            </div>
+                            <span class="seat-category-error error help-block"></span>
+                        </div>
+                    @endif
                 </div>
 
                 <div class="form-group">
@@ -306,12 +338,16 @@
                                             @if(in_array($ts->id, $ttTypes))
                                                 @php $sqArr = json_decode($priceCard->sequences, true); @endphp
                                                 @php $seqkey = array_search($ts->id, $ttTypes); @endphp
-                                                <input data-ttid="{{$ts->id}}" onfocus="removeError('ticket-type');" type="text"
+                                                <input data-ttid="{{$ts->id}}" onfocus="removeError('ticket-type');"
+                                                       type="text"
                                                        class="sequence-input sequence-{{$ts->id}}"
                                                        value="{{$sqArr[$seqkey]}}">
-                                                <input name="ticket_types_sequence[]" class="tic_types_sequence_{{$ts->id}}" value="{{$sqArr[$seqkey]}}" type="hidden">
+                                                <input name="ticket_types_sequence[]"
+                                                       class="tic_types_sequence_{{$ts->id}}"
+                                                       value="{{$sqArr[$seqkey]}}" type="hidden">
                                             @else
-                                                <input data-ttid="{{$ts->id}}" onfocus="removeError('ticket-type');" type="text"
+                                                <input data-ttid="{{$ts->id}}" onfocus="removeError('ticket-type');"
+                                                       type="text"
                                                        class="sequence-input sequence-{{$ts->id}}"
                                                        value="{{$ts->display_sequence}}">
                                             @endif
@@ -321,12 +357,15 @@
                                             @if(in_array($ts->id, $ttTypes))
                                                 @php $prArr = json_decode($priceCard->prices, true); @endphp
                                                 @php $seqkey1 = array_search($ts->id, $ttTypes); @endphp
-                                                <input data-ttid="{{$ts->id}}" onfocus="removeError('ticket-type');" type="text"
+                                                <input data-ttid="{{$ts->id}}" onfocus="removeError('ticket-type');"
+                                                       type="text"
                                                        class="price-input price-{{$ts->id}}"
                                                        value="{{$prArr[$seqkey1]}}">
-                                                <input name="ticket_types_price[]" class="tic_types_price_{{$ts->id}}" value="{{$prArr[$seqkey1]}}" type="hidden">
+                                                <input name="ticket_types_price[]" class="tic_types_price_{{$ts->id}}"
+                                                       value="{{$prArr[$seqkey1]}}" type="hidden">
                                             @else
-                                                <input data-ttid="{{$ts->id}}" onfocus="removeError('ticket-type');" type="text"
+                                                <input data-ttid="{{$ts->id}}" onfocus="removeError('ticket-type');"
+                                                       type="text"
                                                        class="price-input price-{{$ts->id}}"
                                                        value="{{$ts->default_price}}">
                                             @endif
@@ -382,22 +421,166 @@
             }
         });
 
+        var flag = 0;
         $('.screen-span').on('click', function () {
+            $(document).find('input.seat-category').remove();
             var screenId = $(this).data('screenid');
             if (screenId == 'all') {
-                $('.screen-span').addClass('screen-selected');
                 $(document).find('input.screen-ids').remove();
                 @foreach($screens as $s)
-                    $(document).find('form').append('<input name="screen_id[]" value="{{$s->id}}" type="hidden" class="screen-ids screenid-{{$s->id}}">');
-                @endforeach
+                    @if($s->screenSeats != null)
+                        $('.screen-span-{{$s->id}}').addClass('screen-selected');
+                $('.screen-span-all').addClass('screen-selected');
+                $(document).find('form').append('<input name="screen_id[]" value="{{$s->id}}" type="hidden" class="screen-ids screenid-{{$s->id}}">');
+                @else
+$('.screen-id-error').html('<strong>Only the screens having seat structure designed can be selected !</strong>');
+                @endif
+            @endforeach
+$('span.pease-wait').show();
+                var screenIds = [];
+                $(document).find('span.screen-selected').each(function () {
+                    screenIds.push($(this).data('screenid'));
+                    flag++;
+                });
+                var sendParam = JSON.stringify(screenIds);
+
+                $.ajax({
+                    url: baseurl + '/admin/box-office/price-card-management/get-seat-categories?params=' + sendParam + '&flag=' + flag,
+                    type: 'get',
+                    success: function (data) {
+                        if (data != 'empty') {
+                            var html = '';
+                            html += '<div class="form-group">';
+                            html += '<span>Seat Categories <small>*</small></span>';
+                            html += '<div class="category-div">';
+                            for (var i = 0; i < data.length; i++) {
+                                html += '<span class="category-span" data-name="' + data[i] + '">' + data[i] + '</span>';
+                            }
+                            if (data.length > 1) {
+                                html += '<span class="category-span-all" data-name="all">All</span>';
+                            }
+                            html += '</div>';
+                            html += '<span class="seat-category-error error help-block"></span>';
+                            html += '</div>';
+
+                            $('div.seat-category-div').html(html);
+                            $('span.pease-wait').hide();
+                        } else {
+                            $('div.seat-category-div').html('<div class="form-group"><span>Seat Categories <small>*</small></span><div class="category-div"><strong>No any categories matched for selected screens !!!</strong></div><span class="seat-category-error error help-block"></span></div>');
+                            $('span.pease-wait').hide();
+                        }
+
+                    }, error: function (data) {
+                        console.log(data);
+                        $(document).find('input.screen-ids').remove();
+                        $('span.screen-span').removeClass('screen-selected');
+                        alertify.alert('Oops ! something went wrong. Please try again !');
+                        $('span.pease-wait').hide();
+                    }
+                });
             } else {
+
+                $(this).data('screenid');
                 $(document).find('.screen-span-all').removeClass('screen-selected');
                 if ($(this).hasClass('screen-selected')) {
                     $(document).find('input.screenid-' + screenId + '').remove();
                     $(this).removeClass('screen-selected');
+                    $('span.pease-wait').show();
+                    var screenIds = [];
+                    $(document).find('span.screen-selected').each(function () {
+                        screenIds.push($(this).data('screenid'));
+                    });
+                    flag--;
+                    if (screenIds.length > 0) {
+                        var sendParam = JSON.stringify(screenIds);
+
+                        $.ajax({
+                            url: baseurl + '/admin/box-office/price-card-management/get-seat-categories?params=' + sendParam + '&flag=' + flag,
+                            type: 'get',
+                            success: function (data) {
+                                if (data != 'empty') {
+                                    console.log(data);
+                                    var html = '';
+                                    html += '<div class="form-group">';
+                                    html += '<span>Seat Categories <small>*</small></span>';
+                                    html += '<div class="category-div">';
+                                    for (var i = 0; i < data.length; i++) {
+                                        html += '<span class="category-span" data-name="' + data[i] + '">' + data[i] + '</span>';
+                                    }
+                                    if (data.length > 1) {
+                                        html += '<span class="category-span-all" data-name="all">All</span>';
+                                    }
+
+                                    html += '</div>';
+                                    html += '<span class="seat-category-error error help-block"></span>';
+                                    html += '</div>';
+
+                                    $('div.seat-category-div').html(html);
+                                    $('span.pease-wait').hide();
+                                } else {
+                                    $('div.seat-category-div').html('<div class="form-group"><span>Seat Categories <small>*</small></span><div class="category-div"><strong>No any categories matched for selected screens !!!</strong></div><span class="seat-category-error error help-block"></span></div>');
+                                    $('span.pease-wait').hide();
+                                }
+
+                            }, error: function (data) {
+                                console.log(data);
+                                $(document).find('input.screen-ids').remove();
+                                $('span.screen-span').removeClass('screen-selected');
+                                alertify.alert('Oops ! something went wrong. Please try again !');
+                                $('span.pease-wait').hide();
+                            }
+                        });
+                    } else {
+                        $('div.seat-category-div').html('');
+                        $('span.pease-wait').hide();
+                    }
+
                 } else {
                     $(document).find('form').append('<input name="screen_id[]" value="' + screenId + '" type="hidden" class="screen-ids screenid-' + screenId + '">');
                     $(this).addClass('screen-selected');
+                    $('span.pease-wait').show();
+                    var screenIds = [];
+                    $(document).find('span.screen-selected').each(function () {
+                        screenIds.push($(this).data('screenid'));
+                    });
+                    var sendParam = JSON.stringify(screenIds);
+
+                    $.ajax({
+                        url: baseurl + '/admin/box-office/price-card-management/get-seat-categories?params=' + sendParam + '&flag=' + flag,
+                        type: 'get',
+                        success: function (data) {
+                            if (data != 'empty') {
+                                console.log(data);
+                                var html = '';
+                                html += '<div class="form-group">';
+                                html += '<span>Seat Categories <small>*</small></span>';
+                                html += '<div class="category-div">';
+                                for (var i = 0; i < data.length; i++) {
+                                    html += '<span class="category-span" data-name="' + data[i] + '">' + data[i] + '</span>';
+                                }
+                                if (data.length > 1) {
+                                    html += '<span class="category-span-all" data-name="all">All</span>';
+                                }
+                                html += '</div>';
+                                html += '<span class="seat-category-error error help-block"></span>';
+                                html += '</div>';
+
+                                $('div.seat-category-div').html(html);
+                                $('span.pease-wait').hide();
+                                flag++;
+                            } else {
+                                $('div.seat-category-div').html('<div class="form-group"><span>Seat Categories <small>*</small></span><div class="category-div"><strong>No any categories matched for selected screens !!!</strong></div><span class="seat-category-error error help-block"></span></div>');
+                                $('span.pease-wait').hide();
+                            }
+
+                        }, error: function (data) {
+                            console.log(data);
+                            $(document).find('input.screen-ids').remove();
+                            $('span.screen-span').removeClass('screen-selected');
+                            alertify.alert('Oops ! something went wrong. Please try again !');
+                            $('span.pease-wait').hide();
+                        }
+                    });
                 }
             }
 
@@ -559,6 +742,13 @@
                 }
             }
 
+            if ($(document).find('div.seat-category-div').is(':visible') && $(document).find('div.seat-category-div').html() != '') {
+                if ($(document).find('input.seat-category').length == 0) {
+                    e.preventDefault();
+                    $('.seat-category-error').html('<strong>Please choose the screen seat categories.</strong>');
+                }
+            }
+
         });
 
 
@@ -660,16 +850,41 @@
             $('.display-sequence-error-exists').html('');
         });
 
-        $(document).find('input.sequence-input').on('focusout', function(){
+        $(document).find('input.sequence-input').on('focusout', function () {
             var sqVal = $(this).val();
             var ttid = $(this).data('ttid');
-            $(document).find('input.tic_types_sequence_'+ttid).val(sqVal);
+            $(document).find('input.tic_types_sequence_' + ttid).val(sqVal);
         });
 
-        $(document).find('input.price-input').on('focusout', function(){
+        $(document).find('input.price-input').on('focusout', function () {
             var sqVal = $(this).val();
             var ttid = $(this).data('ttid');
-            $(document).find('input.tic_types_price_'+ttid).val(sqVal);
+            $(document).find('input.tic_types_price_' + ttid).val(sqVal);
+        });
+
+        $(document).on('click', 'span.category-span', function () {
+            $(document).find('span.seat-category-error').html('');
+            $(document).find('span.category-span-all').removeClass('category-selected');
+            if ($(this).hasClass('category-selected')) {
+                $(this).removeClass('category-selected');
+                var name = $(this).data('name');
+                $(document).find('input.seat-category-' + name.replace(/\s/g, '')).remove();
+            } else {
+                $(this).addClass('category-selected');
+                var name = $(this).data('name');
+                $(document).find('form').append('<input type="hidden" name="seat_categories[]" class="seat-category seat-category-' + name.replace(/\s/g, '') + '" value="' + name + '">');
+            }
+        });
+
+        $(document).on('click', 'span.category-span-all', function () {
+            $(document).find('input.seat-category').remove();
+            $(document).find('span.seat-category-error').html('');
+            $(this).addClass('category-selected');
+            $(document).find('span.category-span').addClass('category-selected');
+            $(document).find('span.category-span').each(function () {
+                var name = $(this).data('name');
+                $(document).find('form').append('<input type="hidden" name="seat_categories[]" class="seat-category seat-category-' + name.replace(/\s/g, '') + '" value="' + name + '">');
+            });
         });
 
     </script>
