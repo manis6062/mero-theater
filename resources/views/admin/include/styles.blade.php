@@ -1,0 +1,12 @@
+<link rel="stylesheet" href="{{asset('admins/theme/css/bootstrap.min.css')}}" />
+<link rel="stylesheet" href="{{asset('admins/theme/fonts/icomoon/icomoon.css')}}" />
+<link rel="stylesheet" href="{{asset('admins/theme/css/main.css')}}" />
+
+<!-- Other CSS includes plugins - Cleanedup unnecessary CSS -->
+<!-- Chartist css -->
+<link href="{{asset('admins/theme/vendor/chartist/css/chartist.min.css')}}" rel="stylesheet" />
+<link href="{{asset('admins/theme/vendor/chartist/css/chartist-custom.css')}}" rel="stylesheet" />
+
+<!-- Data Tables -->
+<link rel="stylesheet" href="{{asset('admins/theme/vendor/datatables/dataTables.bs4.css')}}" />
+<link rel="stylesheet" href="{{asset('admins/theme/vendor/datatables/dataTables.bs4-custom.css')}}" />

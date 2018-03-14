@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class MovieModel extends Model
 {
+    protected $table = 'movie_tbl';
+    protected $guarded = ['id'];
+
     public function store($data)
     {
     	DB::table('movie_tbl')->insert($data);
