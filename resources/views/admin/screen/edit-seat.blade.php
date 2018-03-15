@@ -691,53 +691,79 @@
                         $(document).find('.category-name-error').html('<strong>Please fill all required values !</strong>');
                     }
 
-                    if (emp == 0) {
+                    if(emp == 0)
+                    {
                         var count = $(document).find('select#seat-categories').val();
-                        var firstCategoryNameVal = $(document).find('input.category-name-1').val();
-                        var firstFromRowVal = $(document).find('select.category-from-row-1').val();
-                        var firstToRowVal = $(document).find('select.category-to-row-1').val();
-                        for (var a = 2; a <= count; a++) {
-                            var otherCategoryNameVal = $(document).find('input.category-name-' + a).val();
-                            var otherFromRowVal = $(document).find('select.category-from-row-' + a).val();
-                            var otherToRowVal = $(document).find('select.category-to-row-' + a).val();
-                            if (firstCategoryNameVal == otherCategoryNameVal) {
-                                chk = 1;
-                            }
 
-                            if (firstFromRowVal == otherFromRowVal) {
-                                chk = 1;
-                            }
+                        for(var a = 0; a < count; a++)
+                        {
+                            var firstCategoryNameVal = $(document).find('input.category-name-'+a).val();
 
-                            if (firstFromRowVal == otherToRowVal) {
-                                chk = 1;
-                            }
+                            for(var b = (a+1); b < count; b++)
+                            {
+                                var otherCategoryNameVal = $(document).find('input.category-name-'+b).val();
 
-                            if (firstToRowVal == otherFromRowVal) {
-                                chk = 1;
-                            }
-
-
-                            if (firstToRowVal == otherToRowVal) {
-                                chk = 1;
+                                if(firstCategoryNameVal == otherCategoryNameVal)
+                                {
+                                    chk = 1;
+                                }
                             }
                         }
 
-                        if (chk == 1) {
+                        if(chk == 1)
+                        {
                             e.preventDefault();
                             $(document).find('.category-name-error').html('<strong>Errorous Values Found !</strong>');
+                        }
+
+                        if(chk == 0)
+                        {
+                            var num = 0;
+                            var numOfCategs = $(document).find('input.category-name').length;
+
+                            var rowArray = [];
+                            for(var j = 0; j < numOfCategs; j++)
+                            {
+                                var fromRowNum = $(document).find('select.category-from-row-'+j+' option:selected').data('val');
+                                var toRowNum = $(document).find('select.category-to-row-'+j+' option:selected').data('val');
+
+                                if(fromRowNum > toRowNum)
+                                {
+                                    for(var k = toRowNum; k <= fromRowNum; k++)
+                                    {
+                                        rowArray.push(k);
+                                    }
+                                }else{
+                                    for(var k = fromRowNum; k <= toRowNum; k++)
+                                    {
+                                        rowArray.push(k);
+                                    }
+                                }
+                            }
+                            var result = [];
+                            $.each(rowArray, function(i, e) {
+                                if ($.inArray(e, result) == -1) result.push(e);
+                            });
+                            var rowLength = $(document).find('select.category-from-row-0').children('option').length;
+                            if((rowLength-1) != result.length)
+                            {
+                                e.preventDefault();
+                                $(document).find('.category-name-error').html('<strong>Error ! You cannot leave any row without any category !</strong>');
+                            }
                         }
                     }
                 });
 
-                $(document).find('select#seat-categories').on('change', function () {
+                $(document).find('select#seat-categories').on('change', function(){
                     var val = $(this).val();
-                    if (val != '') {
+                    if(val != '')
+                    {
                         var alphabets = [];
                         $(document).find('input.alphabets').each(function () {
                             alphabets.push($(this).val());
                         });
 
-                        alphabets = jQuery.unique(alphabets);
+                        alphabets = jQuery.unique( alphabets );
                         var html = '';
                         html += '<table class="table table-responsive table-bordered">';
                         html += '<thead>';
@@ -748,24 +774,27 @@
                         html += '<tr>';
                         html += '</thead>';
                         html += '<tbody>';
-                        for (var i = 0; i < val; i++) {
+                        for(var i = 0; i < val; i++)
+                        {
                             html += '<tr>';
                             html += '<td>';
-                            html += '<input type="text" class="form-control category-name category-name-' + i + '" name="category_name[]" placeholder="Enter Category Name">';
+                            html += '<input type="text" class="form-control category-name category-name-'+i+'" data-id="'+i+'" name="category_name[]" placeholder="Enter Category Name">';
                             html += '</td>';
                             html += '<td>';
-                            html += '<select name="category_from_row[]" class="custom-select category-from-row category-from-row-' + i + '">';
+                            html += '<select name="category_from_row[]" data-id="'+i+'" class="custom-select category-from-row category-from-row-'+i+'">';
                             html += '<option value="">-- Select From Row --</option>';
-                            for (var k = 0; k < alphabets.length; k++) {
-                                html += '<option value="' + alphabets[k] + '">' + alphabets[k] + '</option>';
+                            for(var k = 0; k < alphabets.length; k++)
+                            {
+                                html += '<option class="option'+k+'" data-val="'+k+'" value="'+alphabets[k]+'">'+alphabets[k]+'</option>';
                             }
                             html += '</select>';
                             html += '</td>';
                             html += '<td>';
-                            html += '<select name="category_to_row[]" class="custom-select category-to-row category-to-row-' + i + '">';
+                            html += '<select name="category_to_row[]" data-id="'+i+'" class="custom-select category-to-row category-to-row-'+i+'">';
                             html += '<option value="">-- Select To Row --</option>';
-                            for (var k = 0; k < alphabets.length; k++) {
-                                html += '<option value="' + alphabets[k] + '">' + alphabets[k] + '</option>';
+                            for(var k = 0; k < alphabets.length; k++)
+                            {
+                                html += '<option class="option'+k+'" data-val="'+k+'" value="'+alphabets[k]+'">'+alphabets[k]+'</option>';
                             }
                             html += '</select>';
                             html += '</td>';
@@ -777,7 +806,7 @@
                         html += '</tbody>';
                         html += '</table>';
                         $(document).find('div.category-div').html(html);
-                    } else {
+                    }else{
                         $(document).find('div.category-div').html('');
                     }
                 });
@@ -806,15 +835,15 @@
                         html += '<tbody>';
                         var cnt = 0;
                         @foreach($screenCategoriesData as $dat)
-                            cnt++;
+
                         var fr = "{{$dat->category_from_row}}";
                         var tr = "{{$dat->category_to_row}}";
                         html += '<tr>';
                         html += '<td>';
-                        html += '<input value="{{$dat->category_name}}" type="text" class="form-control category-name category-name-' + cnt + '" name="category_name[]" placeholder="Enter Category Name">';
+                        html += '<input value="{{$dat->category_name}}" type="text" class="form-control category-name category-name-' + cnt + '" data-id="'+cnt+'" name="category_name[]" placeholder="Enter Category Name">';
                         html += '</td>';
                         html += '<td>';
-                        html += '<select name="category_from_row[]" class="custom-select category-from-row category-from-row-' + cnt + '">';
+                        html += '<select name="category_from_row[]" data-id="'+cnt+'" class="custom-select category-from-row category-from-row-' + cnt + '">';
                         html += '<option value="">-- Select From Row --</option>';
                         for (var k = 0; k < alphabets.length; k++) {
                             if (alphabets[k] == fr) {
@@ -822,12 +851,12 @@
                             } else {
                                 var attr = '';
                             }
-                            html += '<option value="' + alphabets[k] + '" ' + attr + '>' + alphabets[k] + '</option>';
+                            html += '<option class="option'+k+'" data-val="'+k+'" value="' + alphabets[k] + '" ' + attr + '>' + alphabets[k] + '</option>';
                         }
                         html += '</select>';
                         html += '</td>';
                         html += '<td>';
-                        html += '<select name="category_to_row[]" class="custom-select category-to-row category-to-row-' + cnt + '">';
+                        html += '<select name="category_to_row[]" data-id="'+cnt+'" class="custom-select category-to-row category-to-row-' + cnt + '">';
                         html += '<option value="">-- Select To Row --</option>';
                         for (var k = 0; k < alphabets.length; k++) {
                             if (alphabets[k] == tr) {
@@ -835,11 +864,12 @@
                             } else {
                                 var attr = '';
                             }
-                            html += '<option value="' + alphabets[k] + '" ' + attr + '>' + alphabets[k] + '</option>';
+                            html += '<option class="option'+k+'" data-val="'+k+'"  value="' + alphabets[k] + '" ' + attr + '>' + alphabets[k] + '</option>';
                         }
                         html += '</select>';
                         html += '</td>';
                         html += '</tr>';
+                        cnt++;
                         @endforeach
                             html += '<tr>';
                         html += '<td colspan="3" class="text-center"><span class="category-name-error help-block"></span></td>';
@@ -849,11 +879,226 @@
                         $(document).find('div.category-div').html(html);
                     }
                     @endif
+
+
+
+                    for(var asdf = 0; asdf < $(document).find('select#seat-categories').val(); asdf++) {
+
+                        if(asdf == 0)
+                        {
+                            var fromOption1 = $(document).find('select.category-from-row-' + asdf + ' option:selected').data('val');
+                            var toOption1 = $(document).find('select.category-to-row-' + asdf + ' option:selected').data('val');
+
+                            $(document).find('select.category-from-row-' + (asdf+1)).children('option').show();
+                            $(document).find('select.category-to-row-' + (asdf+1)).children('option').show();
+                            if (fromOption1 > toOption1) {
+                                for (var opCount = toOption1; opCount <= fromOption1; opCount++) {
+                                    $(document).find('select.category-to-row-' + (asdf + 1)).children('.option' + opCount).hide();
+                                    $(document).find('select.category-from-row-' + (asdf + 1)).children('.option' + opCount).hide();
+                                }
+                            } else {
+                                for (var opCount = fromOption1; opCount <= toOption1; opCount++) {
+                                    $(document).find('select.category-to-row-' + (asdf + 1)).children('.option' + opCount).hide();
+                                    $(document).find('select.category-from-row-' + (asdf + 1)).children('.option' + opCount).hide();
+                                }
+                            }
+                        }else{
+                            $(document).find('select.category-from-row-' + (asdf+1)).children('option').show();
+                            $(document).find('select.category-to-row-' + (asdf+1)).children('option').show();
+                            for(var asdf1 = 0; asdf1 <= asdf; asdf1++) {
+                                var fromOption1 = $(document).find('select.category-from-row-' + asdf1 + ' option:selected').data('val');
+                                var toOption1 = $(document).find('select.category-to-row-' + asdf1 + ' option:selected').data('val');
+
+                                if (fromOption1 > toOption1) {
+                                    for (var opCount = toOption1; opCount <= fromOption1; opCount++) {
+                                        $(document).find('select.category-to-row-' + (asdf + 1)).children('.option' + opCount).hide();
+                                        $(document).find('select.category-from-row-' + (asdf + 1)).children('.option' + opCount).hide();
+                                    }
+                                } else {
+                                    for (var opCount = fromOption1; opCount <= toOption1; opCount++) {
+                                        $(document).find('select.category-to-row-' + (asdf + 1)).children('.option' + opCount).hide();
+                                        $(document).find('select.category-from-row-' + (asdf + 1)).children('.option' + opCount).hide();
+                                    }
+                                }
+                            }
+                        }
+
+                    }
                 });
 
 
                 function rErr(text) {
                     $('.' + text + '-error').html('');
                 }
+
+                $(document).on('click', 'input.category-name', function(){
+                    var id = $(this).data('id');
+                    var error = 0;
+                    if(id > 0)
+                    {
+                        for(var i = (id-1); i >= 0; i--)
+                        {
+                            if($(document).find('input.category-name-'+i).val() == '')
+                            {
+                                error = 1;
+                            }
+
+                            if($(document).find('select.category-from-row-'+i).val() == '')
+                            {
+                                error = 1;
+                            }
+
+                            if($(document).find('select.category-to-row-'+i).val() == '')
+                            {
+                                error = 1;
+                            }
+                        }
+
+                    }
+                    if(error == 1)
+                    {
+                        $(document).find('input.category-name-'+id).blur();
+                        $(document).find('span.category-name-error').html('<strong>You must fill up the given fields one by one sequentially !!!</strong>');
+                    }else{
+                        $(document).find('input.category-name-'+id).focus();
+                        $(document).find('span.category-name-error').html('');
+                    }
+                });
+
+
+                $(document).on('change', 'select.category-from-row', function(){
+                    var id = $(this).data('id');
+                    for(var c = id; c <= $(document).find('input.category-name').length; c++)
+                    {
+                        $(document).find('select.category-to-row-'+c).val('');
+                        $(document).find('select.category-from-row-'+(c+1)).val('');
+                    }
+                    var error = 0;
+                    if($(document).find('input.category-name-'+id).val() == '')
+                    {
+                        error = 1;
+                    }
+                    if(id > 0)
+                    {
+                        for(var i = (id-1); i >= 0; i--)
+                        {
+                            if($(document).find('input.category-name-'+i).val() == '')
+                            {
+                                error = 1;
+                            }
+
+                            if($(document).find('select.category-from-row-'+i).val() == '')
+                            {
+                                error = 1;
+                            }
+
+                            if($(document).find('select.category-to-row-'+i).val() == '')
+                            {
+                                error = 1;
+                            }
+                        }
+                    }
+                    if(error == 1)
+                    {
+                        $(document).find('select.category-from-row-'+id).val('');
+                        $(document).find('span.category-name-error').html('<strong>You must fill up the given fields one by one sequentially !!!</strong>');
+                    }else{
+                        $(document).find('span.category-name-error').html('');
+                    }
+                });
+
+                $(document).on('change', 'select.category-to-row', function(){
+//            $(document).find('select.category-to-row').children('option').show();
+//            $(document).find('select.category-from-row').children('option').show();
+                    var id = $(this).data('id');
+                    for(var c = id; c <= $(document).find('input.category-name').length; c++)
+                    {
+                        $(document).find('select.category-to-row-'+(c+1)).val('');
+                        $(document).find('select.category-from-row-'+(c+1)).val('');
+                        $(document).find('select.category-to-row-'+(c+1)).children('option').show();
+                        $(document).find('select.category-from-row-'+(c+1)).children('option').show();
+                        for(var cc = id; cc >= 0; cc--)
+                        {
+                            var fromOption1 = $(document).find('select.category-from-row-'+cc+' option:selected').data('val');
+                            var toOption1 = $(document).find('select.category-to-row-'+cc+' option:selected').data('val');
+
+                            if(fromOption1 > toOption1)
+                            {
+                                for(var opCount = toOption1; opCount <= fromOption1; opCount++)
+                                {
+                                    $(document).find('select.category-to-row-'+(c+1)).children('.option'+opCount).hide();
+                                    $(document).find('select.category-from-row-'+(c+1)).children('.option'+opCount).hide();
+                                }
+                            }else{
+                                for(var opCount = fromOption1; opCount <= toOption1; opCount++)
+                                {
+                                    $(document).find('select.category-to-row-'+(c+1)).children('.option'+opCount).hide();
+                                    $(document).find('select.category-from-row-'+(c+1)).children('.option'+opCount).hide();
+                                }
+                            }
+                        }
+                    }
+                    var error = 0;
+
+                    if($(document).find('input.category-name-'+id).val() == '')
+                    {
+                        error = 1;
+                    }
+                    if($(document).find('select.category-from-row-'+id).val() == '')
+                    {
+                        error = 1;
+                    }
+                    if(id > 0)
+                    {
+                        for(var i = (id-1); i >= 0; i--)
+                        {
+                            if($(document).find('input.category-name-'+i).val() == '')
+                            {
+                                error = 1;
+                            }
+
+                            if($(document).find('select.category-from-row-'+i).val() == '')
+                            {
+                                error = 1;
+                            }
+
+                            if($(document).find('select.category-to-row-'+i).val() == '')
+                            {
+                                error = 1;
+                            }
+                        }
+                    }
+                    if(error == 1)
+                    {
+                        $(document).find('select.category-to-row-'+id).val('');
+                        $(document).find('span.category-name-error').html('<strong>You must fill up the given fields one by one sequentially !!!</strong>');
+                    }else{
+                        $(document).find('span.category-name-error').html('');
+                        var fromOption = $(document).find('select.category-from-row-'+id+' option:selected').data('val');
+                        var toOption = $(document).find('select.category-to-row-'+id+' option:selected').data('val');
+
+                        if(fromOption > toOption)
+                        {
+                            for(var opCount = toOption; opCount <= fromOption; opCount++)
+                            {
+                                for(var c = id; c <= $(document).find('input.category-name').length; c++)
+                                {
+                                    $(document).find('select.category-to-row-'+(c+1)).children('option.option'+opCount).hide();
+                                    $(document).find('select.category-from-row-'+(c+1)).children('option.option'+opCount).hide();
+                                }
+                            }
+                        }else{
+                            for(var opCount = fromOption; opCount <= toOption; opCount++)
+                            {
+                                for(var c = id; c <= $(document).find('input.category-name').length; c++)
+                                {
+                                    $(document).find('select.category-to-row-'+(c+1)).children('option.option'+opCount).hide();
+                                    $(document).find('select.category-from-row-'+(c+1)).children('option.option'+opCount).hide();
+                                }
+                            }
+                        }
+
+                    }
+                });
             </script>
 @stop

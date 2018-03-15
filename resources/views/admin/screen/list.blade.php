@@ -76,7 +76,7 @@
                                                     </a>
                                                     <a href="{{url('admin/seat-management/screens/'.$sc->slug.'/seat')}}" class="table-content-delete" data-toggle="tooltip"
                                                        data-placement="top" title="Seat">
-                                                        <i class="icon-delete2"></i>Seat
+                                                        <i class="icon-airline_seat_individual_suite"></i>Seat
                                                     </a>
                                                 </td>
                                             </tr>

@@ -301,21 +301,174 @@
             }
        }
 
-       $(document).on('focus', 'input.category-name', function(){
+       $(document).on('click', 'input.category-name', function(){
             var id = $(this).data('id');
+           var error = 0;
             if(id > 0)
             {
-                alert('true');
-                for(var i = id; i <= 0; i++)
+                for(var i = (id-1); i >= 0; i--)
                 {
-                    alert(i);
                     if($(document).find('input.category-name-'+i).val() == '')
                     {
-                        $(document).find('input.category-name-'+id).blur();
-                        $(document).find('span.category-name-error').html('<strong>You must fill up the given fields one by one sequentially !!!</strong>');
+                        error = 1;
+                    }
+
+                    if($(document).find('select.category-from-row-'+i).val() == '')
+                    {
+                        error = 1;
+                    }
+
+                    if($(document).find('select.category-to-row-'+i).val() == '')
+                    {
+                        error = 1;
+                    }
+                }
+
+            }
+           if(error == 1)
+           {
+               $(document).find('input.category-name-'+id).blur();
+               $(document).find('span.category-name-error').html('<strong>You must fill up the given fields one by one sequentially !!!</strong>');
+           }else{
+               $(document).find('input.category-name-'+id).focus();
+               $(document).find('span.category-name-error').html('');
+           }
+       });
+
+
+        $(document).on('change', 'select.category-from-row', function(){
+            var id = $(this).data('id');
+            for(var c = id; c <= $(document).find('input.category-name').length; c++)
+            {
+                $(document).find('select.category-to-row-'+c).val('');
+                $(document).find('select.category-from-row-'+(c+1)).val('');
+            }
+            var error = 0;
+            if($(document).find('input.category-name-'+id).val() == '')
+            {
+                error = 1;
+            }
+            if(id > 0)
+            {
+                for(var i = (id-1); i >= 0; i--)
+                {
+                    if($(document).find('input.category-name-'+i).val() == '')
+                    {
+                        error = 1;
+                    }
+
+                    if($(document).find('select.category-from-row-'+i).val() == '')
+                    {
+                        error = 1;
+                    }
+
+                    if($(document).find('select.category-to-row-'+i).val() == '')
+                    {
+                        error = 1;
                     }
                 }
             }
-       });
+            if(error == 1)
+            {
+                $(document).find('select.category-from-row-'+id).val('');
+                $(document).find('span.category-name-error').html('<strong>You must fill up the given fields one by one sequentially !!!</strong>');
+            }else{
+                $(document).find('span.category-name-error').html('');
+            }
+        });
+
+        $(document).on('change', 'select.category-to-row', function(){
+//            $(document).find('select.category-to-row').children('option').show();
+//            $(document).find('select.category-from-row').children('option').show();
+            var id = $(this).data('id');
+            for(var c = id; c <= $(document).find('input.category-name').length; c++)
+            {
+                $(document).find('select.category-to-row-'+(c+1)).val('');
+                $(document).find('select.category-from-row-'+(c+1)).val('');
+                $(document).find('select.category-to-row-'+(c+1)).children('option').show();
+                $(document).find('select.category-from-row-'+(c+1)).children('option').show();
+                for(var cc = id; cc >= 0; cc--)
+                {
+                    var fromOption1 = $(document).find('select.category-from-row-'+cc+' option:selected').data('val');
+                    var toOption1 = $(document).find('select.category-to-row-'+cc+' option:selected').data('val');
+
+                    if(fromOption1 > toOption1)
+                    {
+                        for(var opCount = toOption1; opCount <= fromOption1; opCount++)
+                        {
+                            $(document).find('select.category-to-row-'+(c+1)).children('.option'+opCount).hide();
+                            $(document).find('select.category-from-row-'+(c+1)).children('.option'+opCount).hide();
+                        }
+                    }else{
+                        for(var opCount = fromOption1; opCount <= toOption1; opCount++)
+                        {
+                            $(document).find('select.category-to-row-'+(c+1)).children('.option'+opCount).hide();
+                            $(document).find('select.category-from-row-'+(c+1)).children('.option'+opCount).hide();
+                        }
+                    }
+                }
+            }
+            var error = 0;
+
+            if($(document).find('input.category-name-'+id).val() == '')
+            {
+                error = 1;
+            }
+            if($(document).find('select.category-from-row-'+id).val() == '')
+            {
+                error = 1;
+            }
+            if(id > 0)
+            {
+                for(var i = (id-1); i >= 0; i--)
+                {
+                    if($(document).find('input.category-name-'+i).val() == '')
+                    {
+                        error = 1;
+                    }
+
+                    if($(document).find('select.category-from-row-'+i).val() == '')
+                    {
+                        error = 1;
+                    }
+
+                    if($(document).find('select.category-to-row-'+i).val() == '')
+                    {
+                        error = 1;
+                    }
+                }
+            }
+            if(error == 1)
+            {
+                $(document).find('select.category-to-row-'+id).val('');
+                $(document).find('span.category-name-error').html('<strong>You must fill up the given fields one by one sequentially !!!</strong>');
+            }else{
+                $(document).find('span.category-name-error').html('');
+                var fromOption = $(document).find('select.category-from-row-'+id+' option:selected').data('val');
+                var toOption = $(document).find('select.category-to-row-'+id+' option:selected').data('val');
+
+                if(fromOption > toOption)
+                {
+                    for(var opCount = toOption; opCount <= fromOption; opCount++)
+                    {
+                        for(var c = id; c <= $(document).find('input.category-name').length; c++)
+                        {
+                            $(document).find('select.category-to-row-'+(c+1)).children('option.option'+opCount).hide();
+                            $(document).find('select.category-from-row-'+(c+1)).children('option.option'+opCount).hide();
+                        }
+                    }
+                }else{
+                    for(var opCount = fromOption; opCount <= toOption; opCount++)
+                    {
+                        for(var c = id; c <= $(document).find('input.category-name').length; c++)
+                        {
+                            $(document).find('select.category-to-row-'+(c+1)).children('option.option'+opCount).hide();
+                            $(document).find('select.category-from-row-'+(c+1)).children('option.option'+opCount).hide();
+                        }
+                    }
+                }
+
+            }
+        });
     </script>
 @stop

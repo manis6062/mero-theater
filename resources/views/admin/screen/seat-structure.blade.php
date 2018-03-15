@@ -266,37 +266,19 @@
         if(emp == 0)
         {
             var count = $(document).find('select#seat-categories').val();
-            var firstCategoryNameVal = $(document).find('input.category-name-1').val();
-            var firstFromRowVal = $(document).find('select.category-from-row-1').val();
-            var firstToRowVal = $(document).find('select.category-to-row-1').val();
-            for(var a = 2; a <= count; a++)
+
+            for(var a = 0; a < count; a++)
             {
-                var otherCategoryNameVal = $(document).find('input.category-name-'+a).val();
-                var otherFromRowVal = $(document).find('select.category-from-row-'+a).val();
-                var otherToRowVal = $(document).find('select.category-to-row-'+a).val();
-                if(firstCategoryNameVal == otherCategoryNameVal)
-                {
-                    chk = 1;
-                }
+                var firstCategoryNameVal = $(document).find('input.category-name-'+a).val();
 
-                if(firstFromRowVal == otherFromRowVal)
+                for(var b = (a+1); b < count; b++)
                 {
-                    chk = 1;
-                }
+                    var otherCategoryNameVal = $(document).find('input.category-name-'+b).val();
 
-                if(firstFromRowVal == otherToRowVal)
-                {
-                    chk = 1;
-                }
-
-                if(firstToRowVal == otherFromRowVal)
-                {
-                    chk = 1;
-                }
-
-                if(firstToRowVal == otherToRowVal)
-                {
-                    chk = 1;
+                    if(firstCategoryNameVal == otherCategoryNameVal)
+                    {
+                        chk = 1;
+                    }
                 }
             }
 
@@ -304,6 +286,42 @@
             {
                 e.preventDefault();
                 $(document).find('.category-name-error').html('<strong>Errorous Values Found !</strong>');
+            }
+
+            if(chk == 0)
+            {
+                var num = 0;
+                var numOfCategs = $(document).find('input.category-name').length;
+
+                var rowArray = [];
+                for(var j = 0; j < numOfCategs; j++)
+                {
+                    var fromRowNum = $(document).find('select.category-from-row-'+j+' option:selected').data('val');
+                    var toRowNum = $(document).find('select.category-to-row-'+j+' option:selected').data('val');
+
+                    if(fromRowNum > toRowNum)
+                    {
+                        for(var k = toRowNum; k <= fromRowNum; k++)
+                        {
+                            rowArray.push(k);
+                        }
+                    }else{
+                        for(var k = fromRowNum; k <= toRowNum; k++)
+                        {
+                            rowArray.push(k);
+                        }
+                    }
+                }
+                var result = [];
+                $.each(rowArray, function(i, e) {
+                    if ($.inArray(e, result) == -1) result.push(e);
+                });
+                var rowLength = $(document).find('select.category-from-row-0').children('option').length;
+                if((rowLength-1) != result.length)
+                {
+                    e.preventDefault();
+                    $(document).find('.category-name-error').html('<strong>Error ! You cannot leave any row without any category !</strong>');
+                }
             }
         }
     });
@@ -339,7 +357,7 @@
                 html += '<option value="">-- Select From Row --</option>';
                 for(var k = 0; k < alphabets.length; k++)
                 {
-                    html += '<option value="'+alphabets[k]+'">'+alphabets[k]+'</option>';
+                    html += '<option class="option'+k+'" data-val="'+k+'" value="'+alphabets[k]+'">'+alphabets[k]+'</option>';
                 }
                 html += '</select>';
                 html += '</td>';
@@ -348,7 +366,7 @@
                 html += '<option value="">-- Select To Row --</option>';
                 for(var k = 0; k < alphabets.length; k++)
                 {
-                    html += '<option value="'+alphabets[k]+'">'+alphabets[k]+'</option>';
+                    html += '<option class="option'+k+'" data-val="'+k+'" value="'+alphabets[k]+'">'+alphabets[k]+'</option>';
                 }
                 html += '</select>';
                 html += '</td>';
