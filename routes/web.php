@@ -193,6 +193,7 @@ Route::group(['prefix'=>'admin','middleware'=> 'admin'], function(){
     Route::group(['prefix'=>'programming', 'namespace' => 'Admin'], function() {
         Route::get('/', 'ProgrammingController@index');
         Route::get('add-show', 'ProgrammingController@addShow');
+        Route::get('add-show/get-pricecard', 'ProgrammingController@getPriceCards');
     });
     //    Route for box office PCM
 });

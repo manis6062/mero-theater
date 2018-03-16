@@ -43,7 +43,7 @@
             <ul class="unifyMenu" id="unifyMenu">
 
                 <li>
-                    <a href="#">
+                    <a href="{{url('admin/dashboard')}}">
 								<span class="has-icon">
 									<i class="icon-dashboard"></i>
 								</span>
@@ -107,6 +107,16 @@
 									<i class="icon-airline_seat_individual_suite"></i>
 								</span>
                         <span class="nav-title">Seat Management</span>
+                    </a>
+                </li>
+
+                {{--side bar for programming--}}
+                <li>
+                    <a href="{{ url('admin/programming') }}">
+                        <span class="has-icon">
+									<i class="icon-airline_seat_individual_suite"></i>
+								</span>
+                        <span class="nav-title">Programming</span>
                     </a>
                 </li>
 
@@ -383,7 +393,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="{{url('admin/logout')}}">
 								<span class="has-icon">
 									<i class="icon-power_settings_new"></i>
 								</span>

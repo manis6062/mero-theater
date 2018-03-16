@@ -3939,7 +3939,7 @@ label {
   }
 
   .loading-wrapper .img{
-    background: url("img/mero-theatre-logo.png") no-repeat;
+    background: url("../img/mero-theatre-logo.png") no-repeat;
     background-size:  auto 100%;
   }
   #select-screen{
@@ -3972,7 +3972,7 @@ select.custom-select option:hover {
   width: 100%;
   margin:0 auto;
 }
-.artist-form button{
+.artist-form button, .campaign-form button{
   cursor: pointer;
 }
 .artist-form label, .campaign-form label{
@@ -4001,6 +4001,13 @@ select.custom-select option:hover {
   margin-left: 5px;
   font-weight: normal;
 }
+.save-template{
+  margin-bottom: 15px;
+}
+.save-template i.icon-notifications_none{
+  color:#da1113;
+  margin-left: 10px;
+}
 .artist-form input[type="checkbox"]{
   margin-left:1px;
 }
@@ -4011,6 +4018,111 @@ select.custom-select option:hover {
 .custom-file-control::before {
     color: #ffffff;
     background-color: #da1113;
+}
+
+.campaign-sidebar .card-header{
+  font-size:16px;
+  text-transform: capitalize;
+  font-weight: 600;
+  padding: .75rem 0;
+}
+.campaign-sidebar .card-header a{
+  float: right;
+}
+.campaign-sidebar .input-group-prepend{
+  background-color:#da1113;
+  color:#ffffff; 
+  padding:5px 10px;
+  line-height: 2.1;
+}
+.campaign-sidebar-info form label{
+  margin-bottom: 10px;
+  font-size:16px;
+  text-transform: capitalize;
+}
+.campaign-sidebar .sidebar-widget{
+  margin-bottom:30px;
+}
+.campaign-sidebar form .form-check .form-check-label{
+  line-height: 1;
+  margin-left: 5px;
+}
+form .account-form{
+  margin-bottom: 30px;
+}
+.card .account-form .card-header.artist-header {
+    padding: .75rem 0;
+    margin-bottom: 30px;
+}
+.account-brand-logo{
+  max-width:120px;
+  height: auto;
+  margin:0 auto;
+}
+.account-brand-logo img{
+  max-width: 100%;
+  height: auto;
+}
+.setting-wrapper .card-header h4{
+  text-transform: uppercase;
+  font-size: 18px;
+  color:#da1113;
+  font-weight: 600;
+}
+.setting-wrapper .card-header{
+  padding: .75rem 0;
+}
+.setting-list{
+  padding-top:20px;
+  min-height: 230px;
+}
+.setting-list li a{
+  padding:5px 0;
+  display: block;
+  text-transform: capitalize;
+}
+.setting-list li a:hover{
+  color:#da1113;
+}
+.setting-list li i{
+  float: left;
+  margin-right:8px;
+  margin-top: 5px;
+  color:#da1113;
+}
+
+.active-list{
+  padding:30px 0;
+  border-bottom:1px dashed #cccccc;
+}
+.active-list h4{
+  font-size:17px;
+  text-transform: capitalize;
+  margin-bottom:20px;
+  font-weight: 600;
+}
+.tab-pane .active-list:first-child{
+  padding-top:15px;
+}
+.tab-pane .active-list:last-child{
+  border-bottom: none;
+}
+
+.pos-setup ul li{
+  list-style-type:decimal;
+  margin-bottom:7px;
+}
+.pos-setup ul li li{
+  list-style-type:disc;
+}
+.pos-setup ul{
+  padding-left:15px;
+}
+.pos-setup ul h5{
+  margin:10px 0;
+}
+.pos-setup{
+  margin-top:30px;
 }
 table.common-table thead th{
   color: #ffffff;
@@ -4047,7 +4159,7 @@ text-transform: capitalize;
   font-weight: 500;
   color:#da1113;
   margin-top: 25px;
-display: block;
+  display: block;
 }
 .common-table input[type="checkbox"]{
   margin-left: 5px;
@@ -4083,6 +4195,10 @@ table.dataTable.common-table thead .sorting_desc_disabled::before, table.dataTab
   -webkit-border-radius:50%;
   -ms-border-radius:50%;
   -moz-border-radius:50%;
+}
+.table-brand-icon img{
+  max-width: 100%;
+  height: auto;
 }
 a.table-content-edit{
   margin-right: 10px;
@@ -4134,20 +4250,12 @@ a.table-content-delete i{
   }
 }
 @media screen and (max-width:991px){
-  .pie-sec .col-md-4, .screen-sec .col-md-3{
+  .pie-sec .col-md-4, .screen-sec .col-md-3, .setting-page .col-md-3{
     max-width: 50%;
     float: left;
     flex: 0 0 50%;
   }
-  /*.app-main{
-    margin-left: 0 !important;
-  }*/
 }
-/*@media screen and (max-width: 1024px){
-  .app-main{
-    margin-left:auto !important;
-  }
-}*/
 @media screen and (max-width:768px){
   .pie-sec .col-md-4{
     max-width: 100%;
@@ -4156,7 +4264,7 @@ a.table-content-delete i{
   }
 }
 @media screen and (max-width:480px){
-  .screen-sec .col-md-3{
+  .screen-sec .col-md-3, .setting-page .col-md-3{
     max-width: 100%;
     float: none;
     flex: 0 0 100%;

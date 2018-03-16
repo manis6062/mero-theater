@@ -17,7 +17,7 @@
                     </div>
                     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4">
                         <div class="right-actions">
-                            <span class="last-login">Last Login: 2 hours ago</span>
+                           @include('admin.last-login-time')
                         </div>
                     </div>
                 </div>

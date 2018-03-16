@@ -38,3 +38,5 @@
 
 {{--alertify--}}
 <script src="{{asset('admins/plugins/alertify/alertify.min.js')}}"></script>
+
+<script src="{{asset('admins/plugins/datepicker/bootstrap-datepicker.js')}}"></script>
