@@ -187,7 +187,7 @@
                     </a>
                     <ul aria-expanded="false" class="collapse">
                         <li>
-                            <a href="overview.html">
+                            <a href="{{url('admin/box-office/smsCampaigns/overView')}}">
 										<span class="has-icon">
 											<i class="icon-eye-plus"></i>
 										</span>

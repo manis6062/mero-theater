@@ -28,6 +28,14 @@ Route::group(['prefix'=>'admin','middleware'=> 'admin'], function(){
 
 	Route::get('logout', 'Admin\LoginController@logout');
 
+
+    // Route for Sms Campaign
+    Route::group(['prefix'=>'box-office/smsCampaigns'], function(){
+
+        Route::get('/overView', 'Admin\smsCampaign\OverViewController@index');
+    });
+    // Route for Sms Campaign end
+
 	// Route for movies
 	Route::group(['prefix'=>'box-office/movies'], function(){
 	   Route::get('/', 'Admin\MovieController@movieslist');
