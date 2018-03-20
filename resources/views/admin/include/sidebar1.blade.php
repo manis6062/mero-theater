@@ -60,7 +60,7 @@
                     </a>
                     <ul aria-expanded="false" class="collapse">
                         <li>
-                            <a href="manage-artist.html">
+                            <a href="{{url('admin/box-office/artist')}}">
 										<span class="has-icon">
 											<i class="icon-accessibility"></i>
 										</span>
@@ -68,7 +68,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="manage-film.html">
+                            <a href="{{url('admin/box-office/movies')}}">
 										<span class="has-icon">
 											<i class="icon-film2"></i>
 										</span>

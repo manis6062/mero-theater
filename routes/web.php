@@ -44,7 +44,7 @@ Route::group(['prefix'=>'admin','middleware'=> 'admin'], function(){
 	   Route::get('{movieid}/edit','Admin\MovieController@editmovie');
        Route::get('{movieid}/view','Admin\MovieController@viewmovie');
 	   Route::post('update/{movieid}','Admin\MovieController@update');
-	   Route::get('delete/{movieid}','Admin\MovieController@deletemovie');
+       Route::get('/delete', 'Admin\MovieController@delete');
        Route::get('addmovieartists','Admin\MovieController@addartistformovie');
 	});
     // Route for movies end
@@ -57,7 +57,8 @@ Route::group(['prefix'=>'admin','middleware'=> 'admin'], function(){
        Route::get('{artistsid}/edit','Admin\ArtistsController@editartist');
        Route::get('{artistsid}/view','Admin\ArtistsController@viewartist');
        Route::post('update/{artistsid}','Admin\ArtistsController@update');
-       Route::get('delete/{artistsid}','Admin\ArtistsController@deleteartist');
+       Route::get('/delete', 'Admin\ArtistsController@delete');
+
     });
     // Route for artists end
 

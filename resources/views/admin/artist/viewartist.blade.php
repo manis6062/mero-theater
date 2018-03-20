@@ -1,28 +1,40 @@
-
-
-@extends('admin.layout.master')
+@extends('admin.layout.master1')
 
 @section('main-body')
-    <!-- Content Header (Page header) -->
-    <section class="content-header">
-        <h1>
-            Dashboard
-            <small>Artist Profile</small>
-        </h1>
-        <ol class="breadcrumb">
-            <li><a href="{{url('admin/dashboard')}}"><i class="fa fa-dashboard"></i> Home</a></li>
-            <li><a href="{{url('admin/box-office/artist')}}"><i class="fa fa-meh-o"></i> Artists</a></li>
-            <li class="active">Profile</li>
-        </ol>
-    </section>
+    <!-- BEGIN .app-main -->
+    <div class="app-main">
+        <!-- BEGIN .main-heading -->
+        <header class="main-heading">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8">
+                        <div class="page-icon">
+                            <i class="icon-border_outer"></i>
+                        </div>
+                        <div class="page-title">
+                            <h5>View Artist</h5>
+                            <h6 class="sub-heading">Welcome to Merotheatre Admin</h6>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4">
+                        <div class="right-actions">
+                            @include('admin.last-login-time')
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- END: .main-heading -->
+        <!-- BEGIN .main-content -->
+        <div class="main-content">
 
-    <!-- Main content -->
-    <section class="content">
-        <!-- Small boxes (Stat box) -->
-        <div class="row">
-            <hr>
-
-            <div class="artist-profile-div">
+            <!-- Row start -->
+            <div class="row gutters">
+                <div class=" col-md-12 col-sm-12">
+                    <div class="card">
+                        <div class="card-header artist-header"><a href="{{url('admin/box-office/artist/create')}}"> View Artist</a></div>
+                        <div class="card-body">
+                       <div class="artist-profile-div">
                 <h1 class="text-center">{{$viewdata->artists_name}}</h1>
 
 
@@ -68,7 +80,15 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Row end -->
 
+        </div>
+        <!-- END: .main-content -->
+    </div>
+    <!-- END: .app-main -->
 @stop
+

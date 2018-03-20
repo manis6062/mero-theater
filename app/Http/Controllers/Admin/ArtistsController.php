@@ -116,10 +116,15 @@ class ArtistsController extends Controller
       return redirect('admin/box-office/artist?status=error-updating');
     }
 
-    public function deleteartist($artistid)
+      public function delete(Request $request)
     {
-       $deleted = $this->artist->deletedata($artistid);
-       if($deleted)
-        return redirect('admin/box-office/artist?status=successfully-deleted');
+       $deleted = $this->artist->deletedata($request->artistId);
+       if($deleted){
+         return 'true';
+       }
+    else{
+          return 'false';
     }
+}
+
 }

@@ -214,12 +214,17 @@ class MovieController extends Controller
         return redirect('admin/box-office/movies?status=successfully-updated');
     }
 
-    public function deletemovie($movieid)
+
+         public function delete(Request $request)
     {
-       $deleted = $this->movie->deletedata($movieid);
-       if($deleted)
-        return redirect('admin/box-office/movies?status=successfully-deleted');
+       $deleted = $this->movie->deletedata($request->movieId);
+       if($deleted){
+         return 'true';
+       }
+    else{
+          return 'false';
     }
+}
 
     public function addartistformovie()
     {
