@@ -200,6 +200,7 @@ Route::group(['prefix'=>'admin','middleware'=> 'admin'], function(){
     //    Route for box office PCM
     Route::group(['prefix'=>'programming', 'namespace' => 'Admin'], function() {
         Route::get('/', 'ProgrammingController@index');
+        Route::post('submit', 'ProgrammingController@submit');
         Route::get('add-show', 'ProgrammingController@addShow');
         Route::get('add-show/get-pricecard', 'ProgrammingController@getPriceCards');
     });

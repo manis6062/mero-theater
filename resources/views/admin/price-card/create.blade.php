@@ -306,7 +306,7 @@
                                                             @foreach($ticketTypes as $ts)
                                                                 <tr>
                                                                     <td><input onclick="removeError('ticket-type');"
-                                                                               type="checkbox" name=""
+                                                                               type="radio" name=""
                                                                                class="tic-type-ids"
                                                                                data-ticketid="{{$ts->id}}"></td>
                                                                     <td>{{$ts->label}}</td>
@@ -425,9 +425,6 @@ $('span.pease-wait').show();
                             for (var i = 0; i < data.length; i++) {
                                 html += '<span class="category-span" data-name="' + data[i] + '">' + data[i] + '</span>';
                             }
-                            if (data.length > 1) {
-                                html += '<span class="category-span-all" data-name="all">All</span>';
-                            }
                             html += '</div>';
                             html += '<span class="seat-category-error error help-block"></span>';
                             html += '</div>';
@@ -478,9 +475,6 @@ $('span.pease-wait').show();
                                     for (var i = 0; i < data.length; i++) {
                                         html += '<span class="category-span" data-name="' + data[i] + '">' + data[i] + '</span>';
                                     }
-                                    if (data.length > 1) {
-                                        html += '<span class="category-span-all" data-name="all">All</span>';
-                                    }
 
                                     html += '</div>';
                                     html += '<span class="seat-category-error error help-block"></span>';
@@ -530,9 +524,6 @@ $('span.pease-wait').show();
                                 html += '<div class="category-div">';
                                 for (var i = 0; i < data.length; i++) {
                                     html += '<span class="category-span" data-name="' + data[i] + '">' + data[i] + '</span>';
-                                }
-                                if (data.length > 1) {
-                                    html += '<span class="category-span-all" data-name="all">All</span>';
                                 }
                                 html += '</div>';
                                 html += '<span class="seat-category-error error help-block"></span>';
@@ -727,6 +718,18 @@ $('span.pease-wait').show();
 
 
         $(document).find('input.tic-type-ids').on('click', function () {
+            $(document).find('input.tic_types_radio_id').each(function(){
+               $(this).remove();
+            });
+            $(document).find('input.tic_types_radio_sequence').each(function(){
+                $(this).remove();
+            });
+            $(document).find('input.tic_types_radio_price').each(function(){
+                $(this).remove();
+            });
+            $(document).find('input.tic-type-ids').not(this).each(function(){
+                $(this).prop('checked', false);
+            });
             var ticTypeId = $(this).data('ticketid');
             var ticTypeSequence = $('input.sequence-' + ticTypeId).val();
             var ticTypePrice = $('input.price-' + ticTypeId).val();
@@ -735,9 +738,9 @@ $('span.pease-wait').show();
                 $('.ticket-type-error').html('<strong>Please fill all the fields.</strong>');
             } else {
                 if ($(this).is(':checked')) {
-                    $(document).find('form').append('<input type="hidden" name="ticket_types_id[]" class="tic_types_id_' + ticTypeId + '" value="' + ticTypeId + '">');
-                    $(document).find('form').append('<input type="hidden" name="ticket_types_sequence[]" class="tic_types_sequence_' + ticTypeId + '" value="' + ticTypeSequence + '">');
-                    $(document).find('form').append('<input type="hidden" name="ticket_types_price[]" class="tic_types_price_' + ticTypeId + '" value="' + ticTypePrice + '">');
+                    $(document).find('form').append('<input type="hidden" name="ticket_types_id" class="tic_types_radio_id tic_types_id_' + ticTypeId + '" value="' + ticTypeId + '">');
+                    $(document).find('form').append('<input type="hidden" name="ticket_types_sequence" class="tic_types_radio_sequence tic_types_sequence_' + ticTypeId + '" value="' + ticTypeSequence + '">');
+                    $(document).find('form').append('<input type="hidden" name="ticket_types_price" class="tic_types_radio_price tic_types_price_' + ticTypeId + '" value="' + ticTypePrice + '">');
                 } else {
                     $(document).find('input.tic_types_id_' + ticTypeId).remove();
                     $(document).find('input.tic_types_sequence_' + ticTypeId).remove();
@@ -838,15 +841,20 @@ $('span.pease-wait').show();
 
         $(document).on('click', 'span.category-span', function () {
             $(document).find('span.seat-category-error').html('');
-            $(document).find('span.category-span-all').removeClass('category-selected');
             if ($(this).hasClass('category-selected')) {
                 $(this).removeClass('category-selected');
                 var name = $(this).data('name');
                 $(document).find('input.seat-category-' + name.replace(/\s/g, '')).remove();
             } else {
+                $(document).find('input.seat-category').each(function(){
+                   $(this).remove();
+                });
+                $(document).find('span.category-span').each(function(){
+                   $(this).removeClass('category-selected');
+                });
                 $(this).addClass('category-selected');
                 var name = $(this).data('name');
-                $(document).find('form').append('<input type="hidden" name="seat_categories[]" class="seat-category seat-category-' + name.replace(/\s/g, '') + '" value="' + name + '">');
+                $(document).find('form').append('<input type="hidden" name="seat_categories" class="seat-category seat-category-' + name.replace(/\s/g, '') + '" value="' + name + '">');
             }
         });
 
@@ -857,7 +865,7 @@ $('span.pease-wait').show();
             $(document).find('span.category-span').addClass('category-selected');
             $(document).find('span.category-span').each(function () {
                 var name = $(this).data('name');
-                $(document).find('form').append('<input type="hidden" name="seat_categories[]" class="seat-category seat-category-' + name.replace(/\s/g, '') + '" value="' + name + '">');
+                $(document).find('form').append('<input type="hidden" name="seat_categories" class="seat-category seat-category-' + name.replace(/\s/g, '') + '" value="' + name + '">');
             });
         });
     </script>
