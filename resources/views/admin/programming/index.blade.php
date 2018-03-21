@@ -12,7 +12,7 @@
 
         .timepicker {
             position: relative;
-            height: 26px;
+            height: auto;
         }
 
         .timepicker.increment-allowed .prev {
@@ -89,10 +89,14 @@
             display: flex;
             -webkit-flex-wrap: wrap;
             flex-wrap: wrap;
+            max-width: calc(100% - 72px);
+            overflow-x: auto;
+            flex-flow: row;
+            overflow-y: hidden;
         }
 
         .stDiv {
-
+            flex: 1;
             position: relative;
         }
 
@@ -240,6 +244,19 @@
                             <a href="javascript:void(0)" class="add-new-show"> Add New Show</a>
                         </div>
                         <div class="card-body">
+                            @if(\Illuminate\Support\Facades\Session::has('message') && \Illuminate\Support\Facades\Session::get('message') == 'success')
+                                <div class="alert alert-success">
+                                    <i class="fa fa-times pull-right closeMessage"></i>
+                                    <p class="text-center">New shows scheduled successfully.</p>
+                                </div>
+                            @endif
+
+                            @if(\Illuminate\Support\Facades\Session::has('message') && \Illuminate\Support\Facades\Session::get('unmessage') == 'success')
+                                <div class="alert alert-danger">
+                                    <i class="fa fa-times pull-right closeMessage"></i>
+                                    <p class="text-center">Oops ! something went wrong. No schedules has been saved.</p>
+                                </div>
+                            @endif
                             <div class="calendar-head">
                                 <div class="input-group date pickDate">
                                     <input onkeydown="return false;" type="text" class="form-control datepicker"
@@ -258,7 +275,8 @@
                                 </div>
                                 <div class="artist-form">
                                     <div class="clearfix"></div>
-                                    <form action="{{url('admin/programming/submit')}}" class="form-horizontal" method="post">
+                                    <form action="{{url('admin/programming/submit')}}" class="form-horizontal"
+                                          method="post">
                                         {{csrf_field()}}
                                         <div class="form-group row">
                                             <label class="col-lg-3 col-form-label form-control-label">Film
@@ -269,7 +287,8 @@
                                                     <option value="">-- Choose Film --</option>
                                                     @if(isset($films) && $films->count() > 0)
                                                         @foreach($films as $film)
-                                                            <option value="{{$film->id}}">{{$film->movie_title}}</option>
+                                                            <option data-duration="{{$film->duration}}"
+                                                                    value="{{$film->id}}">{{$film->movie_title}}</option>
                                                         @endforeach
                                                     @endif
                                                 </select>
@@ -300,7 +319,7 @@
                                                         <label class="container-label checkbox-inline">
                                                             <input type="checkbox" value="all"
                                                                    class="screenIdCheckbox select-screen-id"
-                                                                   name="screen_id[]"
+                                                                   name=""
                                                                    onclick="removeError('screen-id');">
                                                             <span class="checkmark">All</span>
                                                         </label>
@@ -387,6 +406,17 @@
                                             </div>
                                         </div>
 
+                                        <div class="form-group row">
+                                            <label class="col-lg-3 col-form-label form-control-label">Clean Up Time (In
+                                                Minute)
+                                                <span class="req">*</span></label>
+                                            <div class="col-lg-9">
+                                                <input type="text" name="clean_up_time" class="form-control"
+                                                       style="width: 25%;" onfocus="removeError('clean-up')">
+                                                <span class="clean-up-error error help-block"></span>
+                                            </div>
+                                        </div>
+
 
                                         <div class="form-group row">
                                             <label class="col-lg-3 col-form-label form-control-label">Show Times
@@ -398,7 +428,7 @@
                                                         <div class="stDiv">
                                                             <input class="show-time-input" name="show_time[]"
                                                                    type="time" id="time">
-                                                            <i class="fa fa-times closeInput1"
+                                                            <i class="fa fa-times closeInput"
                                                                style="margin-right: 5px;"></i>
                                                         </div>
                                                     </div>
@@ -433,18 +463,6 @@
                                                     <span class="checkmark">KIOSK</span>
                                                 </label>
                                                 <span class="sales-via-error error help-block"></span>
-                                            </div>
-                                        </div>
-
-
-                                        <div class="form-group row">
-                                            <label class="col-lg-3 col-form-label form-control-label">Clean Up Time (In
-                                                Minute)
-                                                <span class="req">*</span></label>
-                                            <div class="col-lg-9">
-                                                <input type="text" name="clean_up_time" class="form-control"
-                                                       style="width: 25%;" onfocus="removeError('clean-up')">
-                                                <span class="clean-up-error error help-block"></span>
                                             </div>
                                         </div>
 
@@ -555,6 +573,10 @@
     <script src="{{asset('admins/plugins/vis/vis.min.js')}}"></script>
     {{--form script--}}
     <script>
+        $(document).find('.closeMessage').on('click', function () {
+            $(this).parent('div').remove();
+        });
+
         $('div.price-card-div').hide();
         $('div.no-price-card-div').hide();
 
@@ -569,26 +591,58 @@
             });
 
             if (empty == 0) {
-                if ($('#film').val() != '') {
-                    var lastInputVal = $(document).find('input.show-time-input:last').val();
-                    var lastInputValArr = lastInputVal.split(':');
-                    var minute = (parseInt(lastInputValArr[1]) + parseInt(00));
-                    var newMinute = minute % 60;
-                    var newHour = ((parseInt(parseInt(lastInputValArr[0]) + parseInt(3))) + (parseInt(Math.floor(minute / 60))));
-                    if (newHour.toString().length == 1) {
-                        newHour = 0 + newHour.toString();
-                    }
-                    if (newMinute.toString().length == 1) {
-                        newMinute = 0 + newMinute.toString();
-                    }
-                    var newTime = newHour + ':' + newMinute;
+                var times = [];
+                $(document).find('input.show-time-input').each(function () {
+                    times.push($(this).val());
+                });
 
-                    if (newHour <= 24) {
-                        showTimeId++;
-                        $('div.show-time-input-div').append('<div class="stDiv stDivAppended"><input name="show_time[]" class="show-time-input" id="time' + showTimeId + '" type="time" value="' + newTime + '"><i class="fa fa-times closeInput" style="margin-right: 5px;"></i></div>');
+
+                times.sort(function (a, b) {
+                    return new Date('1970/01/01 ' + a) - new Date('1970/01/01 ' + b);
+                });
+
+                console.log(times);
+
+                var html = '';
+                for (var i = 0; i < times.length; i++) {
+                    html += '<div class="stDiv stDivAppended"><input name="show_time[]" class="show-time-input" id="time' + parseInt(i + 1) + '" value="' + times[i] + '" type="time"><i class="fa fa-times closeInput" style="margin-right: 5px;"></i></div>';
+                }
+                console.log(html);
+//
+                if (html != '') {
+                    $(document).find('div.show-time-input-div').html(html);
+                }
+                if ($('#film').val() != '') {
+                    if ($(document).find('input[name=clean_up_time]').val() != '') {
+                        var lastInputVal = $(document).find('input.show-time-input:last').val();
+                        var lastInputValArr = lastInputVal.split(':');
+                        var movieDuration = $(document).find('#film option:selected').data('duration');
+                        var totalDuration = parseInt(movieDuration + parseInt($('input[name=clean_up_time]').val()));
+                        var minutesToAdd = totalDuration % 60;
+                        var hoursToAdd = Math.floor(totalDuration / 60);
+                        var minute = (parseInt(lastInputValArr[1]) + parseInt(minutesToAdd));
+                        var newMinute = minute % 60;
+                        var newHour = ((parseInt(parseInt(lastInputValArr[0]) + parseInt(hoursToAdd))) + (parseInt(Math.floor(minute / 60))));
+                        if (newHour.toString().length == 1) {
+                            newHour = 0 + newHour.toString();
+                        }
+                        if (newMinute.toString().length == 1) {
+                            newMinute = 0 + newMinute.toString();
+                        }
+                        var newTime = newHour + ':' + newMinute;
+
+                        if (newHour <= 24) {
+                            showTimeId++;
+                            $('div.show-time-input-div').append('<div class="stDiv stDivAppended"><input name="show_time[]" class="show-time-input" id="time' + showTimeId + '" type="time" value="' + newTime + '"><i class="fa fa-times closeInput" style="margin-right: 5px;"></i></div>');
+                        }
+                    } else {
+                        $(document).find('span.show-time-error').html('<strong>First enter film and clean up time !</strong>');
                     }
+                } else {
+                    $(document).find('span.show-time-error').html('<strong>First enter film and clean up time !</strong>');
                 }
             }
+
         });
 
         $('.prev').on('click', function () {
@@ -600,31 +654,77 @@
             });
 
             if (empty == 0) {
+                var times = [];
+                $(document).find('input.show-time-input').each(function () {
+                    times.push($(this).val());
+                });
+
+
+                times.sort(function (a, b) {
+                    return new Date('1970/01/01 ' + a) - new Date('1970/01/01 ' + b);
+                });
+
+                console.log(times);
+
+                var html = '';
+                for (var i = 0; i < times.length; i++) {
+                    html += '<div class="stDiv stDivAppended"><input name="show_time[]" class="show-time-input" id="time' + parseInt(i + 1) + '" value="' + times[i] + '" type="time"><i class="fa fa-times closeInput" style="margin-right: 5px;"></i></div>';
+                }
+                console.log(html);
+//
+                if (html != '') {
+                    $(document).find('div.show-time-input-div').html(html);
+                }
                 if ($('#film').val() != '') {
-                    var lastInputVal = $(document).find('input.show-time-input:first').val();
-                    var lastInputValArr = lastInputVal.split(':');
-                    var minute = (parseInt(lastInputValArr[1]) - parseInt(00));
-                    var newMinute = minute % 60;
-                    var newHour = ((parseInt(parseInt(lastInputValArr[0]) - parseInt(3))) + (parseInt(Math.floor(minute / 60))));
-                    if (newHour.toString().length == 1) {
-                        newHour = 0 + newHour.toString();
+                    if ($(document).find('input[name=clean_up_time]').val() != '') {
+                        var lastInputVal = $(document).find('input.show-time-input:first').val();
+                        var lastInputValArr = lastInputVal.split(':');
+                        var movieDuration = $(document).find('#film option:selected').data('duration');
+                        var totalDuration = parseInt(movieDuration + parseInt($('input[name=clean_up_time]').val()));
+                        var minutesToSubtract = totalDuration % 60;
+                        var hoursToSubtract = Math.floor(totalDuration / 60);
+                        if (parseInt(lastInputValArr[1]) == 00) {
+                            var minute = (parseInt(60) - parseInt(minutesToSubtract));
+                            hoursToSubtract = parseInt(hoursToSubtract + 1);
+                            var newMinute = minute % 60;
+                        } else if (parseInt(lastInputValArr[1]) >= parseInt(minutesToSubtract)) {
+                            var minute = (parseInt(lastInputValArr[1]) - parseInt(minutesToSubtract));
+                            var newMinute = minute % 60;
+                        } else {
+                            var minute = (parseInt(60) - parseInt(minutesToSubtract));
+                            var minute = (parseInt(minute) + parseInt(lastInputValArr[1]));
+                            hoursToSubtract = parseInt(hoursToSubtract + 1);
+                            var newMinute = 0;
+                        }
+
+                        var newMinute = minute % 60;
+                        var newHour = ((parseInt(parseInt(lastInputValArr[0]) - parseInt(hoursToSubtract))) + (parseInt(Math.floor(minute / 60))));
+                        if (newHour.toString().length == 1) {
+                            newHour = 0 + newHour.toString();
+                        }
+                        if (newMinute.toString().length == 1) {
+                            newMinute = 0 + newMinute.toString();
+                        }
+                        var newTime = newHour + ':' + newMinute;
+                        if (newHour >= 00) {
+                            showTimeId++;
+                            $('div.show-time-input-div').prepend('<div class="stDiv stDivAppended"><input name="show_time[]" class="show-time-input" id="time' + showTimeId + '" type="time" value="' + newTime + '"><i class="fa fa-times closeInput" style="margin-right: 5px;"></i></div>');
+                        }
+                    } else {
+                        $(document).find('span.show-time-error').html('<strong>First enter film and clean up time !</strong>');
                     }
-                    if (newMinute.toString().length == 1) {
-                        newMinute = 0 + newMinute.toString();
-                    }
-                    var newTime = newHour + ':' + newMinute;
-                    if (newHour >= 00) {
-                        showTimeId++;
-                        $('div.show-time-input-div').prepend('<div class="stDiv stDivAppended"><input name="show_time[]" class="show-time-input" id="time' + showTimeId + '" type="time" value="' + newTime + '"><i class="fa fa-times closeInput" style="margin-right: 5px;"></i></div>');
-                    }
+                } else {
+                    $(document).find('span.show-time-error').html('<strong>First enter film and clean up time !</strong>');
                 }
             }
         });
 
         $(document).on('click', '.closeInput', function () {
-            $(this).prev('input').remove();
-            $(this).remove();
-            showTimeId--;
+            if ($(document).find('.closeInput').length > 1) {
+                $(this).prev('input').remove();
+                $(this).remove();
+                showTimeId--;
+            }
         });
 
         $(document).on('change', 'input.select-screen-id', function () {
@@ -681,6 +781,7 @@
             }
         });
 
+
         $(document).on('change', 'input.dayCheckBox', function () {
             if ($(this).val() == 'every-day') {
                 $(document).find('input.dayCheckBox').each(function () {
@@ -703,49 +804,97 @@
             removeError('show-time');
         });
 
+        $(document).find('select[name=price_card]').on('change', function () {
+            var choosedPriceCard = $(this).val();
+            $.ajax({
+                url: baseurl + '/admin/programming/get-pricecard-time?pc=' + choosedPriceCard,
+                type: 'get',
+                success: function (data) {
+                    $(document).find('input.price-card-start-time').remove();
+                    $(document).find('input.price-card-end-time').remove();
+                    $(document).find('form').append('<input type="hidden" class="price-card-start-time" value="' + data[0] + '">');
+                    $(document).find('form').append('<input type="hidden" class="price-card-end-time" value="' + data[1] + '">');
+                }, error: function (data) {
+                    $(document).find('select[name=price_card]').val('');
+                    alertify.alert('Oops ! something went wrong. Please try again.');
+                }
+            });
+        });
 
         $(document).on('submit', 'form', function (e) {
+            var submit = 'true';
+            var times = [];
+            $(document).find('input.show-time-input').each(function () {
+                times.push($(this).val());
+            });
+
+
+            times.sort(function (a, b) {
+                return new Date('1970/01/01 ' + a) - new Date('1970/01/01 ' + b);
+            });
+
+            console.log(times);
+
+            var html = '';
+            for (var i = 0; i < times.length; i++) {
+                html += '<div class="stDiv stDivAppended"><input name="show_time[]" class="show-time-input" id="time' + parseInt(i + 1) + '" value="' + times[i] + '" type="time"><i class="fa fa-times closeInput" style="margin-right: 5px;"></i></div>';
+            }
+            console.log(html);
+//
+            if (html != '') {
+                $(document).find('div.show-time-input-div').html(html);
+            }
+
             if ($('#film').val() == '') {
                 e.preventDefault();
+                submit = 'false';
                 $('span.film-error').html('<strong>Please choose a film !</strong>');
             }
 
             if (!$('input.select-screen-id:checked').val()) {
                 e.preventDefault();
+                submit = 'false';
                 $('span.screen-id-error').html('<strong>Please choose a screen !</strong>');
             }
 
             if (!$('input[name=seating]:checked').val()) {
                 e.preventDefault();
+                submit = 'false';
                 $('span.seating-error').html('<strong>Please choose a value !</strong>');
             }
 
             if (!$('input[name=comps]:checked').val()) {
                 e.preventDefault();
+                submit = 'false';
                 $('span.comps-error').html('<strong>Please choose a value !</strong>');
             }
             if (!$('input[name=status]:checked').val()) {
                 e.preventDefault();
+                submit = 'false';
                 $('span.status-error').html('<strong>Please choose a value !</strong>');
             }
             if (!$('input[name=show_type]:checked').val()) {
                 e.preventDefault();
+                submit = 'false';
                 $('span.show-type-error').html('<strong>Please choose a value !</strong>');
             }
 
             if ($('div.price-card-div').is(':visible')) {
                 if ($('#price-card-select').val() == '') {
                     e.preventDefault();
+                    submit = 'false';
                     $('span.price-card-error').html('<strong>Please choose a price card !</strong>');
                 }
             }
 
             if ($('div.no-price-card-div').is(':visible')) {
                 e.preventDefault();
+                submit = 'false';
             }
 
             if (!$('input.select-days:checked').val()) {
                 e.preventDefault();
+                submit = 'false';
                 $('span.days-error').html('<strong>Please choose a day !</strong>');
             }
 
@@ -758,6 +907,7 @@
             });
             if (emp == 1) {
                 e.preventDefault();
+                submit = 'false';
                 $('span.show-time-error').html('<strong>Please enter show time !</strong>');
             }
 
@@ -791,6 +941,7 @@
 
                             if (showErr == 1) {
                                 e.preventDefault();
+                                submit = 'false';
                                 $('span.show-time-error').html('<strong>Show time cannot be set in the past !</strong>');
                             } else {
                                 $('span.show-time-error').html('');
@@ -807,11 +958,13 @@
 
             if (!$('input.select-sales-via:checked').val()) {
                 e.preventDefault();
+                submit = 'false';
                 $('span.sales-via-error').html('<strong>Please choose a sales via field !</strong>');
             }
 
             if ($('input[name=clean_up_time]').val() == '') {
                 e.preventDefault();
+                submit = 'false';
                 $('span.clean-up-error').html('<strong>Please enter a clean up time !</strong>');
             }
 
@@ -833,9 +986,81 @@
 
                         if (todayDate1 < todayDate) {
                             e.preventDefault();
+                            submit = 'false';
                             $('span.days-error').html('<strong>Show time cannot be set in the past !</strong>');
                         }
                     }
+                });
+            }
+
+            if ($(document).find('select#price-card-select').val() != '') {
+                var priceCardStartTime = $(document).find('input.price-card-start-time').val();
+                var priceCardEndTime = $(document).find('input.price-card-end-time').val();
+                var hours = Number(priceCardStartTime.match(/^(\d+)/)[1]);
+                var minutes = Number(priceCardStartTime.match(/:(\d+)/)[1]);
+                var AMPM = priceCardStartTime.match(/\s(.*)$/)[1];
+                if (AMPM == "PM" && hours < 12) hours = hours + 12;
+                if (AMPM == "AM" && hours == 12) hours = hours - 12;
+                var sHours = hours.toString();
+                var sMinutes = minutes.toString();
+                if (hours < 10) sHours = "0" + sHours;
+                if (minutes < 10) sMinutes = "0" + sMinutes;
+                priceCardStartTime = sHours + ":" + sMinutes;
+
+                var hours = Number(priceCardEndTime.match(/^(\d+)/)[1]);
+                var minutes = Number(priceCardEndTime.match(/:(\d+)/)[1]);
+                var AMPM = priceCardEndTime.match(/\s(.*)$/)[1];
+                if (AMPM == "PM" && hours < 12) hours = hours + 12;
+                if (AMPM == "AM" && hours == 12) hours = hours - 12;
+                var sHours = hours.toString();
+                var sMinutes = minutes.toString();
+                if (hours < 10) sHours = "0" + sHours;
+                if (minutes < 10) sMinutes = "0" + sMinutes;
+                priceCardEndTime = sHours + ":" + sMinutes;
+
+                $(document).find('input.show-time-input').each(function () {
+                    var choosedTime = $(this).val();
+                    if (Date.parse('01/01/2011 ' + choosedTime) < Date.parse('01/01/2011 ' + priceCardStartTime)) {
+                        e.preventDefault();
+                        submit = 'false';
+                        $(document).find('span.show-time-error').html('<strong>Given times did not match the choosed price card !</strong>');
+                    }
+
+                    if (Date.parse('01/01/2011 ' + choosedTime) > Date.parse('01/01/2011 ' + priceCardEndTime)) {
+                        e.preventDefault();
+                        submit = 'false';
+                        $(document).find('span.show-time-error').html('<strong>Given times did not match the choosed price card !</strong>');
+                    }
+                });
+            }
+
+            var numberOfShowTimes = $(document).find('input.show-time-input').length;
+            var movieDuration = $(document).find('#film option:selected').data('duration');
+            var cleanUpDuration = $('input[name=clean_up_time]').val();
+            var totalDuration = parseInt(movieDuration + parseInt($('input[name=clean_up_time]').val()));
+            for (var i = 1; i <= numberOfShowTimes; i++) {
+                for (var j = (i + 1); j <= numberOfShowTimes; j++) {
+                    var time1 = $(document).find('input#time' + i).val();
+                    var time2 = $(document).find('input#time' + j).val();
+                    var minutesBetween = (Date.parse('January 1, 1971 ' + time2) - Date.parse('January 1, 1971 ' + time1)) / 60000;
+                    if (minutesBetween < totalDuration) {
+                        e.preventDefault();
+                        submit = 'false';
+                        $(document).find('span.show-time-error').html('<strong>The show times conflict as movie duration is ' + movieDuration + ' minutes and clean up time is ' + cleanUpDuration + ' minutes !</strong>');
+                    }
+                }
+            }
+
+            if (submit == 'true') {
+                $(document).find('input.choosed-show-dates').remove();
+                $(document).find('input.select-days:checked').each(function () {
+                    var fullDate = $(document).find('input.show-date-' + $(this).val()).val();
+                    fullDate = new Date(fullDate);
+                    var chYear = fullDate.getFullYear();
+                    var chMonth = ("0" + parseInt(fullDate.getMonth() + 1)).slice(-2);
+                    var chDate = ("0" + fullDate.getDate()).slice(-2);
+                    var sd = chYear + '-' + chMonth + '-' + chDate;
+                    $(document).find('form').append('<input value="' + sd + '" class="choosed-show-dates" name="choosed_show_dates[]" type="hidden">');
                 });
             }
         });
