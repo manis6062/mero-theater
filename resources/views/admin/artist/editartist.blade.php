@@ -81,7 +81,6 @@
                         <div class="row gutters form-wrapper">
                             <div class=" col-md-12 col-sm-12">
                                 <div class="card">
-                                    <div class="card-header artist-header"><a href="#"> Edit Artist</a></div>
                                     <div class="card-body">
                                         <div class="card">
                                             <div class="card-body">

@@ -50,11 +50,11 @@
             @if(isset($data) && $data->count() > 0)
                 @foreach($data as $dat)
                     <tr>
-                        <th><a href="{{url('admin/box-office/movies/'.$dat->id.'/view')}}">{{$dat->movie_title}}:{{$dat->movie_short_name}}</a></th>
-                        <td>{{$dat->distributor}}</td>
-                        <td>{{$dat->duration}}</td>
-                        <td>{{$dat->openingdate}}</td>
-                        <td>{{$dat->genre}}</td>
+                        <th><a href="{{url('admin/box-office/movies/'.$dat->id.'/view')}}">{{ucwords($dat->movie_title)}}({{ucwords($dat->movie_short_name)}})</a></th>
+                        <td>{{ucwords($dat->distributor)}}</td>
+                        <td>{{$dat->duration }} Min</td>
+                        <td>{{date('d/m/Y', strtotime($dat->openingdate))}}</td>
+                        <td>{{ucwords($dat->genre)}}</td>
                         <td>
 
  <a href="{{url('admin/box-office/movies/'.$dat->id.'/edit')}}" class="table-content-edit" data-toggle="tooltip"

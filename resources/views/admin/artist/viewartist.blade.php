@@ -32,7 +32,6 @@
             <div class="row gutters">
                 <div class=" col-md-12 col-sm-12">
                     <div class="card">
-                        <div class="card-header artist-header"><a href="{{url('admin/box-office/artist/create')}}"> View Artist</a></div>
                         <div class="card-body">
                        <div class="artist-profile-div">
                 <h1 class="text-center">{{$viewdata->artists_name}}</h1>

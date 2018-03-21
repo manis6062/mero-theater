@@ -50,7 +50,7 @@ class ArtistsController extends Controller
         ]);
 
 		$data = array(
-            'artists_name' => $request->artist_name,
+            'artists_name' => ucwords($request->artist_name),
             'artists_achievements'=>$request->artist_achievements,
             'artists_current_status'=>$request->artist_current_status,
             'artists_early_life'=>$request->artist_early_life,
@@ -94,7 +94,7 @@ class ArtistsController extends Controller
         ]);
 
         $data = array(
-            'artists_name' => $request->artist_name,
+            'artists_name' => ucwords($request->artist_name),
             'artists_achievements'=>$request->artist_achievements,
             'artists_current_status'=>$request->artist_current_status,
             'artists_early_life'=>$request->artist_early_life,

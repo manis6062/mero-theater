@@ -263,7 +263,7 @@
                     </a>
                     <ul aria-expanded="false" class="collapse">
                         <li>
-                            <a href="#.html">
+                            <a href="{{url('admin/content-management/manage-pages')}}">
 										<span class="has-icon">
 											<i class="icon-equalizer"></i>
 										</span>
@@ -271,7 +271,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="#.html">
+                            <a href="{{url('admin/content-management/manage-news/news')}}">
 										<span class="has-icon">
 											<i class="icon-satellite"></i>
 										</span>
@@ -279,7 +279,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="#.html">
+                            <a href="{{url('admin/content-management/inquiry')}}">
 										<span class="has-icon">
 											<i class="icon-search"></i>
 										</span>
@@ -287,7 +287,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="#.html">
+                            <a href="{{url('admin/content-management/notification/footer')}}">
 										<span class="has-icon">
 											<i class="icon-bell"></i>
 										</span>
@@ -295,7 +295,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="#.html">
+                            <a href="{{url('admin/content-management/payment-gateway')}}">
 										<span class="has-icon">
 											<i class="icon-credit-card"></i>
 										</span>
@@ -303,7 +303,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="#.html">
+                            <a href="{{url('admin/content-management/social-media')}}">
 										<span class="has-icon">
 											<i class="icon-share3"></i>
 										</span>
@@ -311,7 +311,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="#.html">
+                            <a href="{{url('admin/content-management/contact-us')}}">
 										<span class="has-icon">
 											<i class="icon-phone"></i>
 										</span>
@@ -319,7 +319,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="#.html">
+                            <a href="{{url('admin/content-management/promotional-banner')}}">
 										<span class="has-icon">
 											<i class="icon-map3"></i>
 										</span>
@@ -327,7 +327,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="#.html">
+                            <a href="{{url('admin/content-management/movie-banner')}}">
 										<span class="has-icon">
 											<i class="icon-map2"></i>
 										</span>

@@ -81,7 +81,6 @@
                         <div class="row gutters form-wrapper">
                             <div class=" col-md-12 col-sm-12">
                                 <div class="card">
-                                    <div class="card-header artist-header"><a href="{{url('admin/box-office/artist/create')}}"> Create New Artist</a></div>
                                     <div class="card-body">
                                         <div class="card">
                                             <div class="card-body">
@@ -139,7 +138,7 @@
                                                             <label class="col-lg-3 col-form-label form-control-label">Early life <span class="req">*</span></label>
                                                             <div class="col-lg-9">
                                                                  <textarea name="artist_early_life" id="artistEarlyLife" placeholder="Type early life" rows="5" class="form-control" onfocus="removeError();" value="{{old('artist_early_life')}}"></textarea>
-  @if($errors->has('artist_early_life'))
+                                                   @if($errors->has('artist_early_life'))
                                                     <span class="help-block">
                                                         <strong>
                                                             {{$errors->first('artist_early_life')}}
