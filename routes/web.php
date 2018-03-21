@@ -196,6 +196,34 @@ Route::group(['prefix'=>'admin','middleware'=> 'admin'], function(){
     });
     //    Route for box office PCM
 
+     //    Route for CRM
+    Route::group(['prefix'=>'crm', 'namespace' => 'Admin'], function() {
+        Route::get('/', 'CrmController@index');
+        Route::get('user/create', 'CrmController@create');
+        Route::post('user/submit', 'CrmController@store');
+        Route::post('user/import/excel', 'CrmController@importExcel');
+        Route::get('user/{id}/edit', 'CrmController@edit');
+        Route::post('user/{id}/update', 'CrmController@update');
+        Route::get('user/delete', 'CrmController@destroy');
+        Route::get('user/suspend', 'CrmController@suspend');
+        
+        //Route::get('get-seat-categories', 'PriceCardController@getSeatCategories');
+    });
+    //    Route for box office CRM
+
+    //    Route for counter-management
+    Route::group(['prefix'=>'counter', 'namespace' => 'Admin'], function() {
+        Route::get('/', 'CounterController@index');
+        Route::get('counteruser/create', 'CounterController@create');
+        Route::post('counteruser/submit', 'CounterController@store');
+        Route::get('counteruser/{id}/edit', 'CounterController@edit');
+        Route::post('counteruser/{id}/update', 'CounterController@update');
+        Route::get('counteruser/delete', 'CounterController@destroy');
+        Route::get('counteruser/suspend', 'CounterController@suspend');
+        //Route::get('get-seat-categories', 'PriceCardController@getSeatCategories');
+    });
+    //    Route for counter-manaement
+
 
 
     //    Route for box office PCM

@@ -121,7 +121,7 @@
                 </li>
 
                 <li>
-                    <a href="#">
+                    <a href="{{url('admin/counter')}}">
 								<span class="has-icon">
 									<i class="icon-meter"></i>
 								</span>
@@ -345,7 +345,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="{{url('admin/crm')}}">
 								<span class="has-icon">
 									<i class="icon-supervisor_account"></i>
 								</span>
