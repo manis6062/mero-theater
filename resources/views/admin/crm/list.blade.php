@@ -1,5 +1,9 @@
 @extends('admin.layout.master1')
 
+@section('styles')
+	
+@stop
+
 @section('main-body')
     <!-- BEGIN .app-main -->
     <div class="app-main">
@@ -42,7 +46,7 @@
 												<div class="row">
 													<div class="col-md-3">
 														<div class="input-group date">
-														  <input type="text" class="form-control" placeholder="Select Registered Date">
+														  <input id="registeredDatePicker" type="text" class="form-control" placeholder="Select Registered Date">
 														  <span class="input-group-addon"><i class="icon-calendar"></i></span>
 														</div>
 													</div>
@@ -127,6 +131,7 @@
 @stop
 
 @section('scripts')
+<script type="text/javascript" src="{{asset('admins/theme/js/bootstrap-datepicker.min.js')}}"></script>
     <script>
         $(document).find('.closeMessage').on('click', function () {
             $(this).parent('div').remove();
@@ -189,5 +194,7 @@
 
 			});
 	});
+
+        $('#registeredDatePicker').datepicker();
     </script>
 @stop
