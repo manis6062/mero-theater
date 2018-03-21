@@ -69,10 +69,7 @@ body {
       display: inline-block; }
     body.off-canvas a.mini-nav-btn {
       display: none; } }
-  body.login-bg {
-    background: url("../img/login-bg.jpg") no-repeat;
-    background-size: cover;
-    background-position: center center; }
+  body.login-bg {}
   body.error-bg {
     background: url("../img/login-slider.jpg") no-repeat;
     background-size: cover;
@@ -2341,15 +2338,23 @@ a.blog-sm {
 
 /*************** Login Signup Screens ***************/
 .login-screen {
-  padding-top: 70px; }
+   max-width: 500px;
+   width:100%;
+   margin:0 auto; 
+ margin-top: 100px;}
+
   .login-screen .login-logo {
     margin: 20px 0 20px 0;
-    text-align: left;
+    text-align: center;
     display: block; }
     .login-screen .login-logo > img {
       margin: 0;
       max-height: 36px; }
 
+.login-wrapper{
+  width: 100%;
+  margin:0 auto;
+}
 .login-container {
   position: relative;
   box-shadow: 0px 25px 15px -15px #d3d7e9;
@@ -4196,21 +4201,471 @@ table.dataTable.common-table thead .sorting_desc_disabled::before, table.dataTab
   -ms-border-radius:50%;
   -moz-border-radius:50%;
 }
-.table-brand-icon img{
+.table-brand-icon img, .transaction-map img{
   max-width: 100%;
   height: auto;
 }
 a.table-content-edit{
   margin-right: 10px;
+  display:inline-block;
 }
 a.table-content-edit i{
   margin-right: 5px;
   color:#aab3c3;
+  font-size: 16px;
 }
 a.table-content-delete i{
   color:#da1113;
   margin-right: 5px;
+  font-size: 16px;
 }
+
+.block-336{
+  min-height: 336px;
+}
+.block-160{
+  min-height: 160px;
+}
+
+.screen-profile{
+    background: #ffffff;
+    padding: 30px 15px;
+    margin-bottom: 1rem;
+    text-align: center;
+    border: 1px solid #e4e7f2;
+    -webkit-border-radius: 0.15rem;
+    -moz-border-radius: 0.15rem;
+    border-radius: 0.15rem;
+    box-shadow: none;
+}
+.screen-profile h5{
+  padding:20px 0;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.screen-img{
+  width:128px;
+  height: 128px;
+  line-height: 138px;
+  border-radius:50%;
+  -webkit-border-radius:50%;
+  -moz-border-radius:50%;
+  -ms-border-radius:50%;
+  background-color:#da1113;
+  margin:0 auto;
+  text-align: center;
+}
+.screen-img img{
+   width:100px;
+  height: 100px;
+  border-radius:50%;
+  -webkit-border-radius:50%;
+  -moz-border-radius:50%;
+  -ms-border-radius:50%;
+  max-width: 100%;
+  height: auto;
+}
+
+.trasaction-btn{
+  margin: 25px 0 25px 0;
+  text-align: center;
+  display: inline-block;
+  width: 100%;
+}
+.screen-btn a{
+  padding: 7px 10px;
+  border:1px solid #da1113;
+  display: inline-block;
+}
+.trasaction-btn a{
+  padding: 10px 15px;
+  border:1px solid #3c3c3c;
+  display: inline-block;
+  transition: all 0.3s ease-out;
+  -webkit-transition: all 0.3s ease-out;
+  -moz-transition: all 0.3s ease-out;
+  -ms-transition: all 0.3s ease-out;
+}
+
+.trasaction-wrap{
+  text-align: center;
+}
+.trasaction-wrap h5{
+  font-weight: 600;
+  text-transform: capitalize;
+
+}
+.trasaction-btn a.active, .trasaction-btn a:hover{
+  color:#ffffff;
+  background-color:#3c3c3c;
+}
+
+.screen-btn a.active{
+  color:#ffffff;
+  background-color:#da1113;
+}
+
+.transaction-date{
+  padding: 20px 0 15px 0;
+}
+.transaction-date .input-group-addon{
+  color:#333333;
+}
+.transaction-date .input-group-addon.trasaction-sumbit-btn{
+  color:#ffffff;
+  background-color:#da1113;
+  -webkit-background-color:#da1113;
+  -moz-background-color:#da1113;
+  -ms-background-color:#da1113;
+  cursor: pointer;
+}
+.transaction-date .input-group-addon.trasaction-sumbit-btn a{
+  color:#ffffff;
+}
+.transaction-date button{
+  margin-top:30px;
+  cursor: pointer;
+}
+.transaction-profile .card-header a.btn-primary{
+  float: right;
+  background-color:#3c3c3c;
+  border-color:#3c3c3c;
+  padding:5px 10px;
+}
+.transaction-profile .card-header a.btn-primary:hover{
+  background-color:#da1113;
+  border-color:#da1113;
+}
+.datepicker{
+  z-index: 9999 !important;
+}
+.datepicker .datepicker-switch, .datepicker .next, .datepicker .prev, .datepicker tfoot tr th,
+.datepicker .datepicker-switch:hover, .datepicker .next:hover, .datepicker .prev:hover, .datepicker tfoot tr th:hover,
+.datepicker td.day:hover {
+    cursor: pointer;
+    background-color:#da1113;
+    color:#ffffff;
+}
+.datepicker td, .datepicker th{
+  padding:5px;
+}
+
+.filter-div{
+  max-width: 1170px;
+  margin:0 auto;
+  margin-bottom:30px;
+}
+.crm-title{
+  text-align: center;
+  margin:15px 0 30px 0;
+}
+.crm-title h4{
+  text-transform: capitalize;
+  font-weight: 600;
+}
+.filter-div select.custom-select,
+.filter-select select.custom-select{
+  width:100%;
+  border-color:#e1e5f1;
+  color:#ccc;
+  font-weight: 600;
+}
+.filter-div button.btn-primary{
+  cursor: pointer;
+}
+.filter-select{
+  margin-top:30px;
+  width:100%;
+}
+.crm-title.filter-transaction-title{
+  text-align: right;
+}
+.crm-title.filter-transaction-title a{
+  display: inline-block;
+}
+.test-btn, .explore-btn{
+  background-color:#3c3c3c;
+  border-color:#3c3c3c;
+}
+.api-note{
+  margin-top:25px
+}
+.api-note span{
+  font-weight: 600;
+  margin-right: 10px;
+}
+.api-sec .card-header{
+  padding-bottom: 30px;
+}
+.api-dettails-form .input-group-addon{
+  cursor: pointer;
+}
+.api-dettails-form .input-group-addon i{
+  margin-right:5px;
+}
+.key-title{
+  width: 100%;
+  margin:-15px 0 20px 0;
+  z-index: 99;
+  position: relative;
+  text-align: center;
+  font-size:18px;
+}
+.key-title span{
+  background-color:#ffffff;
+  padding:5px;
+}
+.table-content-sms, .table-content-email{
+  display: inline-block;
+  font-size:12px;
+  width:38px;
+  margin-right:0;
+}
+
+.login-dash-header a.logo{
+  text-align: right;
+}
+
+@media screen and (max-width: 768px){
+  .login-dash-header a.logo, .login-dash-header .header-actions{
+  text-align: center;
+}
+.login-dash-header .header-actions{
+  float: none;
+  text-align: center;
+}
+  .login-dash-header .header-actions li{
+    display: block;
+    display: inline-block;
+    float: none;
+  }
+}
+.login-dashboard{
+  position: relative;
+background: #f5f6fa;
+top: 60px;
+padding-bottom: 20px;
+overflow: hidden;
+}
+.logi-dash-title h4{
+  text-transform:uppercase;
+}
+.logi-dash-title{
+  border-bottom: 1px solid #e8ebf4;
+  padding-bottom:15px;
+}
+
+.login-dash-label label{
+    float: left;
+    margin-right:15px;
+    font-weight: 600;
+    font-size:18px;
+    color: #da1113;
+}
+.login-dash-label select.custom-select, .login-dash-label .input-group, .login-dash-label .input-group input.form-control{
+    max-width: 300px;
+    width: 100%;
+}
+.movie-days-btn, .movie-sub-btn{
+  width: 100%;
+  text-align: center;
+}
+.movie-sub-btn{
+  margin-top:30px;
+}
+.movie-days-btn a{
+  padding:10px 15px;
+  border: 1px solid #e8ebf4;
+  border-radius:5px;
+  display: inline-block;
+}
+.movie-sub-btn a{
+  display: inline-block;
+  margin-right: 25px;
+  font-size: 16px;
+}
+.movie-sub-btn a.active, .movie-sub-btn a:hover{
+  border-bottom:1px solid #da1113;
+  color:#da1113;
+}
+
+.movie-days-btn a.active, .movie-days-btn a:hover{
+  padding:10px 15px;
+  background-color: #3c3c3c;
+  color:#ffffff;
+}
+
+.movie-sec{
+  width: 100%;
+}
+.movie-item-list{
+  margin-top:30px;
+}
+.movie-item-list .card-header{
+    border-bottom: none;
+}
+.movie-item-list .card-header h4{
+  font-weight:600;
+  font-size:24px;
+  text-transform: uppercase;
+}
+.movie-item{
+   -webkit-box-shadow: 2px 0 13px rgba(66, 78, 92, .35);
+    box-shadow: 2px 0 13px rgba(66, 78, 92, .35);
+    padding:15px;
+    margin-bottom: 30px;
+}
+.movie-item-content{
+  padding:15px;
+}
+.movie-item-content h4{
+  font-size: 18px;
+  text-transform: uppercase;
+  font-weight: 600;
+  text-align: center;
+}
+.movie-item-content h4:hover a{
+  color:#da1113;
+}
+.movie-title{
+  text-align: center;
+}
+.movie-item img{
+  max-width: 100%;
+  height: auto;
+}
+.fifth-item{
+flex: 0 0 20%;
+-ms-flex: 0 0 20%;
+max-width: 20%;
+}
+.movie-sheadule{
+  margin-bottom: 15px;
+}
+.movie-sheadule span.show-time{
+  font-weight: 600;
+  font-size:28px;
+  color:#da1113;
+}
+.movie-sheadule span:last-child{
+    float: right;
+    font-weight: 600;
+  font-size:16px;
+  margin-top: 10px;
+}
+
+.movie-sec .pagination{
+  margin-bottom:15px;
+  margin-left:15px;
+  align-items: right;
+}
+
+.movie-details{
+    max-width: 1170px;
+    width: 100%;
+    margin:0 auto;
+    background-color: #ffffff;
+    padding-top:15px;
+}
+.movie-details .card-header h4{
+  font-weight: 600;
+}
+
+.movie-details-sidebar .ticket-sold-list .ticket-list{
+  position: relative;
+  margin-bottom: 15px;
+  text-transform: capitalize;
+  padding-left:45px;
+  display: block;
+  width: 100%;
+  font-size:16px;
+  font-weight: 600;
+}
+.ticket-sold-list .ticket-list span.tkt-symbol{
+  position: absolute;
+  top:0;
+  left: 0;
+  width:30px;
+  height: 30px;
+  line-height: 30px;
+  background-color:#808080;
+}
+.ticket-sold-list .ticket-list.sold-ticket span.tkt-symbol{
+  background-color:#da1113;
+}
+.ticket-sold-list .ticket-list.slt-ticket span.tkt-symbol{
+  background-color:#008000;
+}
+.ticket-sold-list .ticket-list.rsv-ticket span.tkt-symbol{
+  background-color:#FFFF00;
+}
+.movie-details-sidebar .ticket-sold-list .slected-seat{
+  margin:15px 0;
+  float: left;
+  width: 100%;
+}
+.movie-details-sidebar .ticket-sold-list .slected-seat h5{
+  text-transform: capitalize;
+  font-weight: 600;
+  font-size:16px;
+}
+.movie-details-sidebar .ticket-sold-list .slected-seat span{
+  display: inline-block;
+  margin-right: 15px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.ticket-sold-list  .ticket-amount{
+    text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+.ticket-sold-list  .ticket-amount span.total-amount{
+    margin-left:15px;
+}
+
+@media screen and (max-width: 1068px){
+  .fifth-item{
+  flex: 0 0 25%;
+  -ms-flex: 0 0 25%;
+  max-width: 25%;
+  }
+}
+@media screen and (max-width: 900px){
+  .fifth-item{
+  flex: 0 0 33.333%;
+  -ms-flex: 0 0 33.333%;
+  max-width: 33.333%;
+  }
+}
+@media screen and (max-width: 680px){
+  .fifth-item{
+  flex: 0 0 50%;
+  -ms-flex: 0 0 50%;
+  max-width: 50%;
+  }
+}
+@media screen and (max-width: 480px){
+  .fifth-item{
+  flex: 0 0 100%;
+  -ms-flex: 0 0 100%;
+  max-width: 100%;
+  }
+}
+
+@media screen and (max-width: 480px){
+  .login-dash-label select.custom-select, .login-dash-label .input-group, .login-dash-label .input-group input.form-control{
+        width:100%;
+    }
+    .login-dash-label label{
+      float: none;
+      margin-right:0;
+  }
+}
+
+
 
 @media screen and (max-width:1880px){
   .pie-sec .col-md-4{

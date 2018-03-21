@@ -162,6 +162,7 @@
                             <div class="card">
                                 <div class="card-body">
                                     <div class="artist-form">
+                                        <p style="font-size: 18px; text-align: center; text-decoration: underline;"><small><strong>Note: Already scheduled shows did not get affected updating the price card.</strong></small></p>
                                         <form action="{{url('admin/box-office/price-card-management/'.$slug.'/update')}}"
                                               class="form" role="form" autocomplete="off"
                                               id="create-form"

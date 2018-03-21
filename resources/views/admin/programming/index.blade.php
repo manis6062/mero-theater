@@ -1,7 +1,7 @@
 @extends('admin.layout.master1')
 
 @section('styles')
-    <link rel="stylesheet" href="{{asset('admins/plugins/vis/vis.min.css')}}">
+    <link rel="stylesheet" href="{{asset('admins/plugins/timeline/timeline.min.css')}}">
     <style>
         .timepicker.increment-allowed {
             /*padding: 1px 36px 0;*/
@@ -267,7 +267,15 @@
                                 </div>
                             </div>
 
-                            <div id="movies-calendar"></div>
+                            {{--<div id="movies-calendar">--}}
+                                {{----}}
+                            {{--</div>--}}
+                                <div id="myTimeline">
+                                    <ul class="timeline-events">
+                                        <li data-timeline-node="{ start:'2017-05-28 10:00',end:'2017-05-28 13:00',content:'Event Here' }">Event Label</li>
+                                        <li data-timeline-node="{ start:'2017-05-29 23:10',end:'2017-05-29 1:30',content:'<p>Event Here</p>' }">Event Label</li>
+                                    </ul>
+                                </div>
 
                             <div class="addAShowDiv">
                                 <div class="close-add-show-div">
@@ -427,7 +435,7 @@
                                                     <div class="show-time-input-div">
                                                         <div class="stDiv">
                                                             <input class="show-time-input" name="show_time[]"
-                                                                   type="time" id="time">
+                                                                   type="time" id="time1">
                                                             <i class="fa fa-times closeInput"
                                                                style="margin-right: 5px;"></i>
                                                         </div>
@@ -555,7 +563,10 @@
                                         <div class="form-group row">
                                             <label for="" class="col-lg-3"></label>
                                             <div class="col-lg-9">
-                                                <button type="submit" class="btn btn-primary">Save</button>
+                                                <button type="submit" class="btn btn-primary">Save <span
+                                                            class="submit-processing" style="display: none;"><i
+                                                                class="fa fa-spin fa-spinner"></i> Please Wait ...</span>
+                                                </button>
                                             </div>
                                         </div>
                                     </form>
@@ -570,7 +581,7 @@
 @stop
 
 @section('scripts')
-    <script src="{{asset('admins/plugins/vis/vis.min.js')}}"></script>
+    <script src="{{asset('admins/plugins/timeline/timeline.min.js')}}"></script>
     {{--form script--}}
     <script>
         $(document).find('.closeMessage').on('click', function () {
@@ -581,7 +592,7 @@
         $('div.no-price-card-div').hide();
 
 
-        var showTimeId = 0;
+        var showTimeId = 1;
         $('.next').on('click', function () {
             var empty = 0;
             $('input.show-time-input').each(function () {
@@ -812,8 +823,10 @@
                 success: function (data) {
                     $(document).find('input.price-card-start-time').remove();
                     $(document).find('input.price-card-end-time').remove();
+                    $(document).find('input.price-card-week-days').remove();
                     $(document).find('form').append('<input type="hidden" class="price-card-start-time" value="' + data[0] + '">');
                     $(document).find('form').append('<input type="hidden" class="price-card-end-time" value="' + data[1] + '">');
+                    $(document).find('form').append('<input type="hidden" class="price-card-week-days" value="' + data[2] + '">');
                 }, error: function (data) {
                     $(document).find('select[name=price_card]').val('');
                     alertify.alert('Oops ! something went wrong. Please try again.');
@@ -896,6 +909,28 @@
                 e.preventDefault();
                 submit = 'false';
                 $('span.days-error').html('<strong>Please choose a day !</strong>');
+            }
+
+            if ($('input.select-days:checked').val()) {
+                var priceCardWeekDays = $(document).find('input.price-card-week-days').val();
+                var priceCardDaysArray = priceCardWeekDays.split(',');
+                priceCardDaysArray = $.map(priceCardDaysArray, function (n, i) {
+                    return n.toLowerCase();
+                });
+                console.log(priceCardDaysArray);
+                $('input.select-days:checked').each(function () {
+//                    alert($.inArray( $(this).val(), priceCardDaysArray ));
+//                    alert(priceCardDaysArray);
+                    if ($(this).val() != 'every-day') {
+                        if ($.inArray($(this).val(), priceCardDaysArray) < 0) {
+                            e.preventDefault();
+                            submit = 'false';
+                            $('span.days-error').html('<strong>Selected days did not match the choosed price card ! </strong>');
+                        }
+                    }
+
+                });
+
             }
 
             var emp = 0;
@@ -994,6 +1029,7 @@
             }
 
             if ($(document).find('select#price-card-select').val() != '') {
+
                 var priceCardStartTime = $(document).find('input.price-card-start-time').val();
                 var priceCardEndTime = $(document).find('input.price-card-end-time').val();
                 var hours = Number(priceCardStartTime.match(/^(\d+)/)[1]);
@@ -1031,6 +1067,27 @@
                         submit = 'false';
                         $(document).find('span.show-time-error').html('<strong>Given times did not match the choosed price card !</strong>');
                     }
+
+                    var lastInputValArr = choosedTime.split(':');
+                    var movieDuration = $(document).find('#film option:selected').data('duration');
+                    var totalDuration = parseInt(movieDuration + parseInt($('input[name=clean_up_time]').val()));
+                    var minutesToAdd = totalDuration % 60;
+                    var hoursToAdd = Math.floor(totalDuration / 60);
+                    var minute = (parseInt(lastInputValArr[1]) + parseInt(minutesToAdd));
+                    var newMinute = minute % 60;
+                    var newHour = ((parseInt(parseInt(lastInputValArr[0]) + parseInt(hoursToAdd))) + (parseInt(Math.floor(minute / 60))));
+                    if (newHour.toString().length == 1) {
+                        newHour = 0 + newHour.toString();
+                    }
+                    if (newMinute.toString().length == 1) {
+                        newMinute = 0 + newMinute.toString();
+                    }
+                    var newTime = newHour + ':' + newMinute;
+                    if (Date.parse('01/01/2011 ' + newTime) > Date.parse('01/01/2011 ' + priceCardEndTime)) {
+                        e.preventDefault();
+                        submit = 'false';
+                        $(document).find('span.show-time-error').html('<strong>Show times exceeded price card time !</strong>');
+                    }
                 });
             }
 
@@ -1052,16 +1109,61 @@
             }
 
             if (submit == 'true') {
+                e.preventDefault();
                 $(document).find('input.choosed-show-dates').remove();
                 $(document).find('input.select-days:checked').each(function () {
-                    var fullDate = $(document).find('input.show-date-' + $(this).val()).val();
-                    fullDate = new Date(fullDate);
-                    var chYear = fullDate.getFullYear();
-                    var chMonth = ("0" + parseInt(fullDate.getMonth() + 1)).slice(-2);
-                    var chDate = ("0" + fullDate.getDate()).slice(-2);
-                    var sd = chYear + '-' + chMonth + '-' + chDate;
-                    $(document).find('form').append('<input value="' + sd + '" class="choosed-show-dates" name="choosed_show_dates[]" type="hidden">');
+                    if ($(this).val() != 'every-day') {
+                        var fullDate = $(document).find('input.show-date-' + $(this).val()).val();
+                        fullDate = new Date(fullDate);
+                        var chYear = fullDate.getFullYear();
+                        var chMonth = ("0" + parseInt(fullDate.getMonth() + 1)).slice(-2);
+                        var chDate = ("0" + fullDate.getDate()).slice(-2);
+                        var sd = chYear + '-' + chMonth + '-' + chDate;
+                        $(document).find('form').append('<input value="' + sd + '" class="choosed-show-dates" name="choosed_show_dates[]" type="hidden">');
+                    }
+
                 });
+
+                $(document).find('button[type=submit]').prop('disabled', true);
+                $(document).find('span.submit-processing').show();
+                var formData = $('form').serialize();
+                $.ajax({
+                    url: baseurl + '/admin/programming/submit',
+                    type: 'post',
+                    data: formData,
+                    success: function (data) {
+                        if (data == 'success') {
+                            $("form")[0].reset();
+                            $('div.price-card-div').hide();
+                            $('div.no-price-card-div').hide();
+                            $('form').find('span.error').html('');
+                            $(document).find('input.show-time-input').each(function () {
+                                if ($(this).attr('id') == 'time1') {
+                                    $(this).val('');
+                                } else {
+                                    $(this).remove();
+                                }
+                            });
+                            $('div.addAShowDiv').fadeOut('slow');
+                        }
+
+                        if (data == 'unsuccess') {
+                            alerify.alert('Oops ! something went wrong. Schedule not saved.');
+                        }
+
+                        if (data == 'conflict') {
+                            alertify.alert('Oops ! the given schedule conflicts with other schedule.');
+                        }
+
+                        $(document).find('button[type=submit]').prop('disabled', false);
+                        $(document).find('span.submit-processing').hide();
+                    }, error: function (data) {
+                        alertify.alert('Oops ! something went wrong. Schedule not saved.');
+                        $(document).find('button[type=submit]').prop('disabled', false);
+                        $(document).find('span.submit-processing').hide();
+                    }
+                });
+                $.post(baseurl + '/admin/programming/submit', data);
             }
         });
 
@@ -1078,7 +1180,39 @@
             return true;
         }
         $('input[name=clean_up_time]').keypress(function (event) {
-            return isNumber(event, this)
+            $(document).find('input.show-time-input').each(function () {
+                if ($(this).attr('id') == 'time1') {
+                    $(this).val('');
+                } else {
+                    $(this).remove();
+                }
+            });
+            return isNumber(event, this);
+        });
+
+        $('input[name=clean_up_time]').keypress(function (event) {
+            return isNumber(event, this);
+        });
+
+        $('input[name=clean_up_time]').change(function (event) {
+            $(document).find('input.show-time-input').each(function () {
+                if ($(this).attr('id') == 'time1') {
+                    $(this).val('');
+                } else {
+                    $(this).remove();
+                }
+            });
+        });
+
+
+        $(document).on('change', '#film', function () {
+            $(document).find('input.show-time-input').each(function () {
+                if ($(this).attr('id') == 'time1') {
+                    $(this).val('');
+                } else {
+                    $(this).remove();
+                }
+            });
         });
 
     </script>
@@ -1088,25 +1222,10 @@
     {{--timeline-script--}}
     <script>
         $(window).on('load', function () {
-            // DOM element where the Timeline will be attached
-            var container = document.getElementById('movies-calendar');
+            $("#myTimeline").timeline();
+            @if(isset($scheduleData) && $scheduleData != null)
 
-            // Create a DataSet (allows two way data-binding)
-            var items = new vis.DataSet([
-                {id: 1, content: 'item 1', start: '2016-08-15T10:00'},
-                {id: 2, content: 'item 2', start: '2016-08-15T12:00'},
-                {id: 3, content: 'item 3', start: '2016-08-15T14:00'},
-                {id: 4, content: 'item 4', start: '2016-08-15T16:00'}
-            ]);
-
-            // Configuration for the Timeline
-            var options = {
-//            start: '2016-08-15T08:00',
-//            end: '2016-08-15T20:00'
-            };
-
-            // Create a Timeline
-            var timeline = new vis.Timeline(container, items, options);
+            @endif
         });
     </script>
     {{--timeline script--}}
