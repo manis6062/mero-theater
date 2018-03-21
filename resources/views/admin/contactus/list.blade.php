@@ -40,7 +40,7 @@
             @else
             <a href="{{url('admin/content-management/contact-us/create')}}">Add</a>
             @endif
-            <table class="table table-responsive table-bordered">
+            <table class="table m-0 table-bordered common-table">
                 <thead>
                 <th>Name</th>
                 <th>Email</th>

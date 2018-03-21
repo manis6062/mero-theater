@@ -35,7 +35,7 @@
                         <div class="card-header artist-header"><a href="{{url('admin/content-management/promotional-banner/create')}}"> Add New Promotional Banner</a></div>
                         <div class="card-body">
                             <div class="table-responsive">
-        <table class="table table-responsive table-bordered">
+        <table class="table m-0 table-bordered common-table">
                 <thead>
                 <th>SN</th>
                 <th>Name</th>

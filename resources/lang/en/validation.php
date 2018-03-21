@@ -103,6 +103,12 @@ return [
         'attribute-name' => [
             'rule-name' => 'custom-message',
         ],
+        'count' => [
+            'numeric' => 'Should be a number.',
+        ],
+        'discount_rate' => [
+            'numeric' => 'Should be a number.',
+        ],
     ],
 
     /*

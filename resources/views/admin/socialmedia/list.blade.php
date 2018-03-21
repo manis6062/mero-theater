@@ -35,10 +35,10 @@
                         <div class="card-header artist-header"><a href="{{url('admin/content-management/social-media/create')}}">Add New Social Media</a></div>
                         <div class="card-body">
                             <div class="table-responsive">
-        <table class="table table-responsive table-bordered">
+        <table class="table m-0 table-bordered common-table">
                 <thead>
                 <th>Name</th>
-                <th>Links</th>
+                <th>Link</th>
                 <th>Icon</th>
                 <th>Action</th>
                 </thead>

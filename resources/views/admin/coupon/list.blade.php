@@ -1,5 +1,6 @@
 @extends('admin.layout.master1')
 
+
 @section('main-body')
     <!-- BEGIN .app-main -->
     <div class="app-main">
@@ -12,7 +13,7 @@
                             <i class="icon-border_outer"></i>
                         </div>
                         <div class="page-title">
-                            <h5>Manage News</h5>
+                            <h5>Coupon Code</h5>
                             <h6 class="sub-heading">Welcome to Merotheatre Admin</h6>
                         </div>
                     </div>
@@ -32,46 +33,40 @@
             <div class="row gutters">
                 <div class=" col-md-12 col-sm-12">
                     <div class="card">
-                        <div class="card-header artist-header"><a href="{{url('admin/content-management/manage-news/news/create')}}"> Add News</a></div>
+                    	<div class="card-header artist-header"><a href="{{url('admin/coupon/create')}}"> Create Coupon Code</a></div>
                         <div class="card-body">
                             <div class="table-responsive">
-          <table class="table m-0 table-bordered common-table">
+                  <table class="table m-0 table-bordered common-table">
                 <thead>
-                <th>News Title</th>
-                <th>Category</th>
-                <th>Featured Image</th>
-                <th>Created On</th>
-                <th>Status</th>
+                <th>Coupon Code</th>
+                <th>Discount Type</th>
+                <th>Discount Rate</th>
+                <th>Expires</th>
+                <th>Available No.</th>
+                <th>Active</th>
                 <th>Action</th>
                 </thead>
 
                 <tbody>
-
-
                 @if(isset($data) && $data->count() > 0)
-                    @foreach($data as $dat)
+                    @foreach($data as $c)
                         <tr>
-                            <td>{{$dat->title}}</td>
-                            <td>
-                 @if(!empty(\App\ManageCategoryModel::where('id' , $dat->category)->first()))
-                                {{\App\ManageCategoryModel::where('id' , $dat->category)->first()->category_name}}
-                   @endif
-                            </td>
-                            <td><img width="30" height="30" src="{{asset('news/'.$dat->featured_image)}}" class="img img-responsive"></td>
-                            <td>{{date('M d, Y', strtotime($dat->created_at))}}</td>
-                            <td>{{ucwords($dat->status)}}</td>
+                            <td>{{$c->code}}</td>
+                            <td>{{$c->discount_type}}</td>
+                            <td>{{$c->discount_rate}}</td>
+                            <td>{{date('M d, Y', strtotime($c->expire))}}</td>
+                            <td>{{$c->count}}</td>
+                            <td>{{$c->status}}</td>
                             <td>
 
- <a href="{{url('admin/content-management/manage-news/news/'.$dat->id.'/edit')}}" class="table-content-edit" data-toggle="tooltip"
-                                                       data-placement="top" title="Edit">
-                                                        <i class="icon-edit2"></i>Edit
-                                                    </a>
+                            	<a href="{{url('admin/coupon/'.$c->id.'/edit')}}" class="table-content-edit" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit">
+                                                    <i class="icon-edit2"></i>Edit
+                                                </a>
 
-                                                       <a href="#" class="table-content-delete delete-news" data-id="{{$dat->id}}" data-toggle="tooltip"
-                                                       data-placement="top" title="Delete">
+<a href="#" class="table-content-delete delete-coupon" data-id="{{$c->id}}" data-toggle="tooltip" data-placement="top" title="Delete">
                                                         <i class="icon-delete2"></i>Delete
                                                     </a>
-
+                                                    
                             </td>
                         </tr>
                     @endforeach
@@ -94,15 +89,16 @@
     </div>
     <!-- END: .app-main -->
 @stop
+
 @section('scripts')
     <script>
-        $('.delete-news').on('click', function (e) {
+        $('.delete-coupon').on('click', function (e) {
             e.preventDefault();
             var Id = $(this).data('id');
-            alertify.confirm("Delete It confirm ?",
+            alertify.confirm("Delete this Coupon ?",
                 function () {
                     $.ajax({
-                        url: baseurl + '/admin/content-management/manage-news/news/delete?Id='+Id,
+                        url: baseurl + '/admin/coupon/delete?Id=' + Id,
                         type: 'get',
                         success: function (data) {
                             if (data == 'true') {

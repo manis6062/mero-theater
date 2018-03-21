@@ -285,6 +285,14 @@
                                 <span class="nav-title">Manage News</span>
                             </a>
                         </li>
+                         <li>
+                            <a href="{{url('admin/content-management/manage-news/manage-category')}}">
+                                        <span class="has-icon">
+                                            <i class="icon-tags"></i>
+                                        </span>
+                                <span class="nav-title">Manage News Category</span>
+                            </a>
+                        </li>
                         <li>
                             <a href="{{url('admin/content-management/inquiry')}}">
 										<span class="has-icon">
@@ -368,7 +376,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="{{url('admin/coupon')}}">
 								<span class="has-icon">
 									<i class="icon-gift"></i>
 								</span>

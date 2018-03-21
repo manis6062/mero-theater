@@ -35,7 +35,7 @@
                         <div class="card-header artist-header"><a href="{{url('admin/content-management/manage-pages/create')}}"> Add New Page</a></div>
                         <div class="card-body">
                             <div class="table-responsive">
-            <table class="table table-responsive table-bordered">
+            <table class="table m-0 table-bordered common-table">
                 <thead>
                 <th>Page Name</th>
                 <th>Created On</th>
