@@ -27,13 +27,16 @@ class PaymentController extends Controller
             'name'=> 'required',
             'image'=>'required',
             'description'=>'required',
-            'status'=>'required'
+            'status'=>'required',
+            'link'=>'url',
+
         ]);
 
         $data = array(
             'name'=>$request->name,
             'description'=>$request->description,
             'status'=>$request->status,
+            'link'=>$request->link,
         );
 
         if($request->hasFile('image'))
@@ -69,13 +72,16 @@ class PaymentController extends Controller
             'name'=> 'required',
             'image'=>'sometimes|required|',
             'description'=>'required',
-            'status'=>'required'
+            'status'=>'required',
+                        'link'=>'url',
+
         ]);
 
         $data = array(
             'name'=>$request->name,
             'description'=>$request->description,
             'status'=>$request->status,
+             'link'=>$request->link,
         );
 
         $detail = PaymentModel::where('id',$id)->first();

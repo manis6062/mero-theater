@@ -26,6 +26,8 @@ class MovieBannerController extends Controller
         $this->validate($request,[
             'name'=> 'required',
             'image'=>'required',
+           'link'=>'url',
+
         ]);
 
         $data = array(
@@ -65,6 +67,8 @@ class MovieBannerController extends Controller
         $this->validate($request,[
             'name'=> 'required',
             'image'=>'sometimes|required|mimes:jpeg,jpg,bmp,png,svg|max:2048',
+                        'link'=>'url',
+
         ]);
 
         $data = array(
@@ -96,4 +100,11 @@ class MovieBannerController extends Controller
         MovieBannerModel::where('id', $request->Id)->delete();
         return 'true';
     }
+
+     public function delete(Request $request)
+   {
+      $Id = $request->Id;
+      MovieBannerModel::find($Id)->delete();
+      return 'true';
+   }
 }

@@ -54,11 +54,11 @@
                 @if(isset($data) && $data->count() > 0)
                     @foreach($data as $dat)
                         <tr>
-                            <td>{{$dat->name}}</td>
+                            <th>{{$dat->name}}</th>
                             <td>{{$dat->email}}</td>
                             <td>{{$dat->phone_no}}</td>
                             <td>{{$dat->message}}</td>
-                            <td>{{$dat->status}}</td>
+                            <td>{{ucwords($dat->status)}}</td>
                             <td>
 
  <a href="{{url('admin/content-management/contact-us/'.$dat->id.'/edit')}}" class="table-content-edit" data-toggle="tooltip"

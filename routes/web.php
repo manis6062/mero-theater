@@ -134,7 +134,7 @@ Route::group(['prefix'=>'admin','middleware'=> 'admin'], function(){
             Route::post('movie-banner/submit','Admin\MovieBannerController@store');
             Route::get('movie-banner/{id}/edit','Admin\MovieBannerController@edit');
             Route::post('movie-banner/update/{id}','Admin\MovieBannerController@update');
-            Route::get('movie-banner/delete','Admin\MovieBannerController@destroy');
+            Route::get('movie-banner/delete','Admin\MovieBannerController@delete');
 
             Route::get('payment-gateway','Admin\PaymentController@index');
             Route::get('payment-gateway/create','Admin\PaymentController@create');

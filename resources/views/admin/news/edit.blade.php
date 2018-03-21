@@ -85,7 +85,7 @@
                                         <div class="card">
                                             <div class="card-body">
                                                 <div class="artist-form">
-            <form class="form" role="form" autocomplete="off" action="{{url('admin/content-management/manage-news/news/submit')}}"  method="post" id="createForm" enctype="multipart/form-data">
+            <form class="form" role="form" autocomplete="off" action="{{url('admin/content-management/manage-news/news/update/'.$editdata->id)}}"  method="post" id="createForm" enctype="multipart/form-data">
                                                         {{csrf_field()}}
                                                         <div class="form-group row">
                                                             <label class="col-lg-3 col-form-label form-control-label">News Title <span class="req">*</span></label>
