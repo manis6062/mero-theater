@@ -4,34 +4,33 @@
         <!-- BEGIN .user-actions -->
         <ul class="user-actions">
             <li>
-                <a href="#" data-toggle="tooltip" data-placement="top" title="" data-original-title="Setting">
-                    <i class="icon-cog3"></i>
+                <a href="#" data-toggle="tooltip" data-placement="top" title="Box Office">
+                    <i class="icon-movie_creation"></i>
                 </a>
             </li>
             <li>
-                <a href="#" data-toggle="tooltip" data-placement="top" title="" data-original-title="Profile">
-                    <i class="icon-account_circle"></i>
-                </a>
-            </li>
-            <li>
-                <a href="#">
-                </a><a href="#" data-toggle="tooltip" data-placement="top" title="" data-original-title="Activity">
-                    <i class="icon-schedule"></i>
-                </a>
-            </li>
-            <li>
-                <a href="#" data-toggle="tooltip" data-placement="top" title="" data-original-title="Setting">
-                    <i class="icon-cog3"></i>
-                </a>
-            </li>
-            <li>
-                <a href="#" data-toggle="tooltip" data-placement="top" title="" data-original-title="Profile">
-                    <i class="icon-account_circle"></i>
+                <a href="#" data-toggle="tooltip" data-placement="top" title="Counter Management">
+                    <i class="icon-meter"></i>
                 </a>
             </li>
             <li>
                 <a href="#">
-                </a><a href="#" data-toggle="tooltip" data-placement="top" title="" data-original-title="Activity">
+                    <a href="#" data-toggle="tooltip" data-placement="top" title="Sales Management">
+                        <i class="icon-price-tag"></i>
+                    </a>
+            </li>
+            <li>
+                <a href="setting.html" data-toggle="tooltip" data-placement="top" title="Setting">
+                    <i class="icon-cog3"></i>
+                </a>
+            </li>
+            <li>
+                <a href="profile.html" data-toggle="tooltip" data-placement="top" title="Profile">
+                    <i class="icon-account_circle"></i>
+                </a>
+            </li>
+            <li>
+                <a href="filters.html" data-toggle="tooltip" data-placement="top" title="Activity">
                     <i class="icon-schedule"></i>
                 </a>
             </li>
@@ -114,7 +113,7 @@
                 <li>
                     <a href="{{ url('admin/programming') }}">
                         <span class="has-icon">
-									<i class="icon-airline_seat_individual_suite"></i>
+									<i class="icon-code"></i>
 								</span>
                         <span class="nav-title">Programming</span>
                     </a>
@@ -235,9 +234,9 @@
 								</span>
                         <span class="nav-title">Sales Management</span>
                     </a>
-                    <ul aria-expanded="false" class="collapse">
+                    <ul aria-expanded="false">
                         <li>
-                            <a href="#.html">
+                            <a href="reservation-report.html">
 										<span class="has-icon">
 											<i class="icon-presentation"></i>
 										</span>
@@ -245,11 +244,19 @@
                             </a>
                         </li>
                         <li>
-                            <a href="#.html">
+                            <a href="sold-report.html">
 										<span class="has-icon">
 											<i class="icon-pricetags"></i>
 										</span>
                                 <span class="nav-title">Sold Reports </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="transaction-log.html">
+										<span class="has-icon">
+											<i class="icon-spreadsheet"></i>
+										</span>
+                                <span class="nav-title">Transaction log </span>
                             </a>
                         </li>
                     </ul>
