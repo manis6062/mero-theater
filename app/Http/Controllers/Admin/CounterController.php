@@ -68,7 +68,7 @@ public function update(Request $request, $id)
         'fname'=> 'required',
         'lname'=> 'required',
         'designation'=> 'required',
-        'username'=> 'required | without_spaces',
+        'username'=> 'required',
         'password'=>'min:8',
         'email'=>'required'
     ]);
