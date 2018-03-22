@@ -235,8 +235,6 @@ Route::group(['prefix'=>'admin','middleware'=> 'admin'], function(){
         Route::get('add-show/get-pricecard', 'ProgrammingController@getPriceCards');
     });
     //    Route for box office PCM
-
-
     // Route for coupon
     Route::group(['prefix'=>'coupon'], function(){
        Route::get('/', 'Admin\CouponController@index');
@@ -245,5 +243,14 @@ Route::group(['prefix'=>'admin','middleware'=> 'admin'], function(){
        Route::get('{couponid}/edit','Admin\CouponController@edit');
        Route::post('update/{couponid}','Admin\CouponController@update');
        Route::get('/delete', 'Admin\CouponController@destroy');
+});
+
+
+//    Routes for counter management
+Route::group(['prefix' => 'counter-management', 'namespace' => 'CounterManagement'], function(){
+    Route::get('/', 'IndexController@index');
+    Route::post('login-validation', 'IndexController@validation');
+    Route::group(['middleware' => 'counter'], function (){
+        Route::get('dashboard', 'DashboardController@index');
     });
 });

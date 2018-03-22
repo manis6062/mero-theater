@@ -21,21 +21,34 @@ class ProgrammingController extends Controller
         if($schedules->count() > 0)
         {
             $scheduleData = [];
+            $cnt = 0;
             foreach ($schedules as $sd)
             {
                 $showDates = json_decode($sd->show_dates, true);
+                $movieDuration = MovieModel::find($sd->movie_id)->duration;
+                $cleanUpDuration = $sd->clean_up_time;
+                $totalDuration = ($movieDuration+$cleanUpDuration);
                 foreach ($showDates as $dates)
                 {
                     $showTimes = json_decode($sd->show_time, true);
                     foreach ($showTimes as $times)
                     {
-                        $arrData['id'] = $sd->id;
-                        $arrData['movie_name'] = MovieModel::find($sd->movie_id)->first()->movie_title;
-                        $arrData['start_time'] = $dates.'T'.$times;
-                        $scheduleData[] = $arrData;
+                        $showScreens = json_decode($sd->screen_ids, true);
+                        foreach ($showScreens as $ss)
+                        {
+                            $endTime = date("G:i", strtotime('+' . $totalDuration . ' minutes', strtotime($times)));
+                            $cnt ++;
+                            $arrData['id'] = $cnt;
+                            $arrData['content'] = MovieModel::find($sd->movie_id)->movie_title.' ['.Screen::find($ss)->name.']';
+                            $arrData['start'] = $dates.'T'.$times;
+                            $arrData['end'] = $dates.'T'.$endTime;
+                            $scheduleData[] = $arrData;
+                        }
                     }
                 }
             }
+
+            $scheduleData = json_encode($scheduleData);
         }else{
             $scheduleData = null;
         }

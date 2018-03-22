@@ -48,6 +48,10 @@ return [
         'admin'=> [
             'driver'=>'session',
             'provider'=>'admins',
+        ],
+        'counter'=> [
+            'driver'=>'session',
+            'provider'=>'counter_tbl',
         ]
     ],
 
@@ -77,6 +81,11 @@ return [
         'admins' => [
             'driver' => 'eloquent',
             'model' => App\Admin::class,
+        ],
+
+        'counter_tbl' => [
+            'driver' => 'eloquent',
+            'model' => App\CounterModel::class,
         ],
     ],
 

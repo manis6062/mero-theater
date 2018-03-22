@@ -24,15 +24,15 @@ class CounterController extends Controller
    public function store(Request $request)
    {
     $password = $request->password;
-    $passwordenc = Hash::make('password');
+    $passwordenc = bcrypt('password');
     $this->validate($request,[
         'counter_number'=> 'required | unique:counter_tbl',
         'fname'=> 'required',
         'lname'=> 'required',
         'designation'=> 'required',
         'username'=> 'required',
-        'password'=> 'required | without_spaces',
-        'email'=>'required | unique:counter_tbl | without_spaces',
+        'password'=> 'required',
+        'email'=>'required | unique:counter_tbl',
         'mobile'=>'unique:counter_tbl'
     ]);
 

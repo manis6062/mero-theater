@@ -1,7 +1,7 @@
 @extends('admin.layout.master1')
 
 @section('styles')
-    <link rel="stylesheet" href="{{asset('admins/plugins/timeline/timeline.min.css')}}">
+    <link rel="stylesheet" href="{{asset('admins/plugins/timeline/vis.min.css')}}">
     <style>
         .timepicker.increment-allowed {
             /*padding: 1px 36px 0;*/
@@ -202,6 +202,37 @@
             cursor: not-allowed !important;
         }
 
+        /*.vis-time-axis{*/
+        /*width: 200px !important;*/
+        /*display: block !important;*/
+        /*}*/
+
+        /*.vis-panel .vis-left {*/
+        /*touch-action: none;*/
+        /*-moz-user-select: none;*/
+        /*height: 32px;*/
+        /*left: 0px;*/
+        /*top: -1px;*/
+        /*}*/
+
+        /*.vis-panel .vis-right {*/
+        /*height: 32px;*/
+        /*left: 1036px;*/
+        /*top: -1px;*/
+        /*}*/
+
+        /*.vis-panel .vis-top {*/
+        /*width: 1037px;*/
+        /*left: -1px;*/
+        /*top: 0px;*/
+        /*}*/
+
+        /*.vis-panel .vis-bottom {*/
+        /*width: 1037px;*/
+        /*left: -1px;*/
+        /*top: 31px;*/
+        /*}*/
+
         /*.stDiv{*/
         /*width: 100%;*/
         /*float: left;*/
@@ -267,15 +298,9 @@
                                 </div>
                             </div>
 
-                            {{--<div id="movies-calendar">--}}
-                                {{----}}
-                            {{--</div>--}}
-                                <div id="myTimeline">
-                                    <ul class="timeline-events">
-                                        <li data-timeline-node="{ start:'2017-05-28 10:00',end:'2017-05-28 13:00',content:'Event Here' }">Event Label</li>
-                                        <li data-timeline-node="{ start:'2017-05-29 23:10',end:'2017-05-29 1:30',content:'<p>Event Here</p>' }">Event Label</li>
-                                    </ul>
-                                </div>
+                            <div id="movies-calendar">
+
+                            </div>
 
                             <div class="addAShowDiv">
                                 <div class="close-add-show-div">
@@ -581,7 +606,7 @@
 @stop
 
 @section('scripts')
-    <script src="{{asset('admins/plugins/timeline/timeline.min.js')}}"></script>
+    <script src="{{asset('admins/plugins/timeline/vis.min.js')}}"></script>
     {{--form script--}}
     <script>
         $(document).find('.closeMessage').on('click', function () {
@@ -1222,8 +1247,74 @@
     {{--timeline-script--}}
     <script>
         $(window).on('load', function () {
-            $("#myTimeline").timeline();
-            @if(isset($scheduleData) && $scheduleData != null)
+                    @if(isset($scheduleData) && $scheduleData != null)
+            var sDate = '';
+            var endDate = '';
+            var defaultDays = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+            var curr = new Date($(document).find('input.datepicker').val()); // get current date
+            var currDay = defaultDays[curr.getDay()];
+            if (currDay == 'fri') {
+                sDate = curr;
+                endDate = new Date(curr.getTime() + 6 * 24 * 60 * 60 * 1000);
+            }
+
+
+            if (currDay == 'sat') {
+
+                endDate = new Date(curr.getTime() + 5 * 24 * 60 * 60 * 1000);
+                sDate = new Date(curr.getTime() - 1 * 24 * 60 * 60 * 1000);
+            }
+
+
+            if (currDay == 'sun') {
+                endDate = new Date(curr.getTime() + 4 * 24 * 60 * 60 * 1000);
+                sDate = new Date(curr.getTime() - 2 * 24 * 60 * 60 * 1000);
+            }
+
+            if (currDay == 'mon') {
+                endDate = new Date(curr.getTime() + 3 * 24 * 60 * 60 * 1000);
+                sDate = new Date(curr.getTime() - 3 * 24 * 60 * 60 * 1000);
+            }
+
+            if (currDay == 'tue') {
+                endDate = new Date(curr.getTime() + 2 * 24 * 60 * 60 * 1000);
+                sDate = new Date(curr.getTime() - 4 * 24 * 60 * 60 * 1000);
+            }
+
+            if (currDay == 'wed') {
+                endDate = new Date(curr.getTime() + 1 * 24 * 60 * 60 * 1000);
+                sDate = new Date(curr.getTime() - 5 * 24 * 60 * 60 * 1000);
+            }
+
+            if (currDay == 'thu') {
+                endDate = curr;
+                sDate = new Date(curr.getTime() - 6 * 24 * 60 * 60 * 1000);
+            }
+
+
+            // DOM element where the Timeline will be attached
+            var container = document.getElementById('movies-calendar');
+
+            // Create a DataSet (allows two way data-binding)
+            var items = new vis.DataSet(
+                    {!! $scheduleData !!}
+            );
+
+
+            // Configuration for the Timeline
+            var options = {
+                width: '100%',
+                start: sDate,
+                end: endDate,
+                zoomable: true,
+                timeAxis: {scale: 'hour'},
+                stack: true,
+                autoResize: true,
+
+            };
+
+            // Create a Timeline
+            var timeline = new vis.Timeline(container, items, options);
 
             @endif
         });
