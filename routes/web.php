@@ -236,13 +236,14 @@ Route::group(['prefix'=>'admin','middleware'=> 'admin'], function(){
     });
     //    Route for box office PCM
     // Route for coupon
-    Route::group(['prefix'=>'coupon'], function(){
-       Route::get('/', 'Admin\CouponController@index');
-       Route::get('/create','Admin\CouponController@create');
-       Route::post('/submit','Admin\CouponController@store');
-       Route::get('{couponid}/edit','Admin\CouponController@edit');
-       Route::post('update/{couponid}','Admin\CouponController@update');
-       Route::get('/delete', 'Admin\CouponController@destroy');
+    Route::group(['prefix'=>'coupon'], function() {
+        Route::get('/', 'Admin\CouponController@index');
+        Route::get('/create', 'Admin\CouponController@create');
+        Route::post('/submit', 'Admin\CouponController@store');
+        Route::get('{couponid}/edit', 'Admin\CouponController@edit');
+        Route::post('update/{couponid}', 'Admin\CouponController@update');
+        Route::get('/delete', 'Admin\CouponController@destroy');
+    });
 });
 
 
