@@ -1,13 +1,44 @@
-@extends('admin.layout.master')
+@extends('admin.layout.master1')
 
 @section('main-body')
-    <section class="content">
-        <div class="screen-list" style="width: 80%; margin: 5% 10%;">
-            <a href="{{url('admin/content-management/social-media/create')}}">Add New Social Media</a>
-            <table class="table table-responsive table-bordered">
+    <!-- BEGIN .app-main -->
+    <div class="app-main">
+        <!-- BEGIN .main-heading -->
+        <header class="main-heading">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8">
+                        <div class="page-icon">
+                            <i class="icon-border_outer"></i>
+                        </div>
+                        <div class="page-title">
+                            <h5>Add New Social Media</h5>
+                            <h6 class="sub-heading">Welcome to Merotheatre Admin</h6>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4">
+                        <div class="right-actions">
+                            @include('admin.last-login-time')
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- END: .main-heading -->
+        <!-- BEGIN .main-content -->
+        <div class="main-content">
+
+            <!-- Row start -->
+            <div class="row gutters">
+                <div class=" col-md-12 col-sm-12">
+                    <div class="card">
+                        <div class="card-header artist-header"><a href="{{url('admin/content-management/social-media/create')}}">Add New Social Media</a></div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+        <table class="table m-0 table-bordered common-table">
                 <thead>
                 <th>Name</th>
-                <th>Links</th>
+                <th>Link</th>
                 <th>Icon</th>
                 <th>Action</th>
                 </thead>
@@ -16,13 +47,17 @@
                 @if(isset($data) && $data->count() > 0)
                     @foreach($data as $dat)
                         <tr>
-                            <td>{{$dat->name}}</td>
+                            <th>{{$dat->name}}</th>
                             <td>{{$dat->link}}</td>
                             <td><img src="{{asset('socialmedia/'.$dat->icon)}}" class="img img-responsive"></td>
                             <td>
-                                <span><a href="{{url('admin/content-management/social-media/'.$dat->id.'/edit')}}"><i class="fa fa-edit"></i> Edit</a></span>&nbsp;&nbsp;&nbsp;
-                                <br>
-                                <span class="delete-socialmedia" data-id="{{$dat->id}}"><a href=""><i class="fa fa-trash"></i> Delete</a></span>
+
+<a href="{{url('admin/content-management/social-media/'.$dat->id.'/edit')}}" class="table-content-edit" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit">
+                                                    <i class="icon-edit2"></i>Edit
+                                                </a>
+                                                <a href="#" class="delete-socialmedia" data-toggle="tooltip" data-placement="top" title="" data-original-title="Delete" data-id="{{$dat->id}}">
+                                                    <i class="icon-delete2"></i>Delete
+                                                </a>
                             </td>
                         </tr>
                     @endforeach
@@ -33,10 +68,18 @@
                 @endif
                 </tbody>
             </table>
-        </div>
-    </section>
-@stop
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Row end -->
 
+        </div>
+        <!-- END: .main-content -->
+    </div>
+    <!-- END: .app-main -->
+@stop
 @section('scripts')
     <script>
         $('.delete-socialmedia').on('click', function (e) {

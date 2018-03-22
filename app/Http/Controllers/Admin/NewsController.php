@@ -30,7 +30,7 @@ class NewsController extends Controller
             'meta_title'=>'required',
             'meta_description'=>'required',
             'featured_image'=>'required',
-            'caption'=>'required'
+            'caption'=>'required',
         ]);
 
         $data = array(
@@ -40,6 +40,7 @@ class NewsController extends Controller
             'meta_title'=>$request->meta_title,
             'meta_description'=>$request->meta_description,
             'caption'=>$request->caption,
+             'status'=>$request->status,
         );
 
         if($request->hasFile('featured_image'))
@@ -53,7 +54,7 @@ class NewsController extends Controller
 
         NewsModel::create($data);
 
-        return redirect('admin/content-management/manage-news/news/create');
+        return redirect('admin/content-management/manage-news/news');
     }
 
     public function show($id)

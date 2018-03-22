@@ -1,29 +1,98 @@
-@extends('admin.layout.master')
+@extends('admin.layout.master1')
+
+@section('styles')
+    <style>
+        .create-form {
+            width: 70%;
+            margin-left: 15%;
+            margin-right: 15%;
+            margin-top: 5%;
+            margin-bottom: 5%;
+            border: 1px solid #ddd;
+            padding: 2%;
+        }
+
+
+        .help-block {
+            display: block;
+            color: red;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .info-span{
+            font-size: 18px;
+            text-align: center;
+            font-weight: 600;
+            color: magenta;
+        }
+
+        small{
+            color: red;
+        }
+
+        span.note{
+            font-size: 11px;
+            margin: 0;
+            padding: 0;
+        }
+
+       .artist-avatar-error{
+        text-transform: lowercase;
+       }
+
+       .subModalBtn{
+       background-color: #DA1113;
+       }
+
+    </style>
+@stop
+
 
 @section('main-body')
-    <!-- Content Header (Page header) -->
-    <section class="content-header">
-        <h1>
-            Movies
-        </h1>
-        <ol class="breadcrumb">
-            <li><a href="{{url('admin/dashboard')}}"><i class="fa fa-dashboard"></i>Home</a></li>
-            <li>Edit Movie</li>
-        </ol>
-    </section>
+    <!-- BEGIN .app-main -->
+    <div class="app-main">
+        <!-- BEGIN .main-heading -->
+        <header class="main-heading">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8">
+                        <div class="page-icon">
+                            <i class="icon-border_outer"></i>
+                        </div>
+                        <div class="page-title">
+                            <h5>Edit Movie</h5>
+                            <h6 class="sub-heading">Welcome to Merotheatre Admin</h6>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4">
+                        <div class="right-actions">
+                            @include('admin.last-login-time')
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- END: .main-heading -->
 
-    <!-- Main content -->
-    <section class="content">
-        <!-- Small boxes (Stat box) -->
-        <div class="row">
-            <hr>
-            <form method="post" action="{{url('admin/box-office/movies/update/'.$editdata->id)}}" enctype="multipart/form-data" id="submitmovie">
-                {{csrf_field()}}
+<!-- BEGIN .main-content -->
+                    <div class="main-content">
+                        
+                        <!-- Row start -->
+                        <div class="row gutters form-wrapper">
+                            <div class=" col-md-12 col-sm-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="artist-form">
+                                                    <form class="form" role="form" autocomplete="off" action="{{url('admin/box-office/movies/update/'.$editdata->id)}}"  method="post" id="submitmovie" enctype="multipart/form-data">
+                                                        {{csrf_field()}}
 
-                <div class="form-group row">
-                    <label for="movieTitle" class="col-sm-2 text-right"><span class="req">*</span>Title: </label>
-                    <div class="col-sm-4">
-                        <input type="text" id="movieTitle" name="movieTitle" class="form-control" value="{{ isset($editdata->movie_title)?$editdata->movie_title:old('movieTitle') }}">
+ <div class="form-group row">
+                    <label for="movieTitle" class="col-lg-3 col-form-label form-control-label">Title <span class="req">*</span></label>
+                    <div class="col-sm-9">
+                        <input type="text" id="movieTitle" name="movieTitle" class="form-control" value="{{ isset($editdata->movie_title)?$editdata->movie_title:old('movieTitle') }}" onfocus="removeError();" placeholder="Enter Movie Name">
                         @if($errors->has('movieTitle'))
                             <span class="help-block">
                                 <strong>{{$errors->first('movieTitle')}}</strong>
@@ -32,11 +101,10 @@
                         <span class="movieTitle-error error help-block"></span>
                     </div>
                 </div>
-
                 <div class="form-group row">
-                    <label for="movieShortName" class="col-sm-2 text-right"><span class="req">*</span>Short Name:</label>
-                    <div class="col-sm-4">
-                        <input type="text" id="movieShortName" name="movieShortName" class="form-control" value="{{ isset($editdata->movie_short_name)?$editdata->movie_short_name:old('movieTitle') }}">
+                    <label for="movieTitle" class="col-lg-3 col-form-label form-control-label">Short Name <span class="req">*</span></label>
+                    <div class="col-sm-9">
+                         <input type="text" id="movieShortName" name="movieShortName" class="form-control" value="{{ isset($editdata->movie_short_name)?$editdata->movie_short_name:old('movieShortName') }}" onfocus="removeError();" placeholder="Enter Movie Short Name">
                         @if($errors->has('movieShortName'))
                             <span class="help-block">
                                 <strong>{{$errors->first('movieShortName')}}</strong>
@@ -46,66 +114,69 @@
                     </div>
                 </div>
 
-                <div class="form-group row">
-                    <label for="Synopsis" class="col-sm-2 text-right">Synopsis:</label>
-                    <div class="col-sm-10">
-                        <textarea class="form-control ckeditor" rows="6" name="synopsis">{{ isset($editdata->synopsis)?$editdata->synopsis:old('synopsis') }}</textarea>
-                        @if($errors->has('synopsis'))
-                            <span class="help-block">
-                                <strong>{{$errors->first('synopsis')}}</strong>
-                            </span>
-                        @endif
-                    </div>
-                </div>
+       <div class="form-group row">
+                                                            <label class="col-lg-3 col-form-label form-control-label">Synopsis</label>
+                                                            <div class="col-lg-9">
+ <textarea name="synopsis" id="synopsis" rows="5" class="form-control" placeholder="Type synopsis" onfocus="removeError();" value="">{{ isset($editdata->synopsis)?$editdata->synopsis:old('synopsis') }}</textarea>
+   @if($errors->has('synopsis'))
+                                                    <span class="help-block">
+                                                        <strong>
+                                                            {{$errors->first('synopsis')}}
+                                                        </strong>
+                                                    </span>
+                                                @endif
+                                                <span class="synopsis-error error help-block"></span>
+                                                            </div>
+                                                        </div>
 
-                <div class="form-group row">
-                    <label for="Genre" class="col-sm-2 text-right"><span class="req">*</span>Genre:</label>
-                    <div class="col-sm-2">
-                        <select name="genre" class="form-control">
-                           <option value="">Select Genre</option>
-                            <option value="3D">3D</option>
-                            <option value="action">Action</option>
-                            <option value="adventure">Adventure</option>
-                            <option value="alternativecontent">Alernative Content</option>
-                            <option value="animated">Animated</option>
-                            <option value="asian">Asian</option>
-                            <option value="ballet">Ballet</option>
-                            <option value="biography">Biography</option>
-                            <option value="blackcomedy">Black Comedy</option>
-                            <option value="children">Children</option>
-                            <option value="classic">Classic</option>
-                            <option value="comedy">Comedy</option>
-                            <option value="concert">Concert</option>
-                            <option value="crime">Crime</option>
-                            <option value="dance">Dance</option>
-                            <option value="docu-drama">Docu-Drama</option>
-                            <option value="documentary">Documentary</option>
-                            <option value="drama">Drama</option>
-                            <option value="family">Family</option>
-                            <option value="fantasy">Fantasy</option>
-                            <option value="festival">Festival</option>
-                            <option value="Foreign">Foreign</option>
-                            <option value="horror">Horror</option>
-                            <option value="liveconcert">Live Concert</option>
-                            <option value="liveshow">Live Show</option>
-                            <option value="livesportsbroadcast">Live Sports Broadcast</option>
-                            <option value="livetheatre">Live Theatre</option>
-                            <option value="marshalarts">Marshal Arts</option>
-                            <option value="Musicall">Musical</option>
-                            <option value="mystery">Mystery</option>
-                            <option value="opera">Opera</option>
-                            <option value="periodrama">Period Drama</option>
-                            <option value="romance">Romance</option>
-                            <option value="sciencefiction">Science Fiction</option>
-                            <option value="shortfilm">Short Film</option>
-                            <option value="sports">Sports</option>
-                            <option value="supernatural">Supernatural</option>
-                            <option value="suspense">Suspense</option>
-                            <option value="teens">Teen</option>
-                            <option value="thriller">Thriller</option>
-                            <option value="unknown">Unknown</option>
-                            <option value="war">War</option>
-                            <option value="western">Western</option>
+                 <div class="form-group row">
+                    <label for="Genre" class="col-lg-3 col-form-label form-control-label">Genre<span class="req">*</span></label>
+                    <div class="col-sm-3">
+                        <select name="genre" class="custom-select" onfocus="removeError();">
+                            <option value="">Select Genre</option>
+                            <option value="3D" @if ($editdata->genre == "3D") {{ 'selected' }} @endif>3D</option>
+                            <option value="action" @if ($editdata->genre == "action") {{ 'selected' }} @endif>Action</option>
+                            <option value="adventure" @if ($editdata->genre == "adventure") {{ 'selected' }} @endif>Adventure</option>
+                            <option value="alternativecontent" @if ($editdata->genre == "alternativecontent") {{ 'selected' }} @endif>Alernative Content</option>
+                            <option value="animated" @if ($editdata->genre == "animated") {{ 'selected' }} @endif>Animated</option>
+                            <option value="asian"  @if ($editdata->genre == "asian") {{ 'selected' }} @endif>Asian</option>
+                            <option value="ballet"  @if ($editdata->genre == "ballet") {{ 'selected' }} @endif>Ballet</option>
+                            <option value="biography"  @if ($editdata->genre == "biography") {{ 'selected' }} @endif>Biography</option>
+                            <option value="blackcomedy"  @if ($editdata->genre == "blackcomedy") {{ 'selected' }} @endif>Black Comedy</option>
+                            <option value="children"  @if ($editdata->genre == "children") {{ 'selected' }} @endif>Children</option>
+                            <option value="classic"  @if ($editdata->genre == "classic") {{ 'selected' }} @endif>Classic</option>
+                            <option value="comedy"  @if ($editdata->genre == "comedy") {{ 'selected' }} @endif>Comedy</option>
+                            <option value="concert"  @if ($editdata->genre == "concert") {{ 'selected' }} @endif>Concert</option>
+                            <option value="crime"  @if ($editdata->genre == "crime") {{ 'selected' }} @endif>Crime</option>
+                            <option value="dance"  @if ($editdata->genre == "dance") {{ 'selected' }} @endif>Dance</option>
+                            <option value="docu-drama"  @if ($editdata->genre == "docu-drama") {{ 'selected' }} @endif>Docu-Drama</option>
+                            <option value="documentary"  @if ($editdata->genre == "documentary") {{ 'selected' }} @endif>Documentary</option>
+                            <option value="drama"  @if ($editdata->genre == "drama") {{ 'selected' }} @endif>Drama</option>
+                            <option value="family"  @if ($editdata->genre == "family") {{ 'selected' }} @endif>Family</option>
+                            <option value="fantasy"  @if ($editdata->genre == "fantasy") {{ 'selected' }} @endif>Fantasy</option>
+                            <option value="festival"  @if ($editdata->genre == "festival") {{ 'selected' }} @endif>Festival</option>
+                            <option value="Foreign"  @if ($editdata->genre == "Foreign") {{ 'selected' }} @endif>Foreign</option>
+                            <option value="horror"  @if ($editdata->genre == "horror") {{ 'selected' }} @endif>Horror</option>
+                            <option value="liveconcert"  @if ($editdata->genre == "liveconcert") {{ 'selected' }} @endif>Live Concert</option>
+                            <option value="liveshow"  @if ($editdata->genre == "liveshow") {{ 'selected' }} @endif>Live Show</option>
+                            <option value="livesportsbroadcast"  @if ($editdata->genre == "livesportsbroadcast") {{ 'selected' }} @endif>Live Sports Broadcast</option>
+                            <option value="livetheatre"  @if ($editdata->genre == "livetheatre") {{ 'selected' }} @endif>Live Theatre</option>
+                            <option value="marshalarts"  @if ($editdata->genre == "marshalarts") {{ 'selected' }} @endif>Marshal Arts</option>
+                            <option value="Musicall" @if ($editdata->genre == "Musicall") {{ 'selected' }} @endif>Musical</option>
+                            <option value="mystery" @if ($editdata->genre == "mystery") {{ 'selected' }} @endif>Mystery</option>
+                            <option value="opera" @if ($editdata->genre == "opera") {{ 'selected' }} @endif>Opera</option>
+                            <option value="periodrama" @if ($editdata->genre == "periodrama") {{ 'selected' }} @endif>Period Drama</option>
+                            <option value="romance" @if ($editdata->genre == "romance") {{ 'selected' }} @endif>Romance</option>
+                            <option value="sciencefiction" @if ($editdata->genre == "sciencefiction") {{ 'selected' }} @endif>Science Fiction</option>
+                            <option value="shortfilm" @if ($editdata->genre == "shortfilm") {{ 'selected' }} @endif>Short Film</option>
+                            <option value="sports" @if ($editdata->genre == "sports") {{ 'selected' }} @endif>Sports</option>
+                            <option value="supernatural" @if ($editdata->genre == "supernatural") {{ 'selected' }} @endif>Supernatural</option>
+                            <option value="suspense" @if ($editdata->genre == "suspense") {{ 'selected' }} @endif>Suspense</option>
+                            <option value="teens" @if ($editdata->genre == "teens") {{ 'selected' }} @endif>Teen</option>
+                            <option value="thriller" @if ($editdata->genre == "thriller") {{ 'selected' }} @endif>Thriller</option>
+                            <option value="unknown" @if ($editdata->genre == "unknown") {{ 'selected' }} @endif>Unknown</option>
+                            <option value="war" @if ($editdata->genre == "war") {{ 'selected' }} @endif>War</option>
+                            <option value="western" @if ($editdata->genre == "western") {{ 'selected' }} @endif>Western</option>
                         </select>
                          @if($errors->has('genre'))
                             <span class="help-block">
@@ -116,15 +187,16 @@
                     </div>
                 </div>
 
+
                 <div class="form-group row">
-                    <label for="distributor" class="col-sm-2 text-right"><span class="req">*</span>Distributor:</label>
-                    <div class="col-sm-2">
-                        <select class="form-control" name="distributor">
+                    <label for="distributor" class="col-lg-3 col-form-label form-control-label">Distributor<span class="req">*</span></label>
+                    <div class="col-sm-3">
+                        <select class="custom-select" name="distributor" onfocus="removeError();">
                             <option value="">Select Distributor</option>
-                            <option value="gopikrishna">Gopi Krishna</option>
-                            <option value="barahimovies">Barahi Movies</option>
-                            <option value="blackhorse">Black Horse Creation</option>
-                            <option value="aamasaraswoti">Aama Saraswoti</option>
+                            <option value="gopikrishna" @if ($editdata->distributor == "gopikrishna") {{ 'selected' }} @endif>Gopi Krishna</option>
+                            <option value="barahimovies"  @if ($editdata->distributor == "barahimovies") {{ 'selected' }} @endif>Barahi Movies</option>
+                            <option value="blackhorse" @if ($editdata->distributor == "blackhorse") {{ 'selected' }} @endif >Black Horse Creation</option>
+                            <option value="aamasaraswoti" @if ($editdata->distributor == "aamasaraswoti") {{ 'selected' }} @endif>Aama Saraswoti</option>
                         </select>
                         @if($errors->has('distributor'))
                             <span class="help-block">
@@ -135,10 +207,10 @@
                     </div>
                 </div>
 
-                <div class="form-group row">
-                    <label for="openingdate" class="col-sm-2 text-right"><span class="req">*</span>Opening Date:</label>
-                    <div class="col-sm-4">
-                        <input type="text" id="openingdate" name="openingdate" class="form-control"  value="{{ isset($editdata->openingdate)?$editdata->openingdate:old('openingdate') }}">
+                     <div class="form-group row">
+                    <label for="openingshow" class="col-lg-3 col-form-label form-control-label">Opening Date <span class="req">*</span></label>
+                    <div class="col-sm-3">
+                         <input type="text" id="openingdate" name="openingdate" class="form-control" value="{{ isset($editdata->openingdate)?$editdata->openingdate:old('openingdate') }}" onfocus="removeError();" placeholder="Choose Opening Date">
                         @if($errors->has('openingdate'))
                             <span class="help-block">
                                 <strong>{{$errors->first('openingdate')}}</strong>
@@ -148,23 +220,23 @@
                     </div>
                 </div>
 
-                <div class="form-group row">
-                    <label for="content" class="col-sm-2 text-right">Content:</label>
-                    <div class="col-sm-4">
-                        <input type="text" id="content" name="content" class="form-control"  value="{{ isset($editdata->content)?$editdata->content:old('content') }}">
-                        <span id="seatImageSpan">
+                      <div class="form-group row">
+                    <label for="content" class="col-lg-3 col-form-label form-control-label">Content</label>
+                    <div class="col-sm-9">
+                         <input type="text" id="content" name="content" class="form-control" value="{{ isset($editdata->content)?$editdata->content:old('content') }}" >
                         @if($errors->has('content'))
                             <span class="help-block">
                                 <strong>{{$errors->first('content')}}</strong>
                             </span>
                         @endif
+                        <span class="content-error error help-block"></span>
                     </div>
                 </div>
 
-                <div class="form-group row">
-                    <label for="duration" class="col-sm-2 text-right"><span class="req">*</span>Duration:</label>
-                    <div class="col-sm-4">
-                        <input type="text" id="duration" name="duration" class="form-control" placeholder="Duration in minutes only"  value="{{ isset($editdata->duration)?$editdata->duration:old('duration') }}">
+                      <div class="form-group row">
+                    <label for="duration" class="col-lg-3 col-form-label form-control-label">Duration <span class="req">*</span></label>
+                    <div class="col-sm-3">
+                        <input type="text" id="duration" name="duration" class="form-control" placeholder="Duration in minutes only" value="{{ isset($editdata->duration)?$editdata->duration:old('duration') }}" onfocus="removeError();">
                         @if($errors->has('duration'))
                             <span class="help-block">
                                 <strong>{{$errors->first('duration')}}</strong>
@@ -174,10 +246,10 @@
                     </div>
                 </div>
 
-                <div class="form-group row">
-                    <label for="distributor" class="col-sm-2 text-right">Restricted:</label>
-                    <div class="col-sm-1">
-                        <input type="checkbox" id="isrestricted" name="isrestricted" value="restricted" {{ isset($editdata->isrestricted)?'checked':''}}>
+                  <div class="form-group row">
+                    <label for="isrestricted" class="col-lg-3 col-form-label form-control-label">Restricted <span class="req">*</span></label>
+                    <div class="col-sm-9">
+                       <input type="checkbox" id="isrestricted" name="isrestricted" value="restricted" {{ isset($editdata->isrestricted)?'checked':''}}>
                         @if($errors->has('isrestricted'))
                             <span class="help-block">
                                 <strong>{{$errors->first('isrestricted')}}</strong>
@@ -186,10 +258,10 @@
                     </div>
                 </div>
 
-                <div class="form-group row">
-                    <label for="displaysequence" class="col-sm-2 text-right"><span class="req">*</span>Display Sequence:</label>
-                    <div class="col-sm-4">
-                        <input type="text" id="displaysequence" name="displaysequence" class="form-control" value="{{ isset($editdata->displaysequence)?$editdata->displaysequence:old('displaysequence') }}">
+                  <div class="form-group row">
+                    <label for="displaysequence" class="col-lg-3 col-form-label form-control-label">Display Sequence <span class="req">*</span></label>
+                    <div class="col-sm-3">
+                        <input type="text" id="displaysequence" name="displaysequence" class="form-control" value="{{ isset($editdata->displaysequence)?$editdata->displaysequence:old('displaysequence') }}" onfocus="removeError();">
                         @if($errors->has('displaysequence'))
                             <span class="help-block">
                                 <strong>{{$errors->first('displaysequence')}}</strong>
@@ -199,19 +271,19 @@
                     </div>
                 </div>
 
-                <div class="form-group row">
-                    <label for="filmformat" class="col-sm-2 text-right"><span class="req">*</span>Film Format:</label>
-                    <div class="col-sm-2">
-                        <select class="form-control" name="filmformat">
+                     <div class="form-group row">
+                    <label for="filmformat" class="col-lg-3 col-form-label form-control-label">Film Format<span class="req">*</span></label>
+                    <div class="col-sm-3">
+                        <select class="custom-select" name="filmformat">
                             <option value="">Select Film Format</option>
-                            <option value="2Ddigital">2D Digital</option>
-                            <option value="2Dfilm">2D Film</option>
-                            <option value="3Ddigital">3D Digital</option>
-                            <option value="3Dhfr">3D HFR</option>
-                            <option value="imax">IMAX</option>
-                            <option value="imax15/70">IMAX 15/70</option>
-                            <option value="imax3D">IMAX 3D</option>
-                            <option value="notfilm">Not a Film</option>
+                            <option value="2Ddigital" @if ($editdata->displaysequence == "2Ddigital") {{ 'selected' }} @endif>2D Digital</option>
+                            <option value="2Dfilm" @if ($editdata->displaysequence == "2Dfilm") {{ 'selected' }} @endif>2D Film</option>
+                            <option value="3Ddigital" @if ($editdata->displaysequence == "3Ddigital") {{ 'selected' }} @endif>3D Digital</option>
+                            <option value="3Dhfr" @if ($editdata->displaysequence == "3Dhfr") {{ 'selected' }} @endif>3D HFR</option>
+                            <option value="imax" @if ($editdata->displaysequence == "imax") {{ 'selected' }} @endif>IMAX</option>
+                            <option value="imax15/70" @if ($editdata->displaysequence == "imax15/70") {{ 'selected' }} @endif>IMAX 15/70</option>
+                            <option value="imax3D" @if ($editdata->displaysequence == "imax3D") {{ 'selected' }} @endif>IMAX 3D</option>
+                            <option value="notfilm" @if ($editdata->displaysequence == "notfilm") {{ 'selected' }} @endif>Not a Film</option>
                         </select>
                         @if($errors->has('filmformat'))
                             <span class="help-block">
@@ -222,10 +294,10 @@
                     </div>
                 </div>
 
-                <div class="form-group row">
-                    <label for="trailerurl" class="col-sm-2 text-right">Trailer URL:</label>
-                    <div class="col-sm-4">
-                        <input type="text" id="trailerurl" name="trailerurl" class="form-control" value="{{ isset($editdata->trailerurl)?$editdata->trailerurl:old('trailerurl') }}">
+                 <div class="form-group row">
+                    <label for="trailerurl" class="col-lg-3 col-form-label form-control-label">Trailer URL <span class="req">*</span></label>
+                    <div class="col-sm-9">
+                       <input type="text" id="trailerurl" name="trailerurl" class="form-control" value="{{ isset($editdata->trailerurl)?$editdata->trailerurl:old('trailerurl') }}">
                         @if($errors->has('trailerurl'))
                             <span class="help-block">
                                 <strong>{{$errors->first('trailerurl')}}</strong>
@@ -234,51 +306,83 @@
                     </div>
                 </div>
 
-                <div class="form-group row">
-                    <label for="image" class="col-sm-2 text-right">Poster Image:</label>
-                    <div class="col-sm-4">       
-                        @if(isset($editdata->image))
+                   <div class="form-group row">
+                                                            <label class="col-lg-3 col-form-label form-control-label">Poster Image<br><span class="note">(Dimension 420x200 | Max Size 2mb | Format jpeg, jpg, png, bmp, svg)</span></label>
+                                                            <div class="col-lg-9">
+                                                                 @if(isset($editdata->image))
                             <img src="{{ asset('movies/posterimage/'.$editdata->image) }}" alt="Poster Image" class="img img-responsive">
                         @endif
-                        <label for="poster">Change Poster Image:</label>
-                        <input type="file" class="form-control " name="image" id="image">
-                        (Dimension 25x25 | Max Size 2mb | Format jpeg, jpg, png, bmp, svg)
-                    </div>
-                    <span class="image-error error help-block"></span>
-                </div>
+                          <br><br>
+                                                                <label class="custom-file">
+                                                                  <input  onfocus="removeError();" type="file" id="image" name="image" class="custom-file-input" value="{{old('image')}}">
+                                                                   @if($errors->has('image'))
+                                                    <span class="help-block error">
+                                                        <strong>
+                                                            {{$errors->first('image')}}
+                                                        </strong>
+                                                    </span>
+                                                @endif
+                                               
+                                                                    <span class="custom-file-control image-filename" ></span>
+                                                                     <span class="image-error error help-block"></span>
+                                                                </label>
 
-                <div class="form-group row">
-                    <label for="bannerimage" class="col-sm-2 text-right">Banner Image:</label>
-                    <div class="col-sm-4">
-                        @if(isset($editdata->image))
+                                                            </div>
+                                                        </div>
+
+
+                                                  
+                                                        <div class="form-group row">
+                                                            <label class="col-lg-3 col-form-label form-control-label">Banner Image <span class="note">(Dimension 200x200 | Max Size 2mb | Format jpeg, jpg, png, bmp, svg)</span></label>
+                                                            <div class="col-lg-9">
+                                                                 @if(isset($editdata->image))
                             <img src="{{ asset('movies/bannerimage/'.$editdata->banner_image) }}" alt="Banner Image" class="img img-responsive">
                         @endif
-                        <label for="banner">Change Poster Image:</label>
-                        <input type="file" class="form-control " name="bannerimage" id="bannerimage" style="padding: 0; margin: 0;">
-                        (Dimension 25x25 | Max Size 2mb | Format jpeg, jpg, png, bmp, svg)
-                    </div>
-                    <span class="bannerimage-error error help-block"></span>
-                </div>
+                        <br><br>
+                                                                <label class="custom-file">
+                                                                  <input  onfocus="removeError();" type="file" id="bannerimage" name="bannerimage" class="custom-file-input" value="{{old('bannerimage')}}">
+                                                                   @if($errors->has('bannerimage'))
+                                                    <span class="help-block error">
+                                                        <strong>
+                                                            {{$errors->first('bannerimage')}}
+                                                        </strong>
+                                                    </span>
+                                                @endif
+                                               
+                                                                    <span class="custom-file-control bannerimage-filename" ></span>
+                                                                     <span class="bannerimage-error error help-block"></span>
+                                                                </label>
 
-                <div class="form-group row">
-                    <label for="Status" class="col-sm-2 text-right">Status:</label>
-                    <div class="col-sm-2">
-                        <select class="form-control" name="status">
-                            <option value="active">Active</option>
-                            <option value="inactive">Inactive</option>
+                                                            </div>
+                                                        </div>
+
+
+                                                              <div class="form-group row">
+                    <label for="status" class="col-lg-3 col-form-label form-control-label">Status<span class="req">*</span></label>
+                    <div class="col-sm-3">
+                       <select class="custom-select" name="status">
+                            <option value="active" @if ($editdata->status == "active") {{ 'selected' }} @endif>Active</option>
+                            <option value="inactive" @if ($editdata->status == "inactive") {{ 'selected' }} @endif>Inactive</option>
                         </select>
+                        @if($errors->has('status'))
+                            <span class="help-block">
+                                <strong>{{$errors->first('status')}}</strong>
+                            </span>
+                        @endif
+                        <span class="status-error error help-block"></span>
                     </div>
                 </div>
 
+
                 <div class="form-group row">
-                    <label class="col-sm-2 control-label text-right" for="directartist">Movie Artists</label>
+                    <label class="col-lg-3 col-form-label form-control-label" for="directartist">Movie Artists</label>
                     <div class="col-sm-10">
                         <input type="text" name="directartist" class="form-control" value="{{isset($editdata->direct_artist)?$editdata->direct_artist:old('directartist')}}">
                     </div>
                 </div>
                 <hr>
 
-                <section class="content-header">
+               <section class="content-header">
                     <h1>
                         People
                     </h1>
@@ -329,12 +433,31 @@
                 <br>
                 <button class="btn btn-default" id="addmorebtn">Add Artist</button>
                 <br><br>
-                <button type="submit" class="btn btn-danger subBtn">Submit</button>
-                
-            </form>
-        </div>
-    </section>
+                                                 
+                                             
+                                                        <div class="form-group row">
+                                                            <label class="col-lg-3 col-form-label form-control-label"></label>
+                                                            <div class="col-lg-9">
+                                                                <button type="submit" id="submitmovie" class="btn btn-danger subModalBtn subBtn">Update</button>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                    
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Row end -->
+
+                    </div>
+                    <!-- END: .main-content -->
+    </div>
+    <!-- END: .app-main -->
 @stop
+
 
 @section('scripts')
 <script>
@@ -419,21 +542,28 @@
 
         });
 
-        $('#image').on('change', function () {
+         $('#image').on('change', function () {
+
             var fileOrg = '';
             var widthOfImg = '';
             var heightOfImg = '';
-            var file = $('input#image').val();
+            var file = $('#image').val();
+
+
+             $(".image-filename").text(file);
             if (file != '') {
-                var fileSize = $('input#image')[0].files[0].size;
+                var fileSize = $('#image')[0].files[0].size;
                 if (fileSize > 2097152) {
-                    $('.subBtn').prop('disabled', true);
-                    $('.image-error').html('<strong style="color: red;">Max size 2 mb only !</strong>');
+                    $('.subModalBtn').prop('disabled', true);
+                    alertify.alert('Max size 2 mb only !');
+                     $(".image-filename").text('');
                 } else {
-                    var ext = $('input#image').val().split('.').pop().toLowerCase();
+                    var ext = $('#image').val().split('.').pop().toLowerCase();
                     if ($.inArray(ext, ['jpeg', 'jpg', 'png', 'bmp', 'gif', 'svg']) == -1) {
-                        $('.subBtn').prop('disabled', true);
-                        $('.image-error').html('<strong style="color: red;">Invalid Image Format !</strong>');
+                        $('.subModalBtn').prop('disabled', true);
+                        alertify.alert('Invalid Image Format !');
+                                             $(".image-filename").text('');
+
                     } else {
                         var fileInput = $(this)[0],
                             fileOrg = fileInput.files && fileInput.files[0];
@@ -448,10 +578,12 @@
                                 heightOfImg = img.naturalHeight;
 
                                 if (widthOfImg != 420 && heightOfImg != 200) {
-                                    $('.image-error').html('<strong style="color: red;">Invalid Image Dimension !</strong>');
+                                    alertify.alert('Invalid Image Dimension ! Image Size Must be 420*200.');
+                                    $('.subModalBtn').prop('disabled', true);
+                                                         $(".image-filename").text('');
+
                                 } else {
-                                    $('.image-error').html('');
-                                    $('.subBtn').prop('disabled', false);
+                                    $('.subModalBtn').prop('disabled', false);
                                 }
                             };
                         }
@@ -460,21 +592,28 @@
             }
         });
 
-        $('#bannerimage').on('change', function () {
+     $('#bannerimage').on('change', function () {
+
             var fileOrg = '';
             var widthOfImg = '';
             var heightOfImg = '';
-            var file = $('input#bannerimage').val();
+            var file = $('#bannerimage').val();
+
+
+             $(".bannerimage-filename").text(file);
             if (file != '') {
-                var fileSize = $('input#bannerimage')[0].files[0].size;
+                var fileSize = $('#bannerimage')[0].files[0].size;
                 if (fileSize > 2097152) {
-                    $('.subBtn').prop('disabled', true);
-                    $('.bannerimage-error').html('<strong style="color: red;">Max size 2 mb only !</strong>');
+                    $('.subModalBtn').prop('disabled', true);
+                    alertify.alert('Max size 2 mb only !');
+                     $(".bannerimage-filename").text('');
                 } else {
-                    var ext = $('input#bannerimage').val().split('.').pop().toLowerCase();
+                    var ext = $('#bannerimage').val().split('.').pop().toLowerCase();
                     if ($.inArray(ext, ['jpeg', 'jpg', 'png', 'bmp', 'gif', 'svg']) == -1) {
-                        $('.subBtn').prop('disabled', true);
-                        $('.bannerimage-error').html('<strong style="color: red;">Invalid Image Format !</strong>');
+                        $('.subModalBtn').prop('disabled', true);
+                        alertify.alert('Invalid Image Format !');
+                                             $(".bannerimage-filename").text('');
+
                     } else {
                         var fileInput = $(this)[0],
                             fileOrg = fileInput.files && fileInput.files[0];
@@ -488,21 +627,20 @@
                                 widthOfImg = img.naturalWidth;
                                 heightOfImg = img.naturalHeight;
 
-                                if (widthOfImg != 1280 && heightOfImg != 490) {
-                                    $('.bannerimage-error').html('<strong style="color: red;">Invalid Image Dimension !</strong>');
-                                    $('.subBtn').prop('disabled', true);
+                                if (widthOfImg != 200 && heightOfImg != 200) {
+                                    alertify.alert('Invalid Image Dimension ! Image Size Must be 200*200.');
+                                    $('.subModalBtn').prop('disabled', true);
+                                                         $(".bannerimage-filename").text('');
+
                                 } else {
-                                    $('.bannerimage-error').html('');
-                                    $('.subBtn').prop('disabled', false);
+                                    $('.subModalBtn').prop('disabled', false);
                                 }
                             };
                         }
-
                     }
                 }
             }
         });
-
         $(window).on('load', function(){
             var genreData = "{{$editdata->genre}}";
             $(document).find('select[name=genre]').val(genreData);

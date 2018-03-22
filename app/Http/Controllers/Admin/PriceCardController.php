@@ -17,7 +17,7 @@ class PriceCardController extends Controller
 
     public function index()
     {
-        $priceCards = PriceCard::where('admin_id', Auth::guard('admin')->user()->id)->get();
+        $priceCards = PriceCard::where('admin_id', Auth::guard('admin')->user()->id)->orderBy('screen_ids', 'ASC')->get();
         return view('admin.price-card.list', compact('priceCards'));
     }
 
@@ -31,21 +31,30 @@ class PriceCardController extends Controller
     public function submit(Request $request)
     {
         $data = $request->except('_token');
-        $ds['admin_id'] = Auth::guard('admin')->user()->id;
-        $ds['name'] = $data['name'];
-        $ds['screen_ids'] = json_encode($data['screen_id']);
-        $ds['seat_categories'] = json_encode($data['seat_categories']);
-        $ds['selected_days'] = json_encode($data['days']);
-        $ds['time_range'] = $data['time_range'];
-        $ds['min_time_range'] = $data['min_time_range'];
-        $ds['max_time_range'] = $data['max_time_range'];
-        $ds['ticket_types_ids'] = json_encode($data['ticket_types_id']);
-        $ds['sequences'] = json_encode($data['ticket_types_sequence']);
-        $ds['prices'] = json_encode($data['ticket_types_price']);
-        $ds['status'] = $data['status'];
-        $ds['slug'] = $this->createUniqueSlug($ds['name']);
 
-        $result = PriceCard::create($ds);
+        foreach ($data['screen_id'] as $sid)
+        {
+            if($sid != 'all')
+            {
+                $ds['admin_id'] = Auth::guard('admin')->user()->id;
+                $ds['name'] = $data['name'];
+                $ds['screen_ids'] = $sid;
+                $ds['seat_categories'] = $data['seat_categories'];
+                $ds['selected_days'] = json_encode($data['days']);
+                $ds['time_range'] = $data['time_range'];
+                $ds['min_time_range'] = $data['min_time_range'];
+                $ds['max_time_range'] = $data['max_time_range'];
+                $ds['ticket_types_ids'] = $data['ticket_types_id'];
+                $ds['sequences'] = $data['ticket_types_sequence'];
+                $ds['prices'] = $data['ticket_types_price'];
+                $ds['status'] = $data['status'];
+                $ds['slug'] = $this->createUniqueSlug($ds['name']);
+
+                $result = PriceCard::create($ds);
+            }
+
+        }
+
         if ($result)
             return redirect('admin/box-office/price-card-management')->with('message', 'Price card created successfully !');
 
@@ -59,15 +68,15 @@ class PriceCardController extends Controller
         $pc = PriceCard::where('slug', $slug)->first();
         $ds['admin_id'] = Auth::guard('admin')->user()->id;
         $ds['name'] = $data['name'];
-        $ds['screen_ids'] = json_encode($data['screen_id']);
-        $ds['seat_categories'] = json_encode($data['seat_categories']);
+        $ds['screen_ids'] = $data['screen_ids'];
+        $ds['seat_categories'] = $data['seat_categories'];
         $ds['selected_days'] = json_encode($data['days']);
         $ds['time_range'] = $data['time_range'];
         $ds['min_time_range'] = $data['min_time_range'];
         $ds['max_time_range'] = $data['max_time_range'];
-        $ds['ticket_types_ids'] = json_encode($data['ticket_types_id']);
-        $ds['sequences'] = json_encode($data['ticket_types_sequence']);
-        $ds['prices'] = json_encode($data['ticket_types_price']);
+        $ds['ticket_types_ids'] = $data['ticket_types_id'];
+        $ds['sequences'] = $data['ticket_types_sequence'];
+        $ds['prices'] = $data['ticket_types_price'];
         $ds['status'] = $data['status'];
 
         if ($pc->name != $ds['name'])
@@ -100,50 +109,50 @@ class PriceCardController extends Controller
         $priceCard = PriceCard::where('slug', $slug)->first();
         $screens = Screen::where('admin_id', Auth::guard('admin')->user()->id)->orderBy('id', 'ASC')->get();
         $ticketTypes = TicketType::where('admin_id', Auth::guard('admin')->user()->id)->orderBy('display_sequence', 'ASC')->get();
-        $params = json_decode($priceCard->screen_ids, true);
+
         $returnData = [];
         $sendData = [];
         $ret = '';
 
-        foreach ($params as $param) {
-            $categories = ScreenSeatCategories::where('screen_id', $param)->get();
-            foreach ($categories as $cat) {
-                $returnData[] = $cat->category_name;
-            }
-        }
+//        foreach ($params as $param) {
+//            $categories = ScreenSeatCategories::where('screen_id', $param)->get();
+//            foreach ($categories as $cat) {
+//                $returnData[] = $cat->category_name;
+//            }
+//        }
+//
+//        if(count($params) > 1)
+//        {
+//            foreach ($returnData as $dat)
+//            {
+//                $check = 0;
+//                foreach ($params as $param) {
+//                    if($param != 'all')
+//                    {
+//                        if(ScreenSeatCategories::where('screen_id', $param)->where('category_name', $dat)->first() != null)
+//                        {
+//                            $check ++;
+//                        }
+//                    }else{
+//                        $check ++;
+//                    }
+//                }
+//
+//                if($check == count($params))
+//                {
+//                    $sendData[] = $dat;
+//                }
+//            }
+//        }else{
+//            $sendData = $returnData;
+//        }
+//
+//
+//        $sendData = array_unique($sendData);
+//
+//        $seatCategoriesArr = json_decode($priceCard->seat_categories, true);
 
-        if(count($params) > 1)
-        {
-            foreach ($returnData as $dat)
-            {
-                $check = 0;
-                foreach ($params as $param) {
-                    if($param != 'all')
-                    {
-                        if(ScreenSeatCategories::where('screen_id', $param)->where('category_name', $dat)->first() != null)
-                        {
-                            $check ++;
-                        }
-                    }else{
-                        $check ++;
-                    }
-                }
-
-                if($check == count($params))
-                {
-                    $sendData[] = $dat;
-                }
-            }
-        }else{
-            $sendData = $returnData;
-        }
-
-
-        $sendData = array_unique($sendData);
-
-        $seatCategoriesArr = json_decode($priceCard->seat_categories, true);
-
-        return view('admin.price-card.edit', compact('priceCard', 'slug', 'screens', 'ticketTypes', 'sendData', 'seatCategoriesArr'));
+        return view('admin.price-card.edit', compact('priceCard', 'slug', 'screens', 'ticketTypes'));
     }
 
     public function delete(Request $request)

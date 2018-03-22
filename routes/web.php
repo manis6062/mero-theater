@@ -28,6 +28,14 @@ Route::group(['prefix'=>'admin','middleware'=> 'admin'], function(){
 
 	Route::get('logout', 'Admin\LoginController@logout');
 
+
+    // Route for Sms Campaign
+    Route::group(['prefix'=>'box-office/smsCampaigns'], function(){
+
+        Route::get('/overView', 'Admin\smsCampaign\OverViewController@index');
+    });
+    // Route for Sms Campaign end
+
 	// Route for movies
 	Route::group(['prefix'=>'box-office/movies'], function(){
 	   Route::get('/', 'Admin\MovieController@movieslist');
@@ -36,7 +44,7 @@ Route::group(['prefix'=>'admin','middleware'=> 'admin'], function(){
 	   Route::get('{movieid}/edit','Admin\MovieController@editmovie');
        Route::get('{movieid}/view','Admin\MovieController@viewmovie');
 	   Route::post('update/{movieid}','Admin\MovieController@update');
-	   Route::get('delete/{movieid}','Admin\MovieController@deletemovie');
+       Route::get('/delete', 'Admin\MovieController@delete');
        Route::get('addmovieartists','Admin\MovieController@addartistformovie');
 	});
     // Route for movies end
@@ -49,7 +57,8 @@ Route::group(['prefix'=>'admin','middleware'=> 'admin'], function(){
        Route::get('{artistsid}/edit','Admin\ArtistsController@editartist');
        Route::get('{artistsid}/view','Admin\ArtistsController@viewartist');
        Route::post('update/{artistsid}','Admin\ArtistsController@update');
-       Route::get('delete/{artistsid}','Admin\ArtistsController@deleteartist');
+       Route::get('/delete', 'Admin\ArtistsController@delete');
+
     });
     // Route for artists end
 
@@ -125,7 +134,7 @@ Route::group(['prefix'=>'admin','middleware'=> 'admin'], function(){
             Route::post('movie-banner/submit','Admin\MovieBannerController@store');
             Route::get('movie-banner/{id}/edit','Admin\MovieBannerController@edit');
             Route::post('movie-banner/update/{id}','Admin\MovieBannerController@update');
-            Route::get('movie-banner/delete','Admin\MovieBannerController@destroy');
+            Route::get('movie-banner/delete','Admin\MovieBannerController@delete');
 
             Route::get('payment-gateway','Admin\PaymentController@index');
             Route::get('payment-gateway/create','Admin\PaymentController@create');
@@ -187,13 +196,62 @@ Route::group(['prefix'=>'admin','middleware'=> 'admin'], function(){
     });
     //    Route for box office PCM
 
+     //    Route for CRM
+    Route::group(['prefix'=>'crm', 'namespace' => 'Admin'], function() {
+        Route::get('/', 'CrmController@index');
+        Route::get('user/create', 'CrmController@create');
+        Route::post('user/submit', 'CrmController@store');
+        Route::post('user/import/excel', 'CrmController@importExcel');
+        Route::get('user/{id}/edit', 'CrmController@edit');
+        Route::post('user/{id}/update', 'CrmController@update');
+        Route::get('user/delete', 'CrmController@destroy');
+        Route::get('user/suspend', 'CrmController@suspend');
+        
+        //Route::get('get-seat-categories', 'PriceCardController@getSeatCategories');
+    });
+    //    Route for box office CRM
+
+    //    Route for counter-management
+    Route::group(['prefix'=>'counter', 'namespace' => 'Admin'], function() {
+        Route::get('/', 'CounterController@index');
+        Route::get('counteruser/create', 'CounterController@create');
+        Route::post('counteruser/submit', 'CounterController@store');
+        Route::get('counteruser/{id}/edit', 'CounterController@edit');
+        Route::post('counteruser/{id}/update', 'CounterController@update');
+        Route::get('counteruser/delete', 'CounterController@destroy');
+        Route::get('counteruser/suspend', 'CounterController@suspend');
+        //Route::get('get-seat-categories', 'PriceCardController@getSeatCategories');
+    });
+    //    Route for counter-manaement
+
 
 
     //    Route for box office PCM
     Route::group(['prefix'=>'programming', 'namespace' => 'Admin'], function() {
         Route::get('/', 'ProgrammingController@index');
+        Route::post('submit', 'ProgrammingController@submit');
+        Route::get('get-pricecard-time', 'ProgrammingController@getPriceCardTime');
         Route::get('add-show', 'ProgrammingController@addShow');
         Route::get('add-show/get-pricecard', 'ProgrammingController@getPriceCards');
     });
     //    Route for box office PCM
+    // Route for coupon
+    Route::group(['prefix'=>'coupon'], function() {
+        Route::get('/', 'Admin\CouponController@index');
+        Route::get('/create', 'Admin\CouponController@create');
+        Route::post('/submit', 'Admin\CouponController@store');
+        Route::get('{couponid}/edit', 'Admin\CouponController@edit');
+        Route::post('update/{couponid}', 'Admin\CouponController@update');
+        Route::get('/delete', 'Admin\CouponController@destroy');
+    });
+});
+
+
+//    Routes for counter management
+Route::group(['prefix' => 'counter-management', 'namespace' => 'CounterManagement'], function(){
+    Route::get('/', 'IndexController@index');
+    Route::post('login-validation', 'IndexController@validation');
+    Route::group(['middleware' => 'counter'], function (){
+        Route::get('dashboard', 'DashboardController@index');
+    });
 });

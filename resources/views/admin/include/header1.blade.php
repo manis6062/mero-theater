@@ -10,12 +10,17 @@
                 </a>
             </div>
             <div class="col-xl-2 col-lg-2 col-md-2 col-sm-6 col-4">
-                <a href="index.html" class="logo">
+                <a href="{{url('admin/dashboard')}}" class="logo">
                     <img src="{{asset('admins/theme/img/mero-theatre-logo.png')}}" alt="Unify Admin Dashboard">
                 </a>
             </div>
             <div class="col-xl-5 col-lg-5 col-md-5 col-sm-3 col-4">
                 <ul class="header-actions">
+                    <li>
+                        <a href="setting.html" id="notifications">
+                            <i class="icon-cog"></i>
+                        </a>
+                    </li>
                     <li class="dropdown">
                         <a href="#" id="notifications" data-toggle="dropdown" aria-haspopup="true">
                             <i class="icon-notifications_none"></i>

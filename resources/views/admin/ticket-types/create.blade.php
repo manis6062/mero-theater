@@ -67,7 +67,6 @@
         <!-- END: .main-heading -->
         <!-- BEGIN .main-content -->
         <div class="main-content">
-
             <!-- Row start -->
             <div class="row gutters form-wrapper">
                 <div class=" col-md-12 col-sm-12">
