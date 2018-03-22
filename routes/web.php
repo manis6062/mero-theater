@@ -25,14 +25,33 @@ Route::post('admin/login/validate', 'Admin\LoginController@index');
 Route::group(['prefix'=>'admin','middleware'=> 'admin'], function(){
 
 	Route::get('dashboard', 'Admin\DashboardController@index');
-
 	Route::get('logout', 'Admin\LoginController@logout');
 
 
     // Route for Sms Campaign
     Route::group(['prefix'=>'box-office/smsCampaigns'], function(){
-
         Route::get('/overView', 'Admin\smsCampaign\OverViewController@index');
+
+        //Route for Contact
+        Route::post('contact/mass-delete', 'Admin\smsCampaign\ContactController@postMassDelete');
+        Route::resource('contact', 'Admin\smsCampaign\ContactController');
+        Route::post('contact/import/{xlsx}', 'Admin\smsCampaign\ContactController@import');
+        Route::post('contact/associated-group/delete', 'Admin\smsCampaign\ContactController@deleteContactFromGroup');
+        Route::post('contact/associated-group/add', 'Admin\smsCampaign\ContactController@addContactToGroup');
+        //Route for contact ends
+
+        // Route for Contact Group
+        Route::post('group/mass-delete', 'Admin\smsCampaign\GroupController@postMassDelete');
+        Route::resource('group', 'Admin\smsCampaign\GroupController');
+        Route::post('group/add-contacts', 'Admin\smsCampaign\GroupController@postAddContactsToGroup');
+        Route::post('group/delete-contacts', 'Admin\smsCampaign\GroupController@postDeleteContactsFromGroup');
+           // Route for Contact Group End
+
+        //Route for Campaign sms
+        Route::resource('campaign', 'Admin\smsCampaign\sms\CampaignController');
+
+        //Route end for Campaign sms
+
     });
     // Route for Sms Campaign end
 

@@ -195,7 +195,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="manage-contact.html">
+                            <a href="{{url('admin/box-office/smsCampaigns/contact')}}">
 										<span class="has-icon">
 											<i class="icon-address-book"></i>
 										</span>
@@ -203,7 +203,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="manage-group.html">
+                            <a href="{{url('admin/box-office/smsCampaigns/group')}}">
 										<span class="has-icon">
 											<i class="icon-users"></i>
 										</span>
@@ -211,7 +211,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="campaign.html">
+                            <a href="{{url('admin/box-office/smsCampaigns/campaign')}}">
 										<span class="has-icon">
 											<i class="icon-announcement"></i>
 										</span>

@@ -1,0 +1,443 @@
+    .see-banner p{
+      color: white;
+      font-size: 24px;
+      font-family: 'proxima_nova_rgregular';
+      font-family: 'Proxima Nova';
+    }
+    .see-banner h1{
+      font-size: 40px;
+      margin-bottom: 60px;
+      font-family: 'proxima_nova_rgbold';
+      font-family: 'Proxima Nova';
+    }
+    
+    .download-section{
+      background: #4F2A73;
+      padding-top: 60px;
+      padding-bottom: 60px;
+      text-align: center;
+      color:  white;
+    }
+    .download-section h1, .download-section p{
+      color:  white;
+      font-family: 'proxima_nova_rgbold';
+      font-family: 'Proxima Nova';
+    }
+
+    .download-section p{
+      font-size:  20px;
+    }
+    .link-to-store{
+      display: inline-block;
+      /* margin-right: 10px; */
+    }
+    
+
+    .social-media-section ul li a {
+      text-decoration: none;
+      font-size: 18px;
+      /* margin-right: 20px; */
+      color: #333;
+
+
+    }
+
+    .social-media-section ul li a i{      
+      width: 60px;
+      height: 60px;      
+      border-radius: 50%;
+      padding-top: 21px;
+      color:  #b51213;
+      font-size: 30px;
+    }
+
+    
+    .social-media-section ul{
+      list-style-type: none;
+      text-align: left;
+      padding-left: 0;
+    }
+
+    .social-media-section ul li{
+      display: inline-block;
+    }
+
+    .social-media-section{
+      padding-right: 60px;
+      border-right:  1px solid #e8e8e8;
+    }
+
+    .social-media-section + .col-sm-6{
+      padding-left: 60px;
+    }
+
+    .faqs-section{
+      background: white;
+      padding-top: 80px;
+      padding-bottom: 80px;
+      font-family: 'proxima_nova_rgbold';
+      font-family: 'Proxima Nova';
+    }
+
+    .faqs-section h1{
+      margin-bottom: 30px;
+    }
+
+    .faqs-section .panel-title{
+      font-weight: normal;
+    }
+
+    .faqs-section .panel-title > a{
+      position: relative;
+      color:  #666;
+      padding: 20px 15px;
+      font-size:  18px;
+      font-family: 'Myriad Pro';
+      color:  #000;
+      display: block;
+      background: #f4f4f4;
+      border: none;      
+      padding: 15px 26px;
+      line-height: 28px;
+      padding-right: 62px;
+    }
+
+    .faqs-section .panel-group .panel{
+      margin-bottom: 15px;
+    }
+
+    .faqs-section .panel-group .panel .panel-body{
+      padding-left: 30px;
+      padding-right: 30px;
+      font-family: 'proxima_nova_rgbold';
+      font-family: 'Proxima Nova';
+      font-size:  16px;
+    }
+
+    .faqs-section .panel-group .panel .panel-body p{
+     font-family: 'proxima_nova_rgbold';
+     font-family: 'Proxima Nova';
+     font-size:  16px; 
+   }
+
+   .faqs-section .panel-group .panel .panel-body{
+    color:  #333;
+  }
+
+  .faqs-section .panel-default>.panel-heading{
+    background: #f4f4f4;
+    border:  none;
+    padding: 0;
+  }
+
+  .faqs-section .panel-group .panel.panel-default{
+    border: none;
+  }
+
+  .faqs-section .panel-title > a:hover{
+    text-decoration: none;
+  }
+
+  .faqs-section .panel-group .panel .panel-body{
+    border:  none;
+  }
+
+  .check-see{
+    background: #f4f4f4;
+    text-align: center;  
+    font-size: 30px;  
+    font-family: 'Myriad Pro';
+    color: #171717;
+    padding-top: 30px;
+    padding-bottom: 30px;
+  }
+
+  .video-section{
+    padding-top: 60px;
+    padding-bottom: 30px;                                  
+  }
+
+  .video-section .embed-responsive{
+    margin-bottom: 30px;
+  }
+  .aakash-navbar.dark-bg{
+    background: rgb(50, 54, 76);
+  }
+  .aakash-navbar.dark-bg #navbar, .aakash-navbar.dark-bg .navbar-header{
+    margin-top: 10px;
+    margin-bottom: 5px;
+  }                                
+  .aakash-navbar.dark-bg.navbar>.container .navbar-brand{
+    padding-top: 7px;
+    padding-bottom: 0;
+  }
+  .inner-page-body{
+    padding-top: 70px;
+  }
+
+  .faqs-section h1, .see-info h1{
+    color:  #333;
+  }
+
+
+
+  /*** ***/
+  .btn-see{
+    border-radius: 50px;
+    background: #b51213;
+    color: white;
+    font-size: 20px;
+    font-family: 'Proxima Nova';
+    padding-left: 25px;
+    padding-right: 25px;
+  }
+
+  .btn-see.btn-orange{
+    background: #faa318;
+    margin-bottom: 60px;
+  }
+
+  .hero-caption{
+    font-size: 34px;
+    color: black;
+    font-family: 'Proxima Nova';
+    margin-top: 128px;
+    margin-bottom: 108px;
+  }
+
+  .hero > .container-fluid > .row > .col-sm-6:first-child{
+    background: rgba(255, 255, 255, 0.5);
+    padding-left: 146px;
+    padding-top: 104px;
+    padding-bottom: 236px;
+    padding-bottom: 120px;
+  }
+
+  .hero > .container-fluid > .row > .col-sm-6:last-child{
+    padding-right: 146px;
+    padding-top: 104px;
+  }
+
+  .hero-subtitle{
+    color: #545454;
+    font-size: 24px;
+    font-weight: 600;
+  }
+
+
+
+  /* .hero:after{
+    content: '';
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    background: inherit;
+    background-size: cover;
+    z-index: -1;
+    bottom: 0;
+    transform-origin: right bottom;
+    transform: skewY(-5.2deg);
+  }
+  */
+  .send-sms-now{
+    padding-top: 60px;
+    /* padding-bottom: 60px; */
+    position: relative;
+  }
+
+  .send-sms-now:after{
+    content: '';
+    width: 100%;
+    height: 43.75%;
+    position: absolute;
+    background: #b51213;
+    background-size: cover;
+    z-index: -1;
+    bottom: 0;
+    transform-origin: right bottom;
+    transform: skewY(-5.2deg); 
+  }
+
+  .send-sms-now p{
+    margin-bottom: 30px;
+  }
+
+  h2.title{
+    font-family: 'Myriad Pro';
+    font-size: 24px;
+    color:  #171717;
+    display: block;
+    position: relative;
+    padding-bottom: 1.5rem;
+    margin-bottom: 60px;
+  }
+
+  h2.title:after{
+    border-bottom: .2rem solid #b51213;
+    bottom: 0;
+    content: "";
+    display: block;
+    right: 0;    
+    position: absolute;
+    width: 3rem;
+  }
+
+  .faqs-section h2.title:after{
+    right: none;
+    left: 50%;
+    margin-left: -1.5rem;
+  }
+
+  .card{
+    background: white;
+    padding: 45px 30px;  
+    box-shadow: 1px 4px 21px 0px rgba(0, 0, 0, 0.46);
+    -webkit-box-shadow: 1px 4px 21px 0px rgba(0, 0, 0, 0.46);
+    -moz-box-shadow: 1px 4px 21px 0px rgba(0, 0, 0, 0.46);
+    -ms-box-shadow: 1px 4px 21px 0px rgba(0, 0, 0, 0.46);
+  }
+
+  .card p{
+    color:  #434343;
+    font-size: 14px;
+    line-height: 26px;
+  }
+
+  @media(min-width: 1200px){
+    .wide-container{
+      width: 85%;
+    }
+  }
+
+  .send-sms-now .img-responsive{
+    margin: 0 auto;
+    display: block;
+  }
+
+  .pre-footer{
+    background: #f9f9f9;
+    padding-top: 80px;
+    padding-bottom: 90px;
+  }
+
+  .pre-footer p{
+    color:  #434343;
+    font-size: 16px;
+    line-height: 21px;
+  }
+
+  .pre-footer h3, h4{
+    color:  #181818;
+  }
+
+  .pre-footer h3{
+    font-size: 30px;
+  }
+
+  .pre-footer h4{
+    font-size: 20px;
+  }
+
+.red-block{
+  background: #b51213;
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  width: 47px;  
+}
+
+.card p{
+  margin-bottom: 0;
+}
+
+.panel-title > a >.red-block:after{
+  content: '-';
+  color:  white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  font-family: 'Myriad Pro';
+  font-weight: 400;
+  font-size: 36px;
+}
+
+
+.panel-title > a.collapsed >.red-block:after{
+  content: '+';
+}
+
+.short-code{  
+  margin: 0 auto;
+  font-size: 70px;
+  color: white;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-justify-content: center;
+  justify-content: center;
+  -webkit-align-items: center;
+  align-items: center;
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  background: #B51213;
+  font-weight: bold;
+}
+
+@media(max-width: 767px){
+  .btn-orange + .clearfix + h2.title{
+    color:  white;
+  }
+  .hero > .container-fluid > .row > .col-sm-6:last-child{
+    padding-right: 15px;
+    padding-top: 60px;
+  }
+  .hero > .container-fluid > .row > .col-sm-6:first-child{
+    padding-left: 15px;
+    padding-top: 60px;
+  }
+  .hero-caption{
+    margin-top: 60px;
+    margin-bottom: 60px;
+  }
+  .faqs-section .panel-title > a{
+    padding-left: 15px;
+    padding-right: 62px;
+  }
+  .send-sms-now{
+    padding-top: 15px;
+  }
+  .btn-see.btn-orange{
+    margin-bottom: 30px;
+  }
+  h2.title{
+    margin-bottom: 30px;
+  }
+  .faqs-section{
+    padding-top: 30px;
+    padding-bottom: 30px;
+  }
+  .check-see{
+    font-size: 24px;
+  }
+  .video-section .embed-responsive{
+    margin-bottom: 0;
+  }
+  .video-section{
+    padding-top: 15px;
+    padding-bottom: 15px;
+  }
+  .pre-footer{
+    padding-top: 30px;
+    padding-bottom: 30px;
+  }
+  .social-media-section{
+    padding-right: 15px;
+    border-right: none;
+  }
+  .social-media-section + .col-sm-6{
+    margin-top: 30px;
+    padding-left: 15px;
+  }
+}

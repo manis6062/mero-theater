@@ -9,6 +9,7 @@
     <meta name="description" content="Unify Admin Panel" />
     <meta name="keywords" content="Admin, Dashboard, Bootstrap4, Sass, CSS3, HTML5, Responsive Dashboard, Responsive Admin Template, Admin Template, Best Admin Template, Bootstrap Template, Themeforest" />
     <meta name="author" content="Bootstrap Gallery" />
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="shortcut icon" href="{{asset('admins/theme/img/favicon.png')}}" />
     <title>MeroTheatre Dashboard</title>
 
