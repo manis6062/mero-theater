@@ -17,18 +17,32 @@ class CrmController extends Controller
         return view('admin.crm.list',compact('data'));
     }
 
-    
-    public function create()
+    public function filter(Request $request)
     {
-       return view('admin.crm.create');
+     $date = $request->date;
+     $type = $request->registered_type;
+     if($date!='' || $type!=''){
+       $data = CrmModel::whereDate('created_at', '=', date('Y-m-d', strtotime($date)))
+       ->orwhere('registered_type',$type)
+       ->get();
+       return view('admin.crm.list',compact('data'));
    }
+   else{
+    $data = CrmModel::paginate(10);
+    return view('admin.crm.list',compact('data'));
+}
+}
+public function create()
+{
+ return view('admin.crm.create');
+}
 
-   public function store(Request $request)
-   {
+public function store(Request $request)
+{
     $this->validate($request,[
         'name'=> 'required',
         'email'=>'required | unique:user_tbl',
-        'mobile'=>'unique:user_tbl'
+        'mobile'=>'required |unique:user_tbl'
     ]);
 
     $data = array(
@@ -42,45 +56,111 @@ class CrmController extends Controller
     return redirect('admin/crm');
 }
 
-public function importExcel()
+public function importExcel(Request $request)
 {
+      $this->validate($request,[
+        'name_list'=> 'required',
+    ]);
+
     if(Input::hasFile('name_list')){
-        $path = Input::file('name_list')->getRealPath();
-        $data = Excel::load($path, function($reader){ })->get();
-        dd(($data));
-        $sheetZeroValue = $data[0];
-        dd(count($data[0]));
-        if(count($data)==1){
+     $path = Input::file('name_list')->getRealPath();
+     $data = Excel::load($path, function($reader){ })->get();
+     $dataToImport = [];
+     $count = 0;
+     foreach ($data as $value) {
+        if($value->getTitle() == 'Sheet1')
+        {
+            foreach ($value as $val) {
+                $dataToImport[] = $val->toArray();
+            }
+        }
 
+        if($value->getTitle() == null)
+        {
 
-            if(!empty($data) && count($data) > 0){
-                $cnt = 0;
-                $testArr = [];
-                foreach ($data as $key => $value) {
-                    $testArr[] = $value;
-                }
-
-                foreach ($testArr[0] as $value) {
-                    if(isset($value['name']) && isset($value['email']) && isset($value['mobile']))
-                    {
-                        $insert['name'] = $value['name'];
-                        $insert['email'] = $value['email'];
-                        $insert['mobile'] = $value['mobile'];
-                        $insert['registered_type'] = 'from excel';
-                        $result = CrmModel::create($insert);
-                    }
-                    if(isset($result)){
-                        dd('Insert Record successfully.');
-                    }
+            foreach ($data as $value) {
+                $count++;
+                if($count <= $data->count())
+                {
+                    $dataToImport[] = $value->toArray();
+                }else{
+                    break;
                 }
 
             }
         }
-        else{
-            dd('test');
-        }
     }
-    return back();
+    
+    $mobielValidationData = [];
+    $emailValidationData = [];
+
+    if($dataToImport != null){
+        foreach ($dataToImport as $values) {
+            if(isset($values['name']) && isset($values['email']) && isset($values['mobile']))
+            {
+
+                if(CrmModel::where('email', $values['email'])->first() == null )
+                    {
+                        if(CrmModel::where('mobile', $values['mobile'])->first() == null)
+                            {   
+                                 
+                                $insert['name'] = $values['name'];
+                                $insert['email'] = $values['email'];
+                                $insert['mobile'] = $values['mobile'];
+                                $insert['registered_type'] = 'from excel';
+                                if ( is_numeric($insert['mobile'])&&strlen($insert['mobile'])<10) {
+                                   return redirect('admin/crm/user/create')->with('invalidMoblieErrorData', 'The excel file contain invalid mobile');
+                                } 
+                                elseif (filter_var($insert['email'], FILTER_VALIDATE_EMAIL)) {
+                                     $result = CrmModel::create($insert);
+                                }
+                                else {  
+                                         return redirect('admin/crm/user/create')->with('invalidEmailErrorData', 'The excel file contain invalid email');
+                                    }
+                                
+                            }else{
+                                $mobielValidationData[] = $values['mobile'];     
+                            }
+                        
+                    }else{
+                        $emailValidationData[] = $values['email'];
+                    }  
+                }else{
+                    echo "empty message";                }
+                        // if(isset($result)){
+                        //     dd('Insert Record successfully.');
+                        // }
+            }
+        }
+
+       if(count($mobielValidationData) > 0 && count($emailValidationData) > 0)
+       {
+        return redirect('admin/crm/user/create')->with('mobileErrorData', $mobielValidationData)->with('emailErrorData', $emailValidationData);
+       }
+
+       if(count($mobielValidationData) > 0 && count($emailValidationData) == 0)
+       {
+        return redirect('admin/crm/user/create')->with('mobileErrorData', $mobielValidationData);
+       }
+
+       if(count($mobielValidationData) == 0 && count($emailValidationData) > 0)
+       {
+        return redirect('admin/crm/user/create')->with('emailErrorData', $emailValidationData);
+       }
+
+       if(count($mobielValidationData) == 0 && count($emailValidationData) == 0)
+       {
+        return redirect('admin/crm/user/create');
+       }
+
+
+       //return redirect::back()->withErrors(['msg', $rem]);
+        //return back()->with($rem);
+        
+    }else{
+        
+    }
+
 }
 
     // public function show($id)
@@ -135,35 +215,35 @@ public function update(Request $request, $id)
         'email'=>$request->email,
         'mobile'=>$request->mobile,
     );        
-    
+
 
     CrmModel::find($id)->update($data);
 
-     return redirect('admin/crm');
+    return redirect('admin/crm');
 }
 
-    public function destroy(Request $request)
-    {
-         $result = CrmModel::find($request->uid)->delete();
-         if ($result) {
-            return 'true';
-         }
-        return 'false';
-    }
-    public function suspend(Request $request)
-    {
-        $currentStatus = CrmModel::find($request->uid)->suspend;
+public function destroy(Request $request)
+{
+   $result = CrmModel::find($request->uid)->delete();
+   if ($result) {
+    return 'true';
+}
+return 'false';
+}
+public function suspend(Request $request)
+{
+    $currentStatus = CrmModel::find($request->uid)->suspend;
 
-        if($currentStatus == 'no')
-        {
-            $result = CrmModel::find($request->uid)->update(['suspend' => 'yes']);
-        }else{
-            $result = CrmModel::find($request->uid)->update(['suspend' => 'no']);
-        }
-        
-         if ($result) {
-            return 'true';
-         }
-        return 'false';
+    if($currentStatus == 'no')
+    {
+        $result = CrmModel::find($request->uid)->update(['suspend' => 'yes']);
+    }else{
+        $result = CrmModel::find($request->uid)->update(['suspend' => 'no']);
     }
+
+    if ($result) {
+        return 'true';
+    }
+    return 'false';
+}
 }

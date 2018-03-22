@@ -199,6 +199,7 @@ Route::group(['prefix'=>'admin','middleware'=> 'admin'], function(){
      //    Route for CRM
     Route::group(['prefix'=>'crm', 'namespace' => 'Admin'], function() {
         Route::get('/', 'CrmController@index');
+        Route::get('user/filter','CrmController@filter');
         Route::get('user/create', 'CrmController@create');
         Route::post('user/submit', 'CrmController@store');
         Route::post('user/import/excel', 'CrmController@importExcel');
