@@ -84,12 +84,7 @@ $('.input-daterange input').each(function() {
     $(this).datepicker('clearDates');
 });
 
-
-
-
 // Loading
 $(function() {
 	$(".loading-wrapper").fadeOut(2000);
-});
-$('.input-group.date').datepicker({
 });

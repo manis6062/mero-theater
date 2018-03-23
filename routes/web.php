@@ -231,12 +231,17 @@ Route::group(['prefix'=>'admin','middleware'=> 'admin'], function(){
         Route::get('counteruser/{id}/edit', 'CounterController@edit');
         Route::post('counteruser/{id}/update', 'CounterController@update');
         Route::get('counteruser/delete', 'CounterController@destroy');
-        Route::get('counteruser/suspend', 'CounterController@suspend');
-        //Route::get('get-seat-categories', 'PriceCardController@getSeatCategories');
+        Route::get('counteruser/suspend', 'CounterController@suspend');        
     });
     //    Route for counter-manaement
 
 
+     //    Route for Profile
+    Route::group(['prefix'=>'profile', 'namespace' => 'Admin'], function() {
+        Route::get('/', 'ProfileController@index');
+        Route::post('master/{id}/update','ProfileController@update');
+    });
+    //    Route for Profile
 
     //    Route for box office PCM
     Route::group(['prefix'=>'programming', 'namespace' => 'Admin'], function() {

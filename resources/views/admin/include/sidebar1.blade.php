@@ -420,7 +420,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="{{url('admin/profile')}}">
 								<span class="has-icon">
 									<i class="icon-account_circle"></i>
 								</span>
