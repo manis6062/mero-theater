@@ -48,7 +48,7 @@
                     @foreach($data as $dat)
                         <tr>
                             <th>{{$dat->title}}</th>
-                            <td>{{$dat->created_at}}</td>
+                            <td>{{date('M d, Y', strtotime($dat->created_at))}}</td>
                             <td>{{ucwords($dat->status)}}</td>
                             <td>
 

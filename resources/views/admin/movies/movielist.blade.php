@@ -53,7 +53,7 @@
                         <th><a href="{{url('admin/box-office/movies/'.$dat->id.'/view')}}">{{ucwords($dat->movie_title)}}({{ucwords($dat->movie_short_name)}})</a></th>
                         <td>{{ucwords($dat->distributor)}}</td>
                         <td>{{$dat->duration }} Min</td>
-                        <td>{{date('d/m/Y', strtotime($dat->openingdate))}}</td>
+                        <td>{{date('M d, Y', strtotime($dat->openingdate))}}</td>
                         <td>{{ucwords($dat->genre)}}</td>
                         <td>
 

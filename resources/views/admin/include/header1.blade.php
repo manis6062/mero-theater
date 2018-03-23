@@ -17,7 +17,7 @@
             <div class="col-xl-5 col-lg-5 col-md-5 col-sm-3 col-4">
                 <ul class="header-actions">
                     <li>
-                        <a href="setting.html" id="notifications">
+                        <a href="{{url('admin/settings')}}" id="notifications">
                             <i class="icon-cog"></i>
                         </a>
                     </li>

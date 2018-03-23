@@ -53,7 +53,7 @@
                         <tr>
                             <td>{{$c->code}}</td>
                             <td>{{$c->discount_type}}</td>
-                            <td>{{$c->discount_rate}}</td>
+                            <td>{{($c->discount_type == 'percentage')?($c->discount_rate . '%'):($c->discount_rate)}}</td>
                             <td>{{date('M d, Y', strtotime($c->expire))}}</td>
                             <td>{{$c->count}}</td>
                             <td>{{$c->status}}</td>

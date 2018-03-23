@@ -142,6 +142,17 @@ Route::group(['prefix'=>'admin','middleware'=> 'admin'], function(){
             Route::get('payment-gateway/{id}/edit','Admin\PaymentController@edit');
             Route::post('payment-gateway/update/{id}','Admin\PaymentController@update');
             Route::get('payment-gateway/delete','Admin\PaymentController@destroy');
+            Route::get('payment-gateway/{id}/api_details','Admin\PaymentController@api_details');
+             Route::post('payment-gateway/payment_api_field_live','Admin\PaymentController@payment_api_field_live');
+            Route::post('payment_api_update/{id}','Admin\PaymentController@payment_api_update');
+             Route::post('payment-gateway/payment_api_field_test','Admin\PaymentController@payment_api_field_test');
+            Route::post('payment_api_insert/submit','Admin\PaymentController@payment_api_insert_live');
+            Route::post('payment_api_live_note/update/{id}','Admin\PaymentController@payment_api_live_note');
+            Route::post('payment_api_test_note/update/{id}','Admin\PaymentController@payment_api_test_note');
+             Route::get('payment_api/delete','Admin\PaymentController@payment_api_delete');
+
+
+
 
         });
     // Route for Content Management Ends
@@ -235,7 +246,7 @@ Route::group(['prefix'=>'admin','middleware'=> 'admin'], function(){
         Route::get('add-show', 'ProgrammingController@addShow');
         Route::get('add-show/get-pricecard', 'ProgrammingController@getPriceCards');
     });
-    //    Route for box office PCM
+    
     // Route for coupon
     Route::group(['prefix'=>'coupon'], function() {
         Route::get('/', 'Admin\CouponController@index');
@@ -255,4 +266,11 @@ Route::group(['prefix' => 'counter-management', 'namespace' => 'CounterManagemen
     Route::group(['middleware' => 'counter'], function (){
         Route::get('dashboard', 'DashboardController@index');
     });
+
+
+    //    Route for Setting
+     Route::group(['prefix'=>'settings'], function(){
+       Route::get('/', 'Admin\SettingsController@index');
+    });
+
 });

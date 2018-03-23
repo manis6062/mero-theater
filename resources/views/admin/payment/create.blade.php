@@ -88,9 +88,9 @@
             <form class="form" role="form" autocomplete="off" action="{{url('admin/content-management/payment-gateway/submit')}}"  method="post" id="createForm" enctype="multipart/form-data">
                                                         {{csrf_field()}}
                                                         <div class="form-group row">
-                                                            <label class="col-lg-3 col-form-label form-control-label">Name <span class="req">*</span></label>
+                                                            <label class="col-lg-3 col-form-label form-control-label">Company Name <span class="req">*</span></label>
                                                             <div class="col-lg-9">
-                                                                 <input class="form-control" type="text"  name="name" id="name" value="{{old('name')}}" name="name" onfocus="removeError();" placeholder="Enter Name">
+                                                                 <input class="form-control" type="text"  name="name" id="name" value="{{old('name')}}" name="name" onfocus="removeError();" placeholder="Enter Company Name">
                                                                   @if($errors->has('name'))
                                                     <span class="help-block">
                                                         <strong>
@@ -102,8 +102,54 @@
                                                             </div>
                                                         </div>
 
+                                                          <div class="form-group row">
+                                                            <label class="col-lg-3 col-form-label form-control-label">ID</label>
+                                                            <div class="col-lg-9">
+                                                                <input type="text" id="gateway_id" name="gateway_id" class="form-control" value="{{old('gateway_id')}}" onfocus="removeError();" placeholder="Enter Gateway Id">
+                                                                  @if($errors->has('gateway_id'))
+                                                    <span class="help-block">
+                                                        <strong>
+                                                            {{$errors->first('gateway_id')}}
+                                                        </strong>
+                                                    </span>
+                                                @endif
+                                                <span class="gateway_id-error error help-block"></span>
+                                                            </div>
+                                                        </div>
+
+                                                           <div class="form-group row">
+                                                            <label class="col-lg-3 col-form-label form-control-label">Contact Person</label>
+                                                            <div class="col-lg-9">
+                                                                <input type="text" id="contact_person" name="contact_person" class="form-control" value="{{old('contact_person')}}" onfocus="removeError();" placeholder="Enter Contact Person">
+                                                                  @if($errors->has('contact_person'))
+                                                    <span class="help-block">
+                                                        <strong>
+                                                            {{$errors->first('contact_person')}}
+                                                        </strong>
+                                                    </span>
+                                                @endif
+                                                <span class="contact_person-error error help-block"></span>
+                                                            </div>
+                                                        </div>
+
+
+                                                           <div class="form-group row">
+                                                            <label class="col-lg-3 col-form-label form-control-label">Phone</label>
+                                                            <div class="col-lg-9">
+                                                                <input type="text" id="phone" name="phone" class="form-control" value="{{old('phone')}}" onfocus="removeError();" placeholder="Enter Phone No.">
+                                                                  @if($errors->has('phone'))
+                                                    <span class="help-block">
+                                                        <strong>
+                                                            {{$errors->first('phone')}}
+                                                        </strong>
+                                                    </span>
+                                                @endif
+                                                <span class="contact_person-error error help-block"></span>
+                                                            </div>
+                                                        </div>
+
                                                                <div class="form-group row">
-                                                            <label class="col-lg-3 col-form-label form-control-label">Image<br><span class="note">(Dimension 32x32 | Max Size 2mb | Format jpeg, jpg, png, bmp, svg)</span></label>
+                                                            <label class="col-lg-3 col-form-label form-control-label">Logo<br><span class="note">(Dimension 32x32 | Max Size 2mb | Format jpeg, jpg, png, bmp, svg)</span></label>
                                                             <div class="col-lg-9">
                                                                 <label class="custom-file">
                                                                   <input  onfocus="removeError();" type="file" id="image file2" name="image" class="custom-file-input" value="{{old('image')}}">
@@ -121,9 +167,11 @@
 
                                                             </div>
                                                         </div>
+
+                                                        
                                                 
 
-                                                             <div class="form-group row">
+                                                            <!--  <div class="form-group row">
                                                             <label class="col-lg-3 col-form-label form-control-label">Description<span class="req">*</span></label>
                                                             <div class="col-lg-9">
  <textarea name="description" value="{{old('description')}}" id="description" rows="5" class="form-control" placeholder="Type Description" onfocus="removeError();" ></textarea>
@@ -150,7 +198,7 @@
                                                 @endif
                                                 <span class="link-error error help-block"></span>
                                                             </div>
-                                                        </div>
+                                                        </div> -->
 
                                                         <div class="form-group row">
                                                             <label class="col-lg-3 col-form-label form-control-label">Status <span class="req">*</span></label>
@@ -255,7 +303,7 @@
                                 heightOfImg = img.naturalHeight;
 
                                 if (widthOfImg != 32 && heightOfImg != 32) {
-                                    alertify.alert('Invalid Image Dimension ! Image Size Must be 200*200.');
+                                    alertify.alert('Invalid Image Dimension ! Image Size Must be 32*32.');
                                     $('.subModalBtn').prop('disabled', true);
                                                          $(".image-filename").text('');
 

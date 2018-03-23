@@ -48,7 +48,7 @@
                     @foreach($data as $dat)
                         <tr>
                             <td>{{$dat->category_name}}</td>
-                            <td>{{$dat->created_at}}</td>
+                            <td>{{date('M d, Y', strtotime($dat->created_at))}}</td>
                             <td>
 
 
