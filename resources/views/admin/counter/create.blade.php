@@ -268,42 +268,6 @@
                 }
             }
 
-
-            if ($('#selected_seat').val() == '') {
-                e.preventDefault();
-                $('.selected-seat-error').html('<strong>Please enter the seat image.</strong>');
-            } else {
-                var ext = $('input#selected_seat').val().split('.').pop().toLowerCase();
-                if ($.inArray(ext, ['jpeg', 'jpg', 'png', 'bmp', 'svg']) == -1) {
-                    e.preventDefault();
-                    $('.selected-seat-error').html('<strong>Invalid Image Format !</strong>');
-                } else {
-                    var fileSize = $('input#selected_seat')[0].files[0].size;
-                    if (fileSize > 2097152) {
-                        e.preventDefault();
-                        $('.selected-seat-error').html('<strong>File Size exceed max allowed size !</strong>');
-                    }
-                }
-            }
-
-
-            if ($('#reserved_seat').val() == '') {
-                e.preventDefault();
-                $('.reserved-seat-error').html('<strong>Please enter the seat image.</strong>');
-            } else {
-                var ext = $('input#reserved_seat').val().split('.').pop().toLowerCase();
-                if ($.inArray(ext, ['jpeg', 'jpg', 'png', 'bmp', 'svg']) == -1) {
-                    e.preventDefault();
-                    $('.reserved-seat-error').html('<strong>Invalid Image Format !</strong>');
-                } else {
-                    var fileSize = $('input#reserved_seat')[0].files[0].size;
-                    if (fileSize > 2097152) {
-                        e.preventDefault();
-                        $('.reserved-seat-error').html('<strong>File Size exceed max allowed size !</strong>');
-                    }
-                }
-            }
-
             if ($('#name_list').val()) {
               var ext = $('input#name_list').val().split('.').pop().toLowerCase();
                 if ($.inArray(ext, ['jpeg', 'jpg', 'png', 'bmp', 'svg']) == -1) {

@@ -175,9 +175,9 @@ span.note{
                                             </div>
 
                                             <div class="form-group row">
-                                                <label class="col-lg-3 col-form-label form-control-label">Mobile</label>
+                                                <label class="col-lg-3 col-form-label form-control-label">Mobile<span class="req">*</span></label>
                                                 <div class="col-lg-9">
-                                                    <input type="text" name="mobile" value="{{old('mobile')}}" class="form-control" id="mobile"
+                                                    <input type="text" name="mobile" value="{{old('mobile')}}" class="form-control" id="mobile-number"
                                                     onfocus="removeError();" placeholder="Enter Phone Number">
                                                     @if($errors->has('mobile'))
                                                     <span class="help-block">
@@ -297,7 +297,7 @@ span.note{
     }
 
 
-    $('input#house-seats').keypress(function (event) {
+    $('input#mobile-number').keypress(function (event) {
         return isNumber(event, this)
     });
 
