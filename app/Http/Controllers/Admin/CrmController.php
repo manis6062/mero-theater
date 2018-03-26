@@ -168,6 +168,10 @@ public function importExcel(Request $request)
     //     //
     // }
 
+public function getDownload(){
+    $file= public_path(). "\download\demo.xlsx";   
+    return response()->download($file);
+}
 public function edit($id)
 {
     $editdata = CrmModel::where('id',$id)->first();

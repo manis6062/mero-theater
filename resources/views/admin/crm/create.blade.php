@@ -224,8 +224,7 @@ span.note{
                                         </div>
                                     </div>
                                 </form>
-
-
+                                 <a href="{{url('admin/crm/user/download')}}" class="btn btn-large pull-right"><i class="icon-download-alt"> </i> Download Demo Excel sheet </a>
                             </div>
                         </div>
                     </div>

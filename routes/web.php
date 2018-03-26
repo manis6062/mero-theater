@@ -214,6 +214,7 @@ Route::group(['prefix'=>'admin','middleware'=> 'admin'], function(){
         Route::get('user/create', 'CrmController@create');
         Route::post('user/submit', 'CrmController@store');
         Route::post('user/import/excel', 'CrmController@importExcel');
+        Route::get('user/download', 'CrmController@getDownload');
         Route::get('user/{id}/edit', 'CrmController@edit');
         Route::post('user/{id}/update', 'CrmController@update');
         Route::get('user/delete', 'CrmController@destroy');
