@@ -49,9 +49,10 @@ class PaymentController extends Controller
             $data['image'] = $filename;
         }
 
-        PaymentModel::create($data);
+        $result = PaymentModel::create($data);
 
-        return redirect('admin/content-management/payment-gateway');
+        if (isset($result))
+            return redirect('admin/content-management/payment-gateway')->with('message', 'Payment Method Successfully Created !');
     }
 
 
@@ -174,9 +175,10 @@ class PaymentController extends Controller
             $data['image'] = $filename;
         }
 
-        PaymentModel::where('id',$id)->update($data);
+       $result = PaymentModel::where('id',$id)->update($data);
 
-        return redirect('admin/content-management/payment-gateway');
+        if (isset($result))
+            return redirect('admin/content-management/payment-gateway')->with('message', 'Payment Method Successfully Updated !');
     }
 
     public function destroy(Request $request)

@@ -370,7 +370,7 @@
                     </a>
                 </li>
                   <li>
-                    <a href="{{url('admin/content-management/payment-gateway')}}">
+                    <a href="{{url('admin/payments/transactionlog')}}">
                                 <span class="has-icon">
                                     <i class="icon-price-tag"></i>
                                 </span>

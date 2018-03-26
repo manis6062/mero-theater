@@ -34,6 +34,12 @@
                     <div class="card">
                         <div class="card-header artist-header"><a href="{{url('admin/content-management/payment-gateway/create')}}"> Create Payment Gateway</a></div>
                         <div class="card-body">
+                                 @if(\Illuminate\Support\Facades\Session::has('message'))
+                                <div class="alert alert-success">
+                                    <i class="fa fa-times pull-right closeMessage"></i>
+                                    <p class="text-center">{{\Illuminate\Support\Facades\Session::get('message')}}</p>
+                                </div>
+                            @endif
                             <div class="table-responsive">
         <table class="table m-0 table-bordered common-table">
 							<thead>

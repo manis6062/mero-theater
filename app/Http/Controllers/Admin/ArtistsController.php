@@ -65,9 +65,11 @@ class ArtistsController extends Controller
             $data['artists_avatar'] = $filename;
         }
 
-        $this->artist->store($data);
-        return  redirect('admin/box-office/artist');
+       $result = $this->artist->store($data);
 
+
+         if (isset($result))
+            return redirect('admin/box-office/artist')->with('message', 'Artists Successfully Created !');
 	}
 
     public function editartist($artistid)
@@ -111,9 +113,9 @@ class ArtistsController extends Controller
 
        $updated = $this->artist->updatedata($data,$artistid);
        if($updated)
-          return redirect('admin/box-office/artist?status=successfully-updated');
+          return redirect('admin/box-office/artist?status=successfully-updated')->with('message', 'Artists Successfully Updated !');
 
-      return redirect('admin/box-office/artist?status=error-updating');
+      return redirect('admin/box-office/artist?status=error-updating')->with('message', 'Something got error!');
     }
 
       public function delete(Request $request)

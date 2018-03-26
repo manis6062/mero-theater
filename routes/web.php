@@ -151,9 +151,6 @@ Route::group(['prefix'=>'admin','middleware'=> 'admin'], function(){
             Route::post('payment_api_test_note/update/{id}','Admin\PaymentController@payment_api_test_note');
              Route::get('payment_api/delete','Admin\PaymentController@payment_api_delete');
 
-
-
-
         });
     // Route for Content Management Ends
 
@@ -262,6 +259,23 @@ Route::group(['prefix'=>'admin','middleware'=> 'admin'], function(){
         Route::post('update/{couponid}', 'Admin\CouponController@update');
         Route::get('/delete', 'Admin\CouponController@destroy');
     });
+
+       //    Route for Payment Transaction Log
+     Route::group(['prefix'=>'payments'], function(){
+       Route::get('transactionlog', 'Admin\TransactionLogController@index');
+        Route::post('transactionlog/searchByUser', 'Admin\TransactionLogController@searchByUser');
+         Route::get('transactionlog/searchByUser', 'Admin\TransactionLogController@index');
+         Route::post('transactionlog/searchByPaymentType', 'Admin\TransactionLogController@searchByPaymentType');
+         Route::post('transactionlog/searchByState', 'Admin\TransactionLogController@searchByState');
+         Route::post('transactionlog/searchByStartdate', 'Admin\TransactionLogController@searchByStartdate');
+         Route::post('transactionlog/transactionType', 'Admin\TransactionLogController@show');
+    });
+
+
+      //    Route for Setting
+     Route::group(['prefix'=>'settings'], function(){
+       Route::get('/', 'Admin\SettingsController@index');
+    });
 });
 
 
@@ -271,12 +285,6 @@ Route::group(['prefix' => 'counter-management', 'namespace' => 'CounterManagemen
     Route::post('login-validation', 'IndexController@validation');
     Route::group(['middleware' => 'counter'], function (){
         Route::get('dashboard', 'DashboardController@index');
-    });
-
-
-    //    Route for Setting
-     Route::group(['prefix'=>'settings'], function(){
-       Route::get('/', 'Admin\SettingsController@index');
     });
 
 });

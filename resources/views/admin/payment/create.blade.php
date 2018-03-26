@@ -252,9 +252,9 @@
             }
 
             
-                 if ($('#description').val() == '') {
+                 if ($('#gateway_id').val() == '') {
                 e.preventDefault();
-                $('.description-error').html('<strong>Please enter the description.</strong>');
+                $('.gateway_id-error').html('<strong>Please enter the id.</strong>');
             }
 
 
@@ -265,7 +265,7 @@
 
                 if ($('#status').val() == '') {
                 e.preventDefault();
-                $('.caption-error').html('<strong>Please select the status</strong>');
+                $('.status-error').html('<strong>Please select the status</strong>');
             }
 
         });
