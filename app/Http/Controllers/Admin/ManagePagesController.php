@@ -36,9 +36,10 @@ class ManagePagesController extends Controller
             'status'=>$request->status
         );
 
-        ManagePagesModel::create($data);
+       $result =  ManagePagesModel::create($data);
 
-        return redirect('admin/content-management/manage-pages');
+         if (isset($result))
+            return redirect('admin/content-management/manage-pages')->with('message', 'Pages Successfully Created !');
     }
 
    
@@ -68,9 +69,10 @@ class ManagePagesController extends Controller
             'status'=>$request->status
         );
 
-        ManagePagesModel::where('id',$id)->update($data);
+        $result = ManagePagesModel::where('id',$id)->update($data);
 
-        return redirect('admin/content-management/manage-pages');
+         if (isset($result))
+            return redirect('admin/content-management/manage-pages')->with('message', 'Pages Successfully Updated !');
     }
 
     public function destroy(Request $request)

@@ -309,14 +309,14 @@
                                 <span class="nav-title">List of Notification </span>
                             </a>
                         </li>
-                        <li>
+                      <!--   <li>
                             <a href="{{url('admin/content-management/payment-gateway')}}">
 										<span class="has-icon">
 											<i class="icon-credit-card"></i>
 										</span>
                                 <span class="nav-title">List of Payment Gateway </span>
                             </a>
-                        </li>
+                        </li> -->
                         <li>
                             <a href="{{url('admin/content-management/social-media')}}">
 										<span class="has-icon">
@@ -358,7 +358,7 @@
                                 <span class="has-icon">
                                     <i class="icon-credit-card"></i>
                                 </span>
-                        <span class="nav-title">Payment Type</span>
+                        <span class="nav-title">Payments</span>
                     </a>
                     <ul aria-expanded="false" class="collapse">
                          <li>

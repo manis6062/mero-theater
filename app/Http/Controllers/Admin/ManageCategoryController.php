@@ -32,9 +32,10 @@ class ManageCategoryController extends Controller
             'description'=>$request->description
         );
 
-        ManageCategoryModel::create($data);
+        $result = ManageCategoryModel::create($data);
 
-        return redirect('admin/content-management/manage-news/manage-category');
+         if (isset($result))
+            return redirect('admin/content-management/manage-news/manage-category')->with('message', 'Category Successfully Created !');
     }
 
    
@@ -62,9 +63,10 @@ class ManageCategoryController extends Controller
             'description'=>$request->description
         );
 
-        ManageCategoryModel::where('id',$id)->update($data);
+        $result = ManageCategoryModel::where('id',$id)->update($data);
 
-        return redirect('admin/content-management/manage-news/manage-category');
+        if (isset($result))
+            return redirect('admin/content-management/manage-news/manage-category')->with('message', 'Category Successfully Updated !');
     }
 
     public function destroy(Request $request)

@@ -102,6 +102,11 @@
 @stop
 @section('scripts')
     <script>
+
+        $(document).find('.closeMessage').on('click', function () {
+            $(this).parent('div').remove();
+        });
+        
         // $('.table-content-delete').on('click', function (e) {
         //     e.preventDefault();
         //     var Id = $(this).data('id');

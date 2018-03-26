@@ -35,6 +35,12 @@
                     <div class="card">
                         <div class="card-header artist-header"><a href="{{url('admin/box-office/movies/create')}}"> Create Movie</a></div>
                         <div class="card-body">
+                            @if(\Illuminate\Support\Facades\Session::has('message'))
+                                <div class="alert alert-success">
+                                    <i class="fa fa-times pull-right closeMessage"></i>
+                                    <p class="text-center">{{\Illuminate\Support\Facades\Session::get('message')}}</p>
+                                </div>
+                            @endif
                             <div class="table-responsive">
                                  <table class="table m-0 table-bordered common-table ticket-type-table">
             <thead>
@@ -88,6 +94,13 @@
 
 @section('scripts')
     <script>
+
+$(document).find('.closeMessage').on('click', function () {
+            $(this).parent('div').remove();
+        });
+        
+
+        
         $('.delete-movie').on('click', function (e) {
             e.preventDefault();
             var movieId = $(this).data('movieid');

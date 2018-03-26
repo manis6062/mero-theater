@@ -88,6 +88,12 @@
 
 @section('scripts')
     <script>
+
+$(document).find('.closeMessage').on('click', function () {
+            $(this).parent('div').remove();
+        });
+        
+
         $('.delete-artist').on('click', function (e) {
             e.preventDefault();
             var artistId = $(this).data('artistid');

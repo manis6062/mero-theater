@@ -33,9 +33,10 @@ class NotificationController extends Controller
             'status'=>$request->status
         );
 
-        NotificationModel::create($data);
+        $result = NotificationModel::create($data);
 
-        return redirect('admin/content-management/notification/footer');
+          if (isset($result))
+            return redirect('admin/content-management/notification/footer')->with('message', 'Notification Successfully Created !');
     }
 
     public function show($id)
@@ -64,9 +65,10 @@ class NotificationController extends Controller
             'status'=>$request->status
         );
 
-         NotificationModel::where('id',$id)->update($data);
+        $result =  NotificationModel::where('id',$id)->update($data);
 
-        return redirect('admin/content-management/notification/footer');
+           if (isset($result))
+            return redirect('admin/content-management/notification/footer')->with('message', 'Notification Successfully Created !');
     }
 
     public function destroy(Request $request)

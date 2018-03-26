@@ -54,9 +54,9 @@ class CouponController extends Controller
              'status'=>$request->status,
         );
 
-        Coupon::create($data);
-
-        return redirect('admin/coupon');
+      $result =  Coupon::create($data);
+       if (isset($result))
+            return redirect('admin/coupon')->with('message', 'Coupon Successfully Created !');
     }
 
     /**
@@ -108,9 +108,9 @@ class CouponController extends Controller
              'status'=>$request->status,
         );
 
-         Coupon::where('id',$id)->update($data);
-
-        return redirect('admin/coupon');
+         $result = Coupon::where('id',$id)->update($data);
+            if (isset($result))
+            return redirect('admin/coupon')->with('message', 'Coupon Successfully Updated !');
     }
 
     /**

@@ -43,10 +43,10 @@ class PromotionalBannerController extends Controller
 	   		$data['image'] = $filename;
 	   	}
 
-	   	PromotionalBannerModel::create($data);
+	   	$result = PromotionalBannerModel::create($data);
 
-	   	return redirect('admin/content-management/promotional-banner');
-
+	   	if (isset($result))
+            return redirect('admin/content-management/promotional-banner')->with('message', 'Promotional Banner Successfully Created !');
    }
 
    public function edit($id)
@@ -83,9 +83,10 @@ class PromotionalBannerController extends Controller
 	   		$data['image'] = $filename;
 	   	}
 
-	   	PromotionalBannerModel::where('id',$id)->update($data);
+	 $result  = PromotionalBannerModel::where('id',$id)->update($data);
 
-	   	return redirect('admin/content-management/promotional-banner');
+	   	if (isset($result))
+            return redirect('admin/content-management/promotional-banner')->with('message', 'Promotional Banner Successfully Updated !');
    }
    public function delete(Request $request)
    {
