@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateTicketTypesTable extends Migration
+class CratePriceCardsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,26 +13,28 @@ class CreateTicketTypesTable extends Migration
      */
     public function up()
     {
-        Schema::create('ticket_types', function (Blueprint $table) {
+        Schema::create('price_cards', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('admin_id')->unsigned();
-            $table->text('description');
-            $table->string('label', 100);
-            $table->string('ticket_class', 100);
-            $table->integer('ticket_class_id')->unsigned();
-            $table->float('default_price');
-            $table->integer('display_sequence');
-            $table->string('voucher_identifier', 100)->nullable();
-            $table->string('sales_via', 255)->nullable();
-            $table->string('ticket_type', 100)->nullable();
+            $table->string('name' , 255);
+            $table->integer('screen_ids')->unsigned();
+            $table->string('seat_categories', 1000);
+            $table->string('selected_days' , 255);
+            $table->string('time_range' , 255);
+            $table->integer('min_time_range');
+            $table->integer('max_time_range');
+            $table->string('ticket_types_ids', 255);
+            $table->string('sequences', 255);
+            $table->string('prices', 255);
+            $table->enum('status', ['active', 'inactive']);
             $table->string('slug', 255);
             $table->timestamps();
             $table->foreign('admin_id')
                 ->references('id')->on('admin_tbl')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
-            $table->foreign('ticket_class_id')
-                ->references('id')->on('ticket_classes')
+            $table->foreign('screen_ids')
+                ->references('id')->on('screens')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
         });
@@ -45,6 +47,6 @@ class CreateTicketTypesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('ticket_types');
+        //
     }
 }

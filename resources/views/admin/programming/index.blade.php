@@ -919,6 +919,7 @@
                             $('div.no-price-card-div').hide();
                         } else {
                             $('div.no-price-card-div').show();
+                            $('span.no-price-card-div').html('<strong>No any price card is defined.</strong>');
                             $('div.price-card-div').hide();
                         }
                         $('span.pw').hide();

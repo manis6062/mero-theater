@@ -33,7 +33,7 @@ class IndexController extends Controller
 
         if($check)
         {
-            return redirect('counter-management/dashboard', compact('screens'));
+            return redirect('counter-management/dashboard');
         }
         return redirect('counter-management')->with('error','Invalid Credential  !')->withInput();
 
