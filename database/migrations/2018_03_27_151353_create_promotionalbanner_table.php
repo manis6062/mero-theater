@@ -17,8 +17,8 @@ class CreatePromotionalbannerTable extends Migration
             $table->increments('id');
              $table->string('banner_name');
               $table->string('image');
-               $table->text('description');
-                $table->string('link');
+               $table->text('description')->nullable();
+                $table->string('link')->nullable();
             $table->timestamps();
         });
     }

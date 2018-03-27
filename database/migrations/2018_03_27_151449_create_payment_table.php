@@ -16,15 +16,15 @@ class CreatePaymentTable extends Migration
         Schema::create('payment_tbl', function (Blueprint $table) {
             $table->increments('id');
              $table->string('name');
-              $table->string('gateway_id');
-               $table->string('contact_person');
-                $table->string('phone');
+              $table->string('gateway_id')->nullable();
+               $table->string('contact_person')->nullable();
+                $table->string('phone')->nullable();
                  $table->string('image');
-                  $table->text('description');
-                   $table->string('link');
+                  $table->text('description')->nullable();
+                   $table->string('link')->nullable();
                     $table->string('status');
-                     $table->text('live_note');
-                      $table->text('test_note');
+                     $table->text('live_note')->nullable();
+                      $table->text('test_note')->nullable();
             $table->timestamps();
         });
     }

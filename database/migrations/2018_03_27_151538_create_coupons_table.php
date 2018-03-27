@@ -18,8 +18,8 @@ class CreateCouponsTable extends Migration
             $table->string('code' , 20);
              $table->string('discount_type' , 100);
               $table->string('discount_rate' , 100);
-               $table->dateTime('expire');
-                $table->string('count' , 100);
+               $table->dateTime('expire')->nullable();
+                $table->string('count' , 100)->nullable();
                  $table->string('status' , 50);
             $table->timestamps();
         });

@@ -1253,6 +1253,7 @@
         },
         {
             "name": "nesbot/carbon",
+<<<<<<< Updated upstream
             "version": "1.25.0",
             "version": "1.24.2",
             "source": {
@@ -1266,6 +1267,8 @@
                 "reference": "cbcf13da0b531767e39eb86e9687f5deba9857b4",
                 "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/bba6c6e410c6b4317e37a9474aeaa753808c3875",
                 "reference": "bba6c6e410c6b4317e37a9474aeaa753808c3875",
+=======
+>>>>>>> Stashed changes
             "version": "1.25.0",
             "source": {
                 "type": "git",
@@ -1315,8 +1318,11 @@
                 "datetime",
                 "time"
             ],
+<<<<<<< Updated upstream
             "time": "2018-03-19T15:50:49+00:00",
             "time": "2018-03-10T10:10:14+00:00",
+=======
+>>>>>>> Stashed changes
             "time": "2018-03-19T15:50:49+00:00"
         },
         {
