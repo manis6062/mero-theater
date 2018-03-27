@@ -17,9 +17,10 @@ class CreateUsersTable extends Migration
             $table->increments('id');
             $table->string('name',100);
             $table->string('email',100)->unique();
-            $table->string('mobile',15)
+            $table->string('mobile',15);
             $table->string('registered_type',250);
             $table->enum('suspend',['Yes','No']);
+            $table->string('remember_token', 60)->nullable();
             $table->timestamps();
            
         });

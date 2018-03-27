@@ -14,7 +14,7 @@ class CreateCompanyTable extends Migration
     public function up()
     {
         Schema::create('company_tbl', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->increments('id');
             $table->unsignedInteger('admin_id');
             $table->foreign('admin_id')->references('id')->on('admin_tbl');
             $table->string('company_name',100);

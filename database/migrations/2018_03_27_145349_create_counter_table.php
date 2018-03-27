@@ -14,10 +14,10 @@ class CreateCounterTable extends Migration
     public function up()
     {
         Schema::create('counter_tbl', function (Blueprint $table) {
-            $table->bigIncrements('id')  
+            $table->increments('id');
             $table->unsignedInteger('admin_id');
             $table->foreign('admin_id')->references('id')->on('admin_tbl');      
-            $table->int('counter_number');
+            $table->integer('counter_number');
             $table->string('first_name',100);
             $table->string('last_name',100);
             $table->string('designation',100);

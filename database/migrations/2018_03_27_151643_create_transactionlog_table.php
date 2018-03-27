@@ -20,7 +20,7 @@ class CreateTransactionlogTable extends Migration
             $table->foreign('user_id')->on('user_tbl')->references('id');
              $table->string('amount');
               $table->string('fee');
-               $table->integer('payment_type_id');
+               $table->integer('payment_type_id')->unsigned();
                 $table->foreign('payment_type_id')->on('payment_tbl')->references('id');
                  $table->string('transaction_type');
             $table->timestamps();
