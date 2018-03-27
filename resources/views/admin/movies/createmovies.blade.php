@@ -294,6 +294,43 @@
                     </div>
                 </div>
 
+                  <div class="form-group row">
+                    <label for="filmformat" class="col-lg-3 col-form-label form-control-label"> Rating<span class="req">*</span></label>
+                    <div class="col-sm-3">
+                        <select class="custom-select" name="rating">
+                            <option value="">Select Rating</option>
+                            <option value="PG" @if (old('rating') == "PG") {{ 'selected' }} @endif>PG</option>
+                            <option value="UA" @if (old('rating') == "UA") {{ 'selected' }} @endif>UA</option>
+                            <option value="U" @if (old('rating') == "U") {{ 'selected' }} @endif>U</option>
+                            <option value="A" @if (old('rating') == "A") {{ 'selected' }} @endif>A</option>
+                        </select>
+                        @if($errors->has('rating'))
+                            <span class="help-block">
+                                <strong>{{$errors->first('rating')}}</strong>
+                            </span>
+                        @endif
+                        <span class="rating-error error help-block"></span>
+                    </div>
+                </div>
+
+                 <div class="form-group row">
+                    <label for="filmformat" class="col-lg-3 col-form-label form-control-label"> Language<span class="req">*</span></label>
+                    <div class="col-sm-3">
+                        <select class="custom-select" name="language">
+                            <option value="">Select Language</option>
+                            <option value="nepali" @if (old('rating') == "nepali") {{ 'selected' }} @endif>Nepali</option>
+                            <option value="english" @if (old('rating') == "english") {{ 'selected' }} @endif>English</option>
+                            <option value="hindi" @if (old('hindi') == "hindi") {{ 'selected' }} @endif>Hindi</option>
+                        </select>
+                        @if($errors->has('rating'))
+                            <span class="help-block">
+                                <strong>{{$errors->first('rating')}}</strong>
+                            </span>
+                        @endif
+                        <span class="rating-error error help-block"></span>
+                    </div>
+                </div>
+
                  <div class="form-group row">
                     <label for="trailerurl" class="col-lg-3 col-form-label form-control-label">Trailer URL <span class="req">*</span></label>
                     <div class="col-sm-9">
