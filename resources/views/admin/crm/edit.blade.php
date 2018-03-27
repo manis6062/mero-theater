@@ -136,7 +136,13 @@
                                                            value="{{$editdata->mobile}}" class="form-control"
                                                            id="mobile"
                                                            onfocus="removeError();" placeholder="Enter mobile number">
-                                                   
+                                                   @if($errors->has('mobile'))
+                                                        <span class="help-block">
+                                                        <strong>
+                                                            {{$errors->first('mobile')}}
+                                                        </strong>
+                                                    </span>
+                                                    @endif
                                                   
                                                 </div>
                                             </div>

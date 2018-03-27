@@ -31,7 +31,6 @@
         <!-- END: .main-heading -->
         <!-- BEGIN .main-content -->
        <div class="main-content">
-						
 						<!-- Row start -->
 						 <div class="card-header artist-header"><a href="{{url('admin/crm/user/create')}}"> Create New User</a></div>
 						<div class="row gutters">
@@ -64,6 +63,12 @@
 											</form>
 										</div>
 										<div class="table-responsive">
+											 @if(\Session::has('message'))
+                                <div class="alert alert-success">
+                                    <i class="fa fa-times pull-right closeMessage"></i>
+                                    <p class="text-center">{{\Session::get('message')}}</p>
+                                </div>
+                            @endif
 											<table class="table m-0 table-bordered common-table ticket-type-table">
 												<thead>
 													<tr>
@@ -111,6 +116,7 @@
 														</td>
 													</tr>
 											@endforeach
+
                                     @else
                                         <tr>
                                             <td colspan="7" class="text-center">No Any User Found !</td>
@@ -118,6 +124,9 @@
                                     @endif									
 												</tbody>
 											</table>
+											@if(isset($data) && $data->count() > 0)
+											{{$data->links()}}
+											@endif
 										</div>
 									</div>
 								</div>
