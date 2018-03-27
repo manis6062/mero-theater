@@ -9,6 +9,6 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        dd('Login Success');
+        return view('counter-management.dashboard');
     }
 }

@@ -245,6 +245,10 @@ Route::group(['prefix'=>'admin','middleware'=> 'admin'], function(){
     Route::group(['prefix'=>'programming', 'namespace' => 'Admin'], function() {
         Route::get('/', 'ProgrammingController@index');
         Route::post('submit', 'ProgrammingController@submit');
+        Route::post('update', 'ProgrammingController@update');
+        Route::get('delete-schedule', 'ProgrammingController@deleteSchedule');
+        Route::get('events', 'ProgrammingController@events');
+        Route::get('getScheduleData', 'ProgrammingController@getScheduleData');
         Route::get('get-pricecard-time', 'ProgrammingController@getPriceCardTime');
         Route::get('add-show', 'ProgrammingController@addShow');
         Route::get('add-show/get-pricecard', 'ProgrammingController@getPriceCards');

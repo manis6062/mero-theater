@@ -1,7 +1,9 @@
 @extends('admin.layout.master1')
 
 @section('styles')
-    <link rel="stylesheet" href="{{asset('admins/plugins/timeline/vis.min.css')}}">
+    <link rel="stylesheet" href="{{asset('admins/theme/calendar/css/fullcalendar.min.css')}}">
+    <link rel="stylesheet" media="print" href="{{asset('admins/theme/calendar/css/full-calendar.print.min.css')}}">
+    <link rel="stylesheet" href="{{asset('admins/theme/calendar/css/scheduler.min.css')}}">
     <style>
         .timepicker.increment-allowed {
             /*padding: 1px 36px 0;*/
@@ -10,12 +12,20 @@
             display: flex;
         }
 
+
+
         .timepicker {
             position: relative;
             height: auto;
         }
 
+
+
         .timepicker.increment-allowed .prev {
+            display: block;
+        }
+
+        .timepicker-edit.increment-allowed-edit .prev-edit {
             display: block;
         }
 
@@ -30,20 +40,36 @@
             cursor: pointer;
         }
 
+
+
         .timepicker input {
             margin: 0;
             width: 100% !important;
         }
 
+
+
         .timepicker span.clear {
             display: none;
         }
+
 
         .timepicker.increment-allowed .next {
             display: block;
         }
 
+        .timepicker-edit.increment-allowed-edit .next-edit {
+            display: block;
+        }
+
         .timepicker span.next {
+            display: none;
+            right: 0;
+            left: auto;
+            background-position: -216px -38px;
+        }
+
+        .timepicker-edit span.next-edit {
             display: none;
             right: 0;
             left: auto;
@@ -95,7 +121,24 @@
             overflow-y: hidden;
         }
 
+        .edit-show-time-input-div {
+            display: -webkit-flex;
+            display: flex;
+            -webkit-flex-wrap: wrap;
+            flex-wrap: wrap;
+            max-width: calc(100% - 72px);
+            overflow-x: auto;
+            flex-flow: row;
+            overflow-y: hidden;
+        }
+
+
         .stDiv {
+            flex: 1;
+            position: relative;
+        }
+
+        .stDivEdit {
             flex: 1;
             position: relative;
         }
@@ -130,6 +173,20 @@
             color: #fff;
         }
 
+        .closeInputEdit {
+            margin-right: 0;
+
+            position: absolute;
+
+            right: 1px;
+
+            top: 4px;
+
+            padding: 1px;
+
+            background: #fff;
+        }
+
         .show-time-input::-webkit-clear-button { /* Removes blue cross */
             -webkit-appearance: none;
             -moz-appearance: none;
@@ -137,7 +194,19 @@
 
         }
 
+        .edit-show-time-input::-webkit-clear-button { /* Removes blue cross */
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            margin: 0;
+
+        }
+
         div.addAShowDiv {
+            margin-top: 20px;
+            display: none;
+        }
+
+        div.editAShowDiv {
             padding: 5%;
             display: none;
         }
@@ -145,10 +214,24 @@
         div.artist-form {
             padding: 3%;
             border: 1px solid #000;
-            background-color: rgba(0, 0, 0, 0.1);
+            background-color: #f1f2f8;
         }
 
         .close-add-show-div {
+            float: right;
+
+            margin-top: 0px;
+
+            background: #000;
+
+            padding: 5px 12px;
+
+            color: #fff;
+
+            cursor: pointer;
+        }
+
+        .close-edit-show-div {
             float: right;
 
             margin: 10px;
@@ -198,9 +281,35 @@
             display: block;
         }
 
-        .datepicker-days td.active {
-            cursor: not-allowed !important;
+        .restrict-show{
+            color: #721c24;
+            background: #f8d7da;
+            border: none;
+            font-size: 14px;
+            padding: 10px 20px;
+            height: auto;
+            margin-bottom: 0;
+            border-radius: 0;
         }
+
+        .event-style{
+            text-align: center;
+            color: #000 !important;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .removeSchedule{
+            color: maroon;
+            font-weight: 600;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        /*.datepicker-days td.active {*/
+            /*cursor: not-allowed !important;*/
+        /*}*/
 
         /*.vis-time-axis{*/
         /*width: 200px !important;*/
@@ -288,19 +397,17 @@
                                     <p class="text-center">Oops ! something went wrong. No schedules has been saved.</p>
                                 </div>
                             @endif
-                            <div class="calendar-head">
-                                <div class="input-group date pickDate">
-                                    <input onkeydown="return false;" type="text" class="form-control datepicker"
-                                           value="{{date('Y-m-d')}}">
-                                    <div class="input-group-addon pickDateAddon">
-                                        <span class="fa fa-calendar"></span>
-                                    </div>
-                                </div>
-                            </div>
+                            {{--<div class="calendar-head">--}}
+                            {{--<div class="input-group date pickDate">--}}
+                            {{--<input onkeydown="return false;" type="text" class="form-control datepicker"--}}
+                            {{--value="{{date('Y-m-d')}}">--}}
+                            {{--<div class="input-group-addon pickDateAddon">--}}
+                            {{--<span class="fa fa-calendar"></span>--}}
+                            {{--</div>--}}
+                            {{--</div>--}}
+                            {{--</div>--}}
 
-                            <div id="movies-calendar">
-
-                            </div>
+                            <div id='calendar'></div>
 
                             <div class="addAShowDiv">
                                 <div class="close-add-show-div">
@@ -308,8 +415,8 @@
                                 </div>
                                 <div class="artist-form">
                                     <div class="clearfix"></div>
-                                    <form action="{{url('admin/programming/submit')}}" class="form-horizontal"
-                                          method="post">
+                                    <form class="form-horizontal"
+                                          method="post" id="scheduleForm">
                                         {{csrf_field()}}
                                         <div class="form-group row">
                                             <label class="col-lg-3 col-form-label form-control-label">Film
@@ -597,6 +704,8 @@
                                     </form>
                                 </div>
                             </div>
+
+
                         </div>
                     </div>
                 </div>
@@ -606,7 +715,8 @@
 @stop
 
 @section('scripts')
-    <script src="{{asset('admins/plugins/timeline/vis.min.js')}}"></script>
+    <script src="{{asset('admins/theme/calendar/js/fullcalendar.js')}}"></script>
+    <script src="{{asset('admins/theme/calendar/js/scheduler.js')}}"></script>
     {{--form script--}}
     <script>
         $(document).find('.closeMessage').on('click', function () {
@@ -619,141 +729,150 @@
 
         var showTimeId = 1;
         $('.next').on('click', function () {
-            var empty = 0;
-            $('input.show-time-input').each(function () {
-                if ($(this).val() == '') {
-                    empty = 1;
-                }
-            });
-
-            if (empty == 0) {
-                var times = [];
-                $(document).find('input.show-time-input').each(function () {
-                    times.push($(this).val());
+            var purpose = $('form').find('input.purpose').val();
+            if(purpose == 'store')
+            {
+                var empty = 0;
+                $('input.show-time-input').each(function () {
+                    if ($(this).val() == '') {
+                        empty = 1;
+                    }
                 });
 
+                if (empty == 0) {
+                    var times = [];
+                    $(document).find('input.show-time-input').each(function () {
+                        times.push($(this).val());
+                    });
 
-                times.sort(function (a, b) {
-                    return new Date('1970/01/01 ' + a) - new Date('1970/01/01 ' + b);
-                });
 
-                console.log(times);
+                    times.sort(function (a, b) {
+                        return new Date('1970/01/01 ' + a) - new Date('1970/01/01 ' + b);
+                    });
 
-                var html = '';
-                for (var i = 0; i < times.length; i++) {
-                    html += '<div class="stDiv stDivAppended"><input name="show_time[]" class="show-time-input" id="time' + parseInt(i + 1) + '" value="' + times[i] + '" type="time"><i class="fa fa-times closeInput" style="margin-right: 5px;"></i></div>';
-                }
-                console.log(html);
+                    console.log(times);
+
+                    var html = '';
+                    for (var i = 0; i < times.length; i++) {
+                        html += '<div class="stDiv stDivAppended"><input name="show_time[]" class="show-time-input" id="time' + parseInt(i + 1) + '" value="' + times[i] + '" type="time"><i class="fa fa-times closeInput" style="margin-right: 5px;"></i></div>';
+                    }
+                    console.log(html);
 //
-                if (html != '') {
-                    $(document).find('div.show-time-input-div').html(html);
-                }
-                if ($('#film').val() != '') {
-                    if ($(document).find('input[name=clean_up_time]').val() != '') {
-                        var lastInputVal = $(document).find('input.show-time-input:last').val();
-                        var lastInputValArr = lastInputVal.split(':');
-                        var movieDuration = $(document).find('#film option:selected').data('duration');
-                        var totalDuration = parseInt(movieDuration + parseInt($('input[name=clean_up_time]').val()));
-                        var minutesToAdd = totalDuration % 60;
-                        var hoursToAdd = Math.floor(totalDuration / 60);
-                        var minute = (parseInt(lastInputValArr[1]) + parseInt(minutesToAdd));
-                        var newMinute = minute % 60;
-                        var newHour = ((parseInt(parseInt(lastInputValArr[0]) + parseInt(hoursToAdd))) + (parseInt(Math.floor(minute / 60))));
-                        if (newHour.toString().length == 1) {
-                            newHour = 0 + newHour.toString();
-                        }
-                        if (newMinute.toString().length == 1) {
-                            newMinute = 0 + newMinute.toString();
-                        }
-                        var newTime = newHour + ':' + newMinute;
+                    if (html != '') {
+                        $(document).find('div.show-time-input-div').html(html);
+                    }
+                    if ($('#film').val() != '') {
+                        if ($(document).find('input[name=clean_up_time]').val() != '') {
+                            var lastInputVal = $(document).find('input.show-time-input:last').val();
+                            var lastInputValArr = lastInputVal.split(':');
+                            var movieDuration = $(document).find('#film option:selected').data('duration');
+                            var totalDuration = parseInt(movieDuration + parseInt($('input[name=clean_up_time]').val()));
+                            var minutesToAdd = totalDuration % 60;
+                            var hoursToAdd = Math.floor(totalDuration / 60);
+                            var minute = (parseInt(lastInputValArr[1]) + parseInt(minutesToAdd));
+                            var newMinute = minute % 60;
+                            var newHour = ((parseInt(parseInt(lastInputValArr[0]) + parseInt(hoursToAdd))) + (parseInt(Math.floor(minute / 60))));
+                            if (newHour.toString().length == 1) {
+                                newHour = 0 + newHour.toString();
+                            }
+                            if (newMinute.toString().length == 1) {
+                                newMinute = 0 + newMinute.toString();
+                            }
+                            var newTime = newHour + ':' + newMinute;
 
-                        if (newHour <= 24) {
-                            showTimeId++;
-                            $('div.show-time-input-div').append('<div class="stDiv stDivAppended"><input name="show_time[]" class="show-time-input" id="time' + showTimeId + '" type="time" value="' + newTime + '"><i class="fa fa-times closeInput" style="margin-right: 5px;"></i></div>');
+                            if (newHour <= 24) {
+                                showTimeId++;
+                                $('div.show-time-input-div').append('<div class="stDiv stDivAppended"><input name="show_time[]" class="show-time-input" id="time' + showTimeId + '" type="time" value="' + newTime + '"><i class="fa fa-times closeInput" style="margin-right: 5px;"></i></div>');
+                            }
+                        } else {
+                            $(document).find('span.show-time-error').html('<strong>First enter film and clean up time !</strong>');
                         }
                     } else {
                         $(document).find('span.show-time-error').html('<strong>First enter film and clean up time !</strong>');
                     }
-                } else {
-                    $(document).find('span.show-time-error').html('<strong>First enter film and clean up time !</strong>');
                 }
             }
-
         });
 
         $('.prev').on('click', function () {
-            var empty = 0;
-            $('input.show-time-input').each(function () {
-                if ($(this).val() == '') {
-                    empty = 1;
-                }
-            });
-
-            if (empty == 0) {
-                var times = [];
-                $(document).find('input.show-time-input').each(function () {
-                    times.push($(this).val());
+            var purpose = $('form').find('input.purpose').val();
+            if(purpose == 'store')
+            {
+                var empty = 0;
+                $('input.show-time-input').each(function () {
+                    if ($(this).val() == '') {
+                        empty = 1;
+                    }
                 });
 
+                if (empty == 0) {
+                    var times = [];
+                    $(document).find('input.show-time-input').each(function () {
+                        times.push($(this).val());
+                    });
 
-                times.sort(function (a, b) {
-                    return new Date('1970/01/01 ' + a) - new Date('1970/01/01 ' + b);
-                });
 
-                console.log(times);
+                    times.sort(function (a, b) {
+                        return new Date('1970/01/01 ' + a) - new Date('1970/01/01 ' + b);
+                    });
 
-                var html = '';
-                for (var i = 0; i < times.length; i++) {
-                    html += '<div class="stDiv stDivAppended"><input name="show_time[]" class="show-time-input" id="time' + parseInt(i + 1) + '" value="' + times[i] + '" type="time"><i class="fa fa-times closeInput" style="margin-right: 5px;"></i></div>';
-                }
-                console.log(html);
+                    console.log(times);
+
+                    var html = '';
+                    for (var i = 0; i < times.length; i++) {
+                        html += '<div class="stDiv stDivAppended"><input name="show_time[]" class="show-time-input" id="time' + parseInt(i + 1) + '" value="' + times[i] + '" type="time"><i class="fa fa-times closeInput" style="margin-right: 5px;"></i></div>';
+                    }
+                    console.log(html);
 //
-                if (html != '') {
-                    $(document).find('div.show-time-input-div').html(html);
-                }
-                if ($('#film').val() != '') {
-                    if ($(document).find('input[name=clean_up_time]').val() != '') {
-                        var lastInputVal = $(document).find('input.show-time-input:first').val();
-                        var lastInputValArr = lastInputVal.split(':');
-                        var movieDuration = $(document).find('#film option:selected').data('duration');
-                        var totalDuration = parseInt(movieDuration + parseInt($('input[name=clean_up_time]').val()));
-                        var minutesToSubtract = totalDuration % 60;
-                        var hoursToSubtract = Math.floor(totalDuration / 60);
-                        if (parseInt(lastInputValArr[1]) == 00) {
-                            var minute = (parseInt(60) - parseInt(minutesToSubtract));
-                            hoursToSubtract = parseInt(hoursToSubtract + 1);
-                            var newMinute = minute % 60;
-                        } else if (parseInt(lastInputValArr[1]) >= parseInt(minutesToSubtract)) {
-                            var minute = (parseInt(lastInputValArr[1]) - parseInt(minutesToSubtract));
-                            var newMinute = minute % 60;
-                        } else {
-                            var minute = (parseInt(60) - parseInt(minutesToSubtract));
-                            var minute = (parseInt(minute) + parseInt(lastInputValArr[1]));
-                            hoursToSubtract = parseInt(hoursToSubtract + 1);
-                            var newMinute = 0;
-                        }
+                    if (html != '') {
+                        $(document).find('div.show-time-input-div').html(html);
+                    }
+                    if ($('#film').val() != '') {
+                        if ($(document).find('input[name=clean_up_time]').val() != '') {
+                            var lastInputVal = $(document).find('input.show-time-input:first').val();
+                            var lastInputValArr = lastInputVal.split(':');
+                            var movieDuration = $(document).find('#film option:selected').data('duration');
+                            var totalDuration = parseInt(movieDuration + parseInt($('input[name=clean_up_time]').val()));
+                            var minutesToSubtract = totalDuration % 60;
+                            var hoursToSubtract = Math.floor(totalDuration / 60);
+                            if (parseInt(lastInputValArr[1]) == 00) {
+                                var minute = (parseInt(60) - parseInt(minutesToSubtract));
+                                hoursToSubtract = parseInt(hoursToSubtract + 1);
+                                var newMinute = minute % 60;
+                            } else if (parseInt(lastInputValArr[1]) >= parseInt(minutesToSubtract)) {
+                                var minute = (parseInt(lastInputValArr[1]) - parseInt(minutesToSubtract));
+                                var newMinute = minute % 60;
+                            } else {
+                                var minute = (parseInt(60) - parseInt(minutesToSubtract));
+                                var minute = (parseInt(minute) + parseInt(lastInputValArr[1]));
+                                hoursToSubtract = parseInt(hoursToSubtract + 1);
+                                var newMinute = 0;
+                            }
 
-                        var newMinute = minute % 60;
-                        var newHour = ((parseInt(parseInt(lastInputValArr[0]) - parseInt(hoursToSubtract))) + (parseInt(Math.floor(minute / 60))));
-                        if (newHour.toString().length == 1) {
-                            newHour = 0 + newHour.toString();
-                        }
-                        if (newMinute.toString().length == 1) {
-                            newMinute = 0 + newMinute.toString();
-                        }
-                        var newTime = newHour + ':' + newMinute;
-                        if (newHour >= 00) {
-                            showTimeId++;
-                            $('div.show-time-input-div').prepend('<div class="stDiv stDivAppended"><input name="show_time[]" class="show-time-input" id="time' + showTimeId + '" type="time" value="' + newTime + '"><i class="fa fa-times closeInput" style="margin-right: 5px;"></i></div>');
+                            var newMinute = minute % 60;
+                            var newHour = ((parseInt(parseInt(lastInputValArr[0]) - parseInt(hoursToSubtract))) + (parseInt(Math.floor(minute / 60))));
+                            if (newHour.toString().length == 1) {
+                                newHour = 0 + newHour.toString();
+                            }
+                            if (newMinute.toString().length == 1) {
+                                newMinute = 0 + newMinute.toString();
+                            }
+                            var newTime = newHour + ':' + newMinute;
+                            if (newHour >= 00) {
+                                showTimeId++;
+                                $('div.show-time-input-div').prepend('<div class="stDiv stDivAppended"><input name="show_time[]" class="show-time-input" id="time' + showTimeId + '" type="time" value="' + newTime + '"><i class="fa fa-times closeInput" style="margin-right: 5px;"></i></div>');
+                            }
+                        } else {
+                            $(document).find('span.show-time-error').html('<strong>First enter film and clean up time !</strong>');
                         }
                     } else {
                         $(document).find('span.show-time-error').html('<strong>First enter film and clean up time !</strong>');
                     }
-                } else {
-                    $(document).find('span.show-time-error').html('<strong>First enter film and clean up time !</strong>');
                 }
             }
         });
+
+
 
         $(document).on('click', '.closeInput', function () {
             if ($(document).find('.closeInput').length > 1) {
@@ -762,6 +881,7 @@
                 showTimeId--;
             }
         });
+
 
         $(document).on('change', 'input.select-screen-id', function () {
             $('span.pw').show();
@@ -818,6 +938,50 @@
         });
 
 
+        $(document).on('change', 'input.edit-select-screen-id', function () {
+            $('span.pw-edit').show();
+            $('div.edit-price-card-div').hide();
+            var screenIds = [];
+            screenIds.push($(this).val());
+
+
+            if (screenIds.length > 0) {
+                var sendParam = JSON.stringify(screenIds);
+                $.ajax({
+                    url: baseurl + '/admin/programming/add-show/get-pricecard?screenIds=' + sendParam,
+                    type: 'get',
+                    success: function (data) {
+                        console.log(data);
+                        if (data != '') {
+                            var html = '';
+                            html += '<option value="">-- Choose Price Card --</option>';
+                            for (var i = 0; i < data.length; i++) {
+                                html += '<option value="' + data[i] + '">' + data[i] + '</option>';
+                            }
+                            $(document).find('select#edit-price-card-select').html(html);
+                            $('div.edit-price-card-div').show();
+                            $('div.edit-no-price-card-div').hide();
+                        } else {
+                            $('div.edit-no-price-card-div').show();
+                            $('div.edit-price-card-div').hide();
+                        }
+                        $('span.pw-edit').hide();
+                    }, error: function (data) {
+                        alertify.alert('Oops ! something went wrong. Please Try Again.');
+                        $(document).find('input.screenIdRadio').each(function () {
+                            $(this).prop('checked', false);
+                        });
+                        $('div.edit-price-card-div').hide();
+                        $('div.edit-no-price-card-div').hide();
+                        $('span.pw-edit').hide();
+                    }
+                });
+            } else {
+                $('span.pw-edit').hide();
+            }
+        });
+
+
         $(document).on('change', 'input.dayCheckBox', function () {
             if ($(this).val() == 'every-day') {
                 $(document).find('input.dayCheckBox').each(function () {
@@ -859,7 +1023,7 @@
             });
         });
 
-        $(document).on('submit', 'form', function (e) {
+        $(document).on('submit', '#scheduleForm', function (e) {
             var submit = 'true';
             var times = [];
             $(document).find('input.show-time-input').each(function () {
@@ -1152,43 +1316,92 @@
                 $(document).find('button[type=submit]').prop('disabled', true);
                 $(document).find('span.submit-processing').show();
                 var formData = $('form').serialize();
-                $.ajax({
-                    url: baseurl + '/admin/programming/submit',
-                    type: 'post',
-                    data: formData,
-                    success: function (data) {
-                        if (data == 'success') {
-                            $("form")[0].reset();
-                            $('div.price-card-div').hide();
-                            $('div.no-price-card-div').hide();
-                            $('form').find('span.error').html('');
-                            $(document).find('input.show-time-input').each(function () {
-                                if ($(this).attr('id') == 'time1') {
-                                    $(this).val('');
-                                } else {
-                                    $(this).remove();
-                                }
-                            });
-                            $('div.addAShowDiv').fadeOut('slow');
-                        }
+                if($('form').find('button[type=submit]').text() == 'Save')
+                {
+                    $.ajax({
+                        url: baseurl + '/admin/programming/submit',
+                        type: 'post',
+                        data: formData,
+                        success: function (data) {
+                            if (data == 'success') {
+                                $("form")[0].reset();
+                                $('div.price-card-div').hide();
+                                $('div.no-price-card-div').hide();
+                                $('form').find('span.error').html('');
+                                $(document).find('input.show-time-input').each(function () {
+                                    if ($(this).attr('id') == 'time1') {
+                                        $(this).val('');
+                                    } else {
+                                        $(this).remove();
+                                    }
+                                });
+                                $('div.addAShowDiv').fadeOut('slow');
+                                $('html, body').animate({
+                                    scrollTop: 0
+                                }, 500);
+                                $('#calendar').fullCalendar( 'refetchEvents' );
+                            }
 
-                        if (data == 'unsuccess') {
-                            alerify.alert('Oops ! something went wrong. Schedule not saved.');
-                        }
+                            if (data == 'unsuccess') {
+                                alerify.alert('Oops ! something went wrong. Schedule not saved.');
+                            }
 
-                        if (data == 'conflict') {
-                            alertify.alert('Oops ! the given schedule conflicts with other schedule.');
-                        }
+                            if (data == 'conflict') {
+                                alertify.alert('Oops ! the given schedule conflicts with other schedule.');
+                            }
 
-                        $(document).find('button[type=submit]').prop('disabled', false);
-                        $(document).find('span.submit-processing').hide();
-                    }, error: function (data) {
-                        alertify.alert('Oops ! something went wrong. Schedule not saved.');
-                        $(document).find('button[type=submit]').prop('disabled', false);
-                        $(document).find('span.submit-processing').hide();
-                    }
-                });
-                $.post(baseurl + '/admin/programming/submit', data);
+                            $(document).find('button[type=submit]').prop('disabled', false);
+                            $(document).find('span.submit-processing').hide();
+                        }, error: function (data) {
+                            alertify.alert('Oops ! something went wrong. Schedule not saved.');
+                            $(document).find('button[type=submit]').prop('disabled', false);
+                            $(document).find('span.submit-processing').hide();
+                        }
+                    });
+                }else{
+                    var editId = $('form').find('input.editId').val();
+                    $.ajax({
+                        url: baseurl + '/admin/programming/update',
+                        type: 'post',
+                        data: formData,
+                        success: function (data) {
+                            if (data == 'success') {
+                                $("form")[0].reset();
+                                $('div.price-card-div').hide();
+                                $('div.no-price-card-div').hide();
+                                $('form').find('span.error').html('');
+                                $(document).find('input.show-time-input').each(function () {
+                                    if ($(this).attr('id') == 'time1') {
+                                        $(this).val('');
+                                    } else {
+                                        $(this).remove();
+                                    }
+                                });
+                                $('div.addAShowDiv').fadeOut('slow');
+                                $('html, body').animate({
+                                    scrollTop: 0
+                                }, 500);
+                                $('#calendar').fullCalendar( 'refetchEvents' );
+                            }
+
+                            if (data == 'unsuccess') {
+                                alerify.alert('Oops ! something went wrong. Schedule not updated.');
+                            }
+
+                            if (data == 'conflict') {
+                                alertify.alert('Oops ! the given schedule conflicts with other schedule.');
+                            }
+
+                            $(document).find('button[type=submit]').prop('disabled', false);
+                            $(document).find('span.submit-processing').hide();
+                        }, error: function (data) {
+                            alertify.alert('Oops ! something went wrong. Schedule not saved.');
+                            $(document).find('button[type=submit]').prop('disabled', false);
+                            $(document).find('span.submit-processing').hide();
+                        }
+                    });
+                }
+
             }
         });
 
@@ -1207,38 +1420,43 @@
         $('input[name=clean_up_time]').keypress(function (event) {
             $(document).find('input.show-time-input').each(function () {
                 if ($(this).attr('id') == 'time1') {
-                    $(this).val('');
+
                 } else {
                     $(this).remove();
                 }
             });
             return isNumber(event, this);
         });
+
+
 
         $('input[name=clean_up_time]').keypress(function (event) {
             return isNumber(event, this);
         });
 
+
         $('input[name=clean_up_time]').change(function (event) {
             $(document).find('input.show-time-input').each(function () {
                 if ($(this).attr('id') == 'time1') {
-                    $(this).val('');
+
                 } else {
                     $(this).remove();
                 }
             });
         });
+
 
 
         $(document).on('change', '#film', function () {
             $(document).find('input.show-time-input').each(function () {
                 if ($(this).attr('id') == 'time1') {
-                    $(this).val('');
+
                 } else {
                     $(this).remove();
                 }
             });
         });
+
 
     </script>
     {{--form-script--}}
@@ -1246,93 +1464,679 @@
 
     {{--timeline-script--}}
     <script>
+
+        var current_view = "day";
         $(window).on('load', function () {
-                    @if(isset($scheduleData) && $scheduleData != null)
-            var sDate = '';
-            var endDate = '';
-            var defaultDays = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
-            var curr = new Date($(document).find('input.datepicker').val()); // get current date
-            var currDay = defaultDays[curr.getDay()];
-            if (currDay == 'fri') {
-                sDate = curr;
-                endDate = new Date(curr.getTime() + 6 * 24 * 60 * 60 * 1000);
-            }
+            $(function () { // document ready
+                var colors = ['#ff0000', '#ff9a00', '#ffec00', '#bdff00', '#00c200', '#65ffff', '#3875db', '#8700a1', '#f11eec', '#b7b7b7', '#ffc8de', '#ffd8ae', '#f7f6cd', '#a5ffc1'];
+                var colorIndex = 0;
+
+                $('#calendar').fullCalendar({
+                    eventClick: function (calEvent, jsEvent, view) {
+                        $("form")[0].reset();
+                        $('div.price-card-div').hide();
+                        $('div.no-price-card-div').hide()
+                        $('form').find('span.error').html('');
+                        $('form').find('div.stDivAppended').not(':first').remove();
+                        $('div.addAShowDiv').fadeOut('slow');
+                        var scheduleId = calEvent.unique_id;
+                        $('form').find('input.editId').remove();
+                        $('form').append('<input class="editId" name="scheduleIdToEdit" value="'+scheduleId+'" type="hidden">');
+                        $('form').find('a.removeSchedule').remove();
+                        $('form').prepend('<a href="#" class="removeSchedule" data-scheduleid="'+scheduleId+'"><i class="fa fa-trash"></i> Remove This Schedule</a>');
+                        $.ajax({
+                           url: baseurl+'/admin/programming/getScheduleData?sid='+scheduleId,
+                            type: 'get',
+                            success: function (data) {
+                               console.log(data);
+                               $('form').find('input.purpose').remove();
+                               $('form').append('<input class="purpose" value="edit" type="hidden">');
+                                $('div.addAShowDiv').fadeIn('slow');
+                                $('#film').val(data.scheduleData.movie_id);
+                                $('.select-screen-id[value='+data.scheduleData.screen_id+']').prop('checked', true);
+
+                                var html = '';
+                                for(var k = 0; k < data.priceCardData.length; k++)
+                                {
+                                    html += '<option value="'+data.priceCardData[k]+'">'+data.priceCardData[k]+'</option>'
+                                }
+
+                                $('#price-card-select').html(html);
+                                $('#price-card-select').val(data.scheduleData.price_card_name);
+                                $('div.price-card-div').show();
+                                var dbDay = data.scheduleData.show_day.slice(0,3);
+                                $('.select-days[value='+dbDay.toLowerCase()+']').prop('checked', true);
+                                $(document).find('input[name=clean_up_time]').val(data.scheduleData.clean_up_time);
+                                $(document).find('input#time1').val(data.showTime);
+                                $(document).find('.select-sales-via').each(function(){
+                                    if($.inArray($(this).val(), data.salesVia)  != -1)
+                                    {
+                                        $(this).prop('checked', true);
+                                    }
+                                });
+                                $(document).find('input[name=seating][value='+data.scheduleData.seating+']').prop('checked', true);
+                                $(document).find('input[name=comps][value='+data.scheduleData.comps+']').prop('checked', true);
+                                $(document).find('input[name=status][value='+data.scheduleData.status+']').prop('checked', true);
+                                $('form').find('.screenIdCheckbox').each(function(data){
+                                   $(this).removeAttr('type').attr('type', 'radio');
+                                });
+                                $('form').find('.select-screen-id[value=all]').prop('disabled', true);
+                                $('form').find('.dayCheckBox').each(function(data){
+                                    $(this).removeAttr('type').attr('type', 'radio');
+                                });
+
+                                $('form').find('.select-days[value=every-day]').prop('disabled', true);
+                                $('form').find('button[type=submit]').text('Update');
+                                    var choosedPriceCard = $('select[name=price_card]').val();
+                                    $.ajax({
+                                        url: baseurl + '/admin/programming/get-pricecard-time?pc=' + choosedPriceCard,
+                                        type: 'get',
+                                        success: function (data) {
+                                            $(document).find('input.price-card-start-time').remove();
+                                            $(document).find('input.price-card-end-time').remove();
+                                            $(document).find('input.price-card-week-days').remove();
+                                            $(document).find('form').append('<input type="hidden" class="price-card-start-time" value="' + data[0] + '">');
+                                            $(document).find('form').append('<input type="hidden" class="price-card-end-time" value="' + data[1] + '">');
+                                            $(document).find('form').append('<input type="hidden" class="price-card-week-days" value="' + data[2] + '">');
+                                        }, error: function (data) {
+                                            $(document).find('select[name=price_card]').val('');
+                                            alertify.alert('Oops ! something went wrong. Please try again.');
+                                        }
+                                    });
+                                $('html, body').animate({
+                                    scrollTop: $(".addAShowDiv").offset().top - 80
+                                }, 500);
+                            }
+                        });
+
+                    },
+                    editable: false, // disable draggable events
+                    scrollTime: '06:00', // undo default 6am scrollTime
+                    customButtons: { // Custom Button
+                        myCustomButton: {
+                            text: ' '
+                        }
+                    },
+
+                    header: {
+                        left: 'today prev,next',
+                        center: 'myCustomButton',
+                        right: 'timelineDay,agendaWeek,month,listWeek'
+                    },
+                    defaultView: 'timelineDay',
+                    viewRender: function (view) {
+//                        $('#calendar').fullCalendar( 'refetchEvents' );
+                        $('.fc-myCustomButton-button').text(view.title); // Set Text of Custom Button everytime view changes
+                        current_view = view.name;
+                        $('.add-new-show').next('span').remove();
+                        if (current_view!="timelineDay") {
+                            $("form")[0].reset();
+                            $('div.price-card-div').hide();
+                            $('div.no-price-card-div').hide();
+                            $('form').find('span.error').html('');
+                            $('form').find('div.stDivAppended').not(':first').remove();
+                            $('div.addAShowDiv').fadeOut('slow');
+                        }
 
 
-            if (currDay == 'sat') {
 
-                endDate = new Date(curr.getTime() + 5 * 24 * 60 * 60 * 1000);
-                sDate = new Date(curr.getTime() - 1 * 24 * 60 * 60 * 1000);
-            }
-
-
-            if (currDay == 'sun') {
-                endDate = new Date(curr.getTime() + 4 * 24 * 60 * 60 * 1000);
-                sDate = new Date(curr.getTime() - 2 * 24 * 60 * 60 * 1000);
-            }
-
-            if (currDay == 'mon') {
-                endDate = new Date(curr.getTime() + 3 * 24 * 60 * 60 * 1000);
-                sDate = new Date(curr.getTime() - 3 * 24 * 60 * 60 * 1000);
-            }
-
-            if (currDay == 'tue') {
-                endDate = new Date(curr.getTime() + 2 * 24 * 60 * 60 * 1000);
-                sDate = new Date(curr.getTime() - 4 * 24 * 60 * 60 * 1000);
-            }
-
-            if (currDay == 'wed') {
-                endDate = new Date(curr.getTime() + 1 * 24 * 60 * 60 * 1000);
-                sDate = new Date(curr.getTime() - 5 * 24 * 60 * 60 * 1000);
-            }
-
-            if (currDay == 'thu') {
-                endDate = curr;
-                sDate = new Date(curr.getTime() - 6 * 24 * 60 * 60 * 1000);
-            }
+                        var defaultDays = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+                        var curr = new Date($(document).find('.fc-myCustomButton-button').text()); // get current date
+                        var currDay = defaultDays[curr.getDay()];
+                        if (currDay == 'fri') {
+                            $(document).find('input.show-date').each(function () {
+                                $(this).remove();
+                            });
+                            var friDate = curr;
+                            var satDate = new Date(curr.getTime() + 1 * 24 * 60 * 60 * 1000);
+                            var sunDate = new Date(curr.getTime() + 2 * 24 * 60 * 60 * 1000);
+                            var monDate = new Date(curr.getTime() + 3 * 24 * 60 * 60 * 1000);
+                            var tueDate = new Date(curr.getTime() + 4 * 24 * 60 * 60 * 1000);
+                            var wedDate = new Date(curr.getTime() + 5 * 24 * 60 * 60 * 1000);
+                            var thuDate = new Date(curr.getTime() + 6 * 24 * 60 * 60 * 1000);
+                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
+                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
+                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
+                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
+                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
+                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
+                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
+                        }
 
 
-            // DOM element where the Timeline will be attached
-            var container = document.getElementById('movies-calendar');
+                        if (currDay == 'sat') {
+                            $(document).find('input.show-date').each(function () {
+                                $(this).remove();
+                            });
+                            var satDate = curr;
+                            var sunDate = new Date(curr.getTime() + 1 * 24 * 60 * 60 * 1000);
+                            var monDate = new Date(curr.getTime() + 2 * 24 * 60 * 60 * 1000);
+                            var tueDate = new Date(curr.getTime() + 3 * 24 * 60 * 60 * 1000);
+                            var wedDate = new Date(curr.getTime() + 4 * 24 * 60 * 60 * 1000);
+                            var thuDate = new Date(curr.getTime() + 5 * 24 * 60 * 60 * 1000);
+                            var friDate = new Date(curr.getTime() - 1 * 24 * 60 * 60 * 1000);
+                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
+                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
+                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
+                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
+                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
+                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
+                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
+                        }
 
-            // Create a DataSet (allows two way data-binding)
-            var items = new vis.DataSet(
-                    {!! $scheduleData !!}
-            );
+
+                        if (currDay == 'sun') {
+                            $(document).find('input.show-date').each(function () {
+                                $(this).remove();
+                            });
+                            var sunDate = curr;
+                            var monDate = new Date(curr.getTime() + 1 * 24 * 60 * 60 * 1000);
+                            var tueDate = new Date(curr.getTime() + 2 * 24 * 60 * 60 * 1000);
+                            var wedDate = new Date(curr.getTime() + 3 * 24 * 60 * 60 * 1000);
+                            var thuDate = new Date(curr.getTime() + 4 * 24 * 60 * 60 * 1000);
+                            var satDate = new Date(curr.getTime() - 1 * 24 * 60 * 60 * 1000);
+                            var friDate = new Date(curr.getTime() - 2 * 24 * 60 * 60 * 1000);
+                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
+                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
+                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
+                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
+                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
+                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
+                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
+                        }
+
+                        if (currDay == 'mon') {
+                            $(document).find('input.show-date').each(function () {
+                                $(this).remove();
+                            });
+                            var monDate = curr;
+                            var tueDate = new Date(curr.getTime() + 1 * 24 * 60 * 60 * 1000);
+                            var wedDate = new Date(curr.getTime() + 2 * 24 * 60 * 60 * 1000);
+                            var thuDate = new Date(curr.getTime() + 3 * 24 * 60 * 60 * 1000);
+                            var sunDate = new Date(curr.getTime() - 1 * 24 * 60 * 60 * 1000);
+                            var satDate = new Date(curr.getTime() - 2 * 24 * 60 * 60 * 1000);
+                            var friDate = new Date(curr.getTime() - 3 * 24 * 60 * 60 * 1000);
+                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
+                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
+                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
+                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
+                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
+                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
+                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
+                        }
+
+                        if (currDay == 'tue') {
+                            $(document).find('input.show-date').each(function () {
+                                $(this).remove();
+                            });
+                            var tueDate = curr;
+                            var wedDate = new Date(curr.getTime() + 1 * 24 * 60 * 60 * 1000);
+                            var thuDate = new Date(curr.getTime() + 2 * 24 * 60 * 60 * 1000);
+                            var friDate = new Date(curr.getTime() - 4 * 24 * 60 * 60 * 1000);
+                            var monDate = new Date(curr.getTime() - 1 * 24 * 60 * 60 * 1000);
+                            var sunDate = new Date(curr.getTime() - 2 * 24 * 60 * 60 * 1000);
+                            var satDate = new Date(curr.getTime() - 3 * 24 * 60 * 60 * 1000);
+                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
+                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
+                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
+                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
+                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
+                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
+                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
+                        }
+
+                        if (currDay == 'wed') {
+                            $(document).find('input.show-date').each(function () {
+                                $(this).remove();
+                            });
+                            var wedDate = curr;
+                            var thuDate = new Date(curr.getTime() + 1 * 24 * 60 * 60 * 1000);
+                            var friDate = new Date(curr.getTime() - 5 * 24 * 60 * 60 * 1000);
+                            var satDate = new Date(curr.getTime() - 4 * 24 * 60 * 60 * 1000);
+                            var tueDate = new Date(curr.getTime() - 1 * 24 * 60 * 60 * 1000);
+                            var monDate = new Date(curr.getTime() - 2 * 24 * 60 * 60 * 1000);
+                            var sunDate = new Date(curr.getTime() - 3 * 24 * 60 * 60 * 1000);
+                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
+                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
+                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
+                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
+                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
+                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
+                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
+                        }
+
+                        if (currDay == 'thu') {
+                            $(document).find('input.show-date').each(function () {
+                                $(this).remove();
+                            });
+                            var thuDate = curr;
+                            var friDate = new Date(curr.getTime() - 6 * 24 * 60 * 60 * 1000);
+                            var satDate = new Date(curr.getTime() - 5 * 24 * 60 * 60 * 1000);
+                            var sunDate = new Date(curr.getTime() - 4 * 24 * 60 * 60 * 1000);
+                            var wedDate = new Date(curr.getTime() - 1 * 24 * 60 * 60 * 1000);
+                            var tueDate = new Date(curr.getTime() - 2 * 24 * 60 * 60 * 1000);
+                            var monDate = new Date(curr.getTime() - 3 * 24 * 60 * 60 * 1000);
+                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
+                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
+                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
+                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
+                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
+                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
+                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
+                        }
 
 
-            // Configuration for the Timeline
-            var options = {
-                width: '100%',
-                start: sDate,
-                end: endDate,
-                zoomable: true,
-                timeAxis: {scale: 'hour'},
-                stack: true,
-                autoResize: true,
 
-            };
+                    },
 
-            // Create a Timeline
-            var timeline = new vis.Timeline(container, items, options);
 
-            @endif
+                    resources: [
+                        @foreach(\App\Screen\Screen::where('admin_id', \Illuminate\Support\Facades\Auth::guard('admin')->user()->id)->orderBy('screen_number', 'ASC')->get() as $sc)
+                        { id: '{{$sc->id}}', title: '{{$sc->name}}', eventColor: getColor(colorIndex) },
+                        @endforeach
+                    ],
+                    eventSources: [
+                        {
+                            url: baseurl+'/admin/programming/events', // use the `url` property
+                        }
+
+                    ],
+
+                });
+
+                function getColor(index)
+                {
+                    colorIndex++;
+                    return colors[index];
+                }
+
+
+
+//            $('.fc-myCustomButton-button').attr('id', 'datepicker-custom');
+
+                $('.fc-myCustomButton-button').addClass('datepicker');
+
+                $('.datepicker').datepicker({
+                    format: 'yyyy-mm-dd',
+                });
+
+
+                $('.datepicker').on('changeDate', function (ev) {
+                    $('.datepicker-dropdown').hide();
+                    $('#calendar').fullCalendar('gotoDate', ev.date);
+
+                    var defaultDays = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+                    var curr = new Date($(document).find('.fc-myCustomButton-button').text()); // get current date
+                    var currDay = defaultDays[curr.getDay()];
+                    if (currDay == 'fri') {
+                        $(document).find('input.show-date').each(function () {
+                            $(this).remove();
+                        });
+                        var friDate = curr;
+                        var satDate = new Date(curr.getTime() + 1 * 24 * 60 * 60 * 1000);
+                        var sunDate = new Date(curr.getTime() + 2 * 24 * 60 * 60 * 1000);
+                        var monDate = new Date(curr.getTime() + 3 * 24 * 60 * 60 * 1000);
+                        var tueDate = new Date(curr.getTime() + 4 * 24 * 60 * 60 * 1000);
+                        var wedDate = new Date(curr.getTime() + 5 * 24 * 60 * 60 * 1000);
+                        var thuDate = new Date(curr.getTime() + 6 * 24 * 60 * 60 * 1000);
+                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
+                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
+                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
+                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
+                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
+                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
+                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
+                    }
+
+
+                    if (currDay == 'sat') {
+                        $(document).find('input.show-date').each(function () {
+                            $(this).remove();
+                        });
+                        var satDate = curr;
+                        var sunDate = new Date(curr.getTime() + 1 * 24 * 60 * 60 * 1000);
+                        var monDate = new Date(curr.getTime() + 2 * 24 * 60 * 60 * 1000);
+                        var tueDate = new Date(curr.getTime() + 3 * 24 * 60 * 60 * 1000);
+                        var wedDate = new Date(curr.getTime() + 4 * 24 * 60 * 60 * 1000);
+                        var thuDate = new Date(curr.getTime() + 5 * 24 * 60 * 60 * 1000);
+                        var friDate = new Date(curr.getTime() - 1 * 24 * 60 * 60 * 1000);
+                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
+                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
+                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
+                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
+                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
+                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
+                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
+                    }
+
+
+                    if (currDay == 'sun') {
+                        $(document).find('input.show-date').each(function () {
+                            $(this).remove();
+                        });
+                        var sunDate = curr;
+                        var monDate = new Date(curr.getTime() + 1 * 24 * 60 * 60 * 1000);
+                        var tueDate = new Date(curr.getTime() + 2 * 24 * 60 * 60 * 1000);
+                        var wedDate = new Date(curr.getTime() + 3 * 24 * 60 * 60 * 1000);
+                        var thuDate = new Date(curr.getTime() + 4 * 24 * 60 * 60 * 1000);
+                        var satDate = new Date(curr.getTime() - 1 * 24 * 60 * 60 * 1000);
+                        var friDate = new Date(curr.getTime() - 2 * 24 * 60 * 60 * 1000);
+                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
+                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
+                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
+                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
+                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
+                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
+                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
+                    }
+
+                    if (currDay == 'mon') {
+                        $(document).find('input.show-date').each(function () {
+                            $(this).remove();
+                        });
+                        var monDate = curr;
+                        var tueDate = new Date(curr.getTime() + 1 * 24 * 60 * 60 * 1000);
+                        var wedDate = new Date(curr.getTime() + 2 * 24 * 60 * 60 * 1000);
+                        var thuDate = new Date(curr.getTime() + 3 * 24 * 60 * 60 * 1000);
+                        var sunDate = new Date(curr.getTime() - 1 * 24 * 60 * 60 * 1000);
+                        var satDate = new Date(curr.getTime() - 2 * 24 * 60 * 60 * 1000);
+                        var friDate = new Date(curr.getTime() - 3 * 24 * 60 * 60 * 1000);
+                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
+                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
+                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
+                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
+                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
+                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
+                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
+                    }
+
+                    if (currDay == 'tue') {
+                        $(document).find('input.show-date').each(function () {
+                            $(this).remove();
+                        });
+                        var tueDate = curr;
+                        var wedDate = new Date(curr.getTime() + 1 * 24 * 60 * 60 * 1000);
+                        var thuDate = new Date(curr.getTime() + 2 * 24 * 60 * 60 * 1000);
+                        var friDate = new Date(curr.getTime() - 4 * 24 * 60 * 60 * 1000);
+                        var monDate = new Date(curr.getTime() - 1 * 24 * 60 * 60 * 1000);
+                        var sunDate = new Date(curr.getTime() - 2 * 24 * 60 * 60 * 1000);
+                        var satDate = new Date(curr.getTime() - 3 * 24 * 60 * 60 * 1000);
+                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
+                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
+                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
+                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
+                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
+                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
+                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
+                    }
+
+                    if (currDay == 'wed') {
+                        $(document).find('input.show-date').each(function () {
+                            $(this).remove();
+                        });
+                        var wedDate = curr;
+                        var thuDate = new Date(curr.getTime() + 1 * 24 * 60 * 60 * 1000);
+                        var friDate = new Date(curr.getTime() - 5 * 24 * 60 * 60 * 1000);
+                        var satDate = new Date(curr.getTime() - 4 * 24 * 60 * 60 * 1000);
+                        var tueDate = new Date(curr.getTime() - 1 * 24 * 60 * 60 * 1000);
+                        var monDate = new Date(curr.getTime() - 2 * 24 * 60 * 60 * 1000);
+                        var sunDate = new Date(curr.getTime() - 3 * 24 * 60 * 60 * 1000);
+                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
+                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
+                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
+                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
+                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
+                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
+                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
+                    }
+
+                    if (currDay == 'thu') {
+                        $(document).find('input.show-date').each(function () {
+                            $(this).remove();
+                        });
+                        var thuDate = curr;
+                        var friDate = new Date(curr.getTime() - 6 * 24 * 60 * 60 * 1000);
+                        var satDate = new Date(curr.getTime() - 5 * 24 * 60 * 60 * 1000);
+                        var sunDate = new Date(curr.getTime() - 4 * 24 * 60 * 60 * 1000);
+                        var wedDate = new Date(curr.getTime() - 1 * 24 * 60 * 60 * 1000);
+                        var tueDate = new Date(curr.getTime() - 2 * 24 * 60 * 60 * 1000);
+                        var monDate = new Date(curr.getTime() - 3 * 24 * 60 * 60 * 1000);
+                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
+                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
+                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
+                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
+                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
+                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
+                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
+                    }
+                });
+
+
+                var defaultDays = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+                var curr = new Date($(document).find('.fc-myCustomButton-button').text()); // get current date
+                var currDay = defaultDays[curr.getDay()];
+                if (currDay == 'fri') {
+                    $(document).find('input.show-date').each(function () {
+                        $(this).remove();
+                    });
+                    var friDate = curr;
+                    var satDate = new Date(curr.getTime() + 1 * 24 * 60 * 60 * 1000);
+                    var sunDate = new Date(curr.getTime() + 2 * 24 * 60 * 60 * 1000);
+                    var monDate = new Date(curr.getTime() + 3 * 24 * 60 * 60 * 1000);
+                    var tueDate = new Date(curr.getTime() + 4 * 24 * 60 * 60 * 1000);
+                    var wedDate = new Date(curr.getTime() + 5 * 24 * 60 * 60 * 1000);
+                    var thuDate = new Date(curr.getTime() + 6 * 24 * 60 * 60 * 1000);
+                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
+                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
+                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
+                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
+                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
+                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
+                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
+                }
+
+
+                if (currDay == 'sat') {
+                    $(document).find('input.show-date').each(function () {
+                        $(this).remove();
+                    });
+                    var satDate = curr;
+                    var sunDate = new Date(curr.getTime() + 1 * 24 * 60 * 60 * 1000);
+                    var monDate = new Date(curr.getTime() + 2 * 24 * 60 * 60 * 1000);
+                    var tueDate = new Date(curr.getTime() + 3 * 24 * 60 * 60 * 1000);
+                    var wedDate = new Date(curr.getTime() + 4 * 24 * 60 * 60 * 1000);
+                    var thuDate = new Date(curr.getTime() + 5 * 24 * 60 * 60 * 1000);
+                    var friDate = new Date(curr.getTime() - 1 * 24 * 60 * 60 * 1000);
+                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
+                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
+                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
+                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
+                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
+                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
+                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
+                }
+
+
+                if (currDay == 'sun') {
+                    $(document).find('input.show-date').each(function () {
+                        $(this).remove();
+                    });
+                    var sunDate = curr;
+                    var monDate = new Date(curr.getTime() + 1 * 24 * 60 * 60 * 1000);
+                    var tueDate = new Date(curr.getTime() + 2 * 24 * 60 * 60 * 1000);
+                    var wedDate = new Date(curr.getTime() + 3 * 24 * 60 * 60 * 1000);
+                    var thuDate = new Date(curr.getTime() + 4 * 24 * 60 * 60 * 1000);
+                    var satDate = new Date(curr.getTime() - 1 * 24 * 60 * 60 * 1000);
+                    var friDate = new Date(curr.getTime() - 2 * 24 * 60 * 60 * 1000);
+                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
+                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
+                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
+                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
+                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
+                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
+                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
+                }
+
+                if (currDay == 'mon') {
+                    $(document).find('input.show-date').each(function () {
+                        $(this).remove();
+                    });
+                    var monDate = curr;
+                    var tueDate = new Date(curr.getTime() + 1 * 24 * 60 * 60 * 1000);
+                    var wedDate = new Date(curr.getTime() + 2 * 24 * 60 * 60 * 1000);
+                    var thuDate = new Date(curr.getTime() + 3 * 24 * 60 * 60 * 1000);
+                    var sunDate = new Date(curr.getTime() - 1 * 24 * 60 * 60 * 1000);
+                    var satDate = new Date(curr.getTime() - 2 * 24 * 60 * 60 * 1000);
+                    var friDate = new Date(curr.getTime() - 3 * 24 * 60 * 60 * 1000);
+                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
+                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
+                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
+                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
+                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
+                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
+                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
+                }
+
+                if (currDay == 'tue') {
+                    $(document).find('input.show-date').each(function () {
+                        $(this).remove();
+                    });
+                    var tueDate = curr;
+                    var wedDate = new Date(curr.getTime() + 1 * 24 * 60 * 60 * 1000);
+                    var thuDate = new Date(curr.getTime() + 2 * 24 * 60 * 60 * 1000);
+                    var friDate = new Date(curr.getTime() - 4 * 24 * 60 * 60 * 1000);
+                    var monDate = new Date(curr.getTime() - 1 * 24 * 60 * 60 * 1000);
+                    var sunDate = new Date(curr.getTime() - 2 * 24 * 60 * 60 * 1000);
+                    var satDate = new Date(curr.getTime() - 3 * 24 * 60 * 60 * 1000);
+                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
+                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
+                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
+                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
+                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
+                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
+                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
+                }
+
+                if (currDay == 'wed') {
+                    $(document).find('input.show-date').each(function () {
+                        $(this).remove();
+                    });
+                    var wedDate = curr;
+                    var thuDate = new Date(curr.getTime() + 1 * 24 * 60 * 60 * 1000);
+                    var friDate = new Date(curr.getTime() - 5 * 24 * 60 * 60 * 1000);
+                    var satDate = new Date(curr.getTime() - 4 * 24 * 60 * 60 * 1000);
+                    var tueDate = new Date(curr.getTime() - 1 * 24 * 60 * 60 * 1000);
+                    var monDate = new Date(curr.getTime() - 2 * 24 * 60 * 60 * 1000);
+                    var sunDate = new Date(curr.getTime() - 3 * 24 * 60 * 60 * 1000);
+                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
+                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
+                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
+                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
+                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
+                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
+                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
+                }
+
+                if (currDay == 'thu') {
+                    $(document).find('input.show-date').each(function () {
+                        $(this).remove();
+                    });
+                    var thuDate = curr;
+                    var friDate = new Date(curr.getTime() - 6 * 24 * 60 * 60 * 1000);
+                    var satDate = new Date(curr.getTime() - 5 * 24 * 60 * 60 * 1000);
+                    var sunDate = new Date(curr.getTime() - 4 * 24 * 60 * 60 * 1000);
+                    var wedDate = new Date(curr.getTime() - 1 * 24 * 60 * 60 * 1000);
+                    var tueDate = new Date(curr.getTime() - 2 * 24 * 60 * 60 * 1000);
+                    var monDate = new Date(curr.getTime() - 3 * 24 * 60 * 60 * 1000);
+                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
+                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
+                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
+                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
+                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
+                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
+                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
+                }
+
+            });
+
+        });
+
+        $(document).on('click', 'a.removeSchedule', function(e){
+            e.preventDefault();
+            var scheduleId = $(this).data('scheduleid');
+            alertify.confirm("Delete this schedule ?",
+                function () {
+                    $.ajax({
+                        url: baseurl + '/admin/programming/delete-schedule?scheduleId=' + scheduleId,
+                        type: 'get',
+                        success: function (data) {
+                            if (data == 'true') {
+                                $("form")[0].reset();
+                                $('div.price-card-div').hide();
+                                $('div.no-price-card-div').hide();
+                                $('form').find('span.error').html('');
+                                $(document).find('input.show-time-input').each(function () {
+                                    if ($(this).attr('id') == 'time1') {
+                                        $(this).val('');
+                                    } else {
+                                        $(this).remove();
+                                    }
+                                });
+                                $('div.addAShowDiv').fadeOut('slow');
+                                $('html, body').animate({
+                                    scrollTop: 0
+                                }, 500);
+                                $('#calendar').fullCalendar( 'refetchEvents' );
+                            } else {
+                                alertify.alert("Oops ! something went wrong. Please try again.");
+                            }
+                        }, error: function (data) {
+                            alertify.alert("Oops ! something went wrong. Please try again.");
+                        }
+                    });
+                },
+                function () {
+
+                });
         });
     </script>
     {{--timeline script--}}
 
     <script>
-        $(document).find('input.datepicker').on('click', function () {
-            $(document).find('td.active').on('click', function () {
-                return false;
-            });
-        });
+//        $(document).find('input.datepicker').on('click', function () {
+//            $(document).find('td.active').on('click', function () {
+//                return false;
+//            });
+//        });
         $('.add-new-show').on('click', function () {
-            $('div.addAShowDiv').fadeIn('slow');
-        });
-
-        $('.datepicker').datepicker({
-            format: 'yyyy-mm-dd',
+           // alert(current_view);
+            if (current_view=="timelineDay") {
+                $("form")[0].reset();
+                $('div.price-card-div').hide();
+                $('div.no-price-card-div').hide()
+                $('form').find('span.error').html('');
+                $('form').find('div.stDivAppended').not(':first').remove();
+                $('div.addAShowDiv').fadeIn('slow');
+                $('html, body').animate({
+                    scrollTop: $(".addAShowDiv").offset().top - 80
+                }, 500);
+                $('form').find('.screenIdCheckbox ').each(function(data){
+                    $(this).removeAttr('type').attr('type', 'checkbox');
+                });
+                $('form').find('.select-screen-id[value=all]').prop('disabled', false);
+                $('form').find('.select-days[value=every-day]').prop('disabled', false);
+                $('form').find('.dayCheckBox').each(function(data){
+                    $(this).removeAttr('type').attr('type', 'checkbox');
+                });
+                $('form').find('input.purpose').remove();
+                $('form').find('input.editId').remove();
+                $('form').append('<input class="purpose" value="store" type="hidden">');
+                $('form').find('button[type=submit]').text('Save');
+                $('form').find('a.removeSchedule').remove();
+            }
+            else{
+             $('.add-new-show').parent().append('<span class="restrict-show"  role="alert">You can add new shows only in Day View</span>');
+            }
         });
 
 
@@ -1341,309 +2145,22 @@
             $('div.price-card-div').hide();
             $('div.no-price-card-div').hide();
             $('form').find('span.error').html('');
-            $('form').find('div.stDivAppended').remove();
+            $('form').find('div.stDivAppended').not(':first').remove();
             $('div.addAShowDiv').fadeOut('slow');
+            $('html, body').animate({
+                scrollTop: 0
+            }, 500);
         });
 
-        $('.datepicker').on('changeDate', function (ev) {
-            $(document).find('td.active').on('click', function () {
-                return false;
-            });
-            $(this).datepicker('hide');
-            var defaultDays = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
-            var curr = new Date($(document).find('input.datepicker').val()); // get current date
-            var currDay = defaultDays[curr.getDay()];
-            if (currDay == 'fri') {
-                $(document).find('input.show-date').each(function () {
-                    $(this).remove();
-                });
-                var friDate = curr;
-                var satDate = new Date(curr.getTime() + 1 * 24 * 60 * 60 * 1000);
-                var sunDate = new Date(curr.getTime() + 2 * 24 * 60 * 60 * 1000);
-                var monDate = new Date(curr.getTime() + 3 * 24 * 60 * 60 * 1000);
-                var tueDate = new Date(curr.getTime() + 4 * 24 * 60 * 60 * 1000);
-                var wedDate = new Date(curr.getTime() + 5 * 24 * 60 * 60 * 1000);
-                var thuDate = new Date(curr.getTime() + 6 * 24 * 60 * 60 * 1000);
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
-            }
 
 
-            if (currDay == 'sat') {
-                $(document).find('input.show-date').each(function () {
-                    $(this).remove();
-                });
-                var satDate = curr;
-                var sunDate = new Date(curr.getTime() + 1 * 24 * 60 * 60 * 1000);
-                var monDate = new Date(curr.getTime() + 2 * 24 * 60 * 60 * 1000);
-                var tueDate = new Date(curr.getTime() + 3 * 24 * 60 * 60 * 1000);
-                var wedDate = new Date(curr.getTime() + 4 * 24 * 60 * 60 * 1000);
-                var thuDate = new Date(curr.getTime() + 5 * 24 * 60 * 60 * 1000);
-                var friDate = new Date(curr.getTime() - 1 * 24 * 60 * 60 * 1000);
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
-            }
 
-
-            if (currDay == 'sun') {
-                $(document).find('input.show-date').each(function () {
-                    $(this).remove();
-                });
-                var sunDate = curr;
-                var monDate = new Date(curr.getTime() + 1 * 24 * 60 * 60 * 1000);
-                var tueDate = new Date(curr.getTime() + 2 * 24 * 60 * 60 * 1000);
-                var wedDate = new Date(curr.getTime() + 3 * 24 * 60 * 60 * 1000);
-                var thuDate = new Date(curr.getTime() + 4 * 24 * 60 * 60 * 1000);
-                var satDate = new Date(curr.getTime() - 1 * 24 * 60 * 60 * 1000);
-                var friDate = new Date(curr.getTime() - 2 * 24 * 60 * 60 * 1000);
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
-            }
-
-            if (currDay == 'mon') {
-                $(document).find('input.show-date').each(function () {
-                    $(this).remove();
-                });
-                var monDate = curr;
-                var tueDate = new Date(curr.getTime() + 1 * 24 * 60 * 60 * 1000);
-                var wedDate = new Date(curr.getTime() + 2 * 24 * 60 * 60 * 1000);
-                var thuDate = new Date(curr.getTime() + 3 * 24 * 60 * 60 * 1000);
-                var sunDate = new Date(curr.getTime() - 1 * 24 * 60 * 60 * 1000);
-                var satDate = new Date(curr.getTime() - 2 * 24 * 60 * 60 * 1000);
-                var friDate = new Date(curr.getTime() - 3 * 24 * 60 * 60 * 1000);
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
-            }
-
-            if (currDay == 'tue') {
-                $(document).find('input.show-date').each(function () {
-                    $(this).remove();
-                });
-                var tueDate = curr;
-                var wedDate = new Date(curr.getTime() + 1 * 24 * 60 * 60 * 1000);
-                var thuDate = new Date(curr.getTime() + 2 * 24 * 60 * 60 * 1000);
-                var friDate = new Date(curr.getTime() - 4 * 24 * 60 * 60 * 1000);
-                var monDate = new Date(curr.getTime() - 1 * 24 * 60 * 60 * 1000);
-                var sunDate = new Date(curr.getTime() - 2 * 24 * 60 * 60 * 1000);
-                var satDate = new Date(curr.getTime() - 3 * 24 * 60 * 60 * 1000);
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
-            }
-
-            if (currDay == 'wed') {
-                $(document).find('input.show-date').each(function () {
-                    $(this).remove();
-                });
-                var wedDate = curr;
-                var thuDate = new Date(curr.getTime() + 1 * 24 * 60 * 60 * 1000);
-                var friDate = new Date(curr.getTime() - 5 * 24 * 60 * 60 * 1000);
-                var satDate = new Date(curr.getTime() - 4 * 24 * 60 * 60 * 1000);
-                var tueDate = new Date(curr.getTime() - 1 * 24 * 60 * 60 * 1000);
-                var monDate = new Date(curr.getTime() - 2 * 24 * 60 * 60 * 1000);
-                var sunDate = new Date(curr.getTime() - 3 * 24 * 60 * 60 * 1000);
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
-            }
-
-            if (currDay == 'thu') {
-                $(document).find('input.show-date').each(function () {
-                    $(this).remove();
-                });
-                var thuDate = curr;
-                var friDate = new Date(curr.getTime() - 6 * 24 * 60 * 60 * 1000);
-                var satDate = new Date(curr.getTime() - 5 * 24 * 60 * 60 * 1000);
-                var sunDate = new Date(curr.getTime() - 4 * 24 * 60 * 60 * 1000);
-                var wedDate = new Date(curr.getTime() - 1 * 24 * 60 * 60 * 1000);
-                var tueDate = new Date(curr.getTime() - 2 * 24 * 60 * 60 * 1000);
-                var monDate = new Date(curr.getTime() - 3 * 24 * 60 * 60 * 1000);
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
-            }
-        });
 
         $(window).on('load', function () {
             $("form")[0].reset();
             $('div.price-card-div').hide();
             $('div.no-price-card-div').hide();
-            var defaultDays = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
-            var curr = new Date($(document).find('input.datepicker').val()); // get current date
-            var currDay = defaultDays[curr.getDay()];
-            if (currDay == 'fri') {
-                $(document).find('input.show-date').each(function () {
-                    $(this).remove();
-                });
-                var friDate = curr;
-                var satDate = new Date(curr.getTime() + 1 * 24 * 60 * 60 * 1000);
-                var sunDate = new Date(curr.getTime() + 2 * 24 * 60 * 60 * 1000);
-                var monDate = new Date(curr.getTime() + 3 * 24 * 60 * 60 * 1000);
-                var tueDate = new Date(curr.getTime() + 4 * 24 * 60 * 60 * 1000);
-                var wedDate = new Date(curr.getTime() + 5 * 24 * 60 * 60 * 1000);
-                var thuDate = new Date(curr.getTime() + 6 * 24 * 60 * 60 * 1000);
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
-            }
-
-
-            if (currDay == 'sat') {
-                $(document).find('input.show-date').each(function () {
-                    $(this).remove();
-                });
-                var satDate = curr;
-                var sunDate = new Date(curr.getTime() + 1 * 24 * 60 * 60 * 1000);
-                var monDate = new Date(curr.getTime() + 2 * 24 * 60 * 60 * 1000);
-                var tueDate = new Date(curr.getTime() + 3 * 24 * 60 * 60 * 1000);
-                var wedDate = new Date(curr.getTime() + 4 * 24 * 60 * 60 * 1000);
-                var thuDate = new Date(curr.getTime() + 5 * 24 * 60 * 60 * 1000);
-                var friDate = new Date(curr.getTime() - 1 * 24 * 60 * 60 * 1000);
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
-            }
-
-
-            if (currDay == 'sun') {
-                $(document).find('input.show-date').each(function () {
-                    $(this).remove();
-                });
-                var sunDate = curr;
-                var monDate = new Date(curr.getTime() + 1 * 24 * 60 * 60 * 1000);
-                var tueDate = new Date(curr.getTime() + 2 * 24 * 60 * 60 * 1000);
-                var wedDate = new Date(curr.getTime() + 3 * 24 * 60 * 60 * 1000);
-                var thuDate = new Date(curr.getTime() + 4 * 24 * 60 * 60 * 1000);
-                var satDate = new Date(curr.getTime() - 1 * 24 * 60 * 60 * 1000);
-                var friDate = new Date(curr.getTime() - 2 * 24 * 60 * 60 * 1000);
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
-            }
-
-            if (currDay == 'mon') {
-                $(document).find('input.show-date').each(function () {
-                    $(this).remove();
-                });
-                var monDate = curr;
-                var tueDate = new Date(curr.getTime() + 1 * 24 * 60 * 60 * 1000);
-                var wedDate = new Date(curr.getTime() + 2 * 24 * 60 * 60 * 1000);
-                var thuDate = new Date(curr.getTime() + 3 * 24 * 60 * 60 * 1000);
-                var sunDate = new Date(curr.getTime() - 1 * 24 * 60 * 60 * 1000);
-                var satDate = new Date(curr.getTime() - 2 * 24 * 60 * 60 * 1000);
-                var friDate = new Date(curr.getTime() - 3 * 24 * 60 * 60 * 1000);
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
-            }
-
-            if (currDay == 'tue') {
-                $(document).find('input.show-date').each(function () {
-                    $(this).remove();
-                });
-                var tueDate = curr;
-                var wedDate = new Date(curr.getTime() + 1 * 24 * 60 * 60 * 1000);
-                var thuDate = new Date(curr.getTime() + 2 * 24 * 60 * 60 * 1000);
-                var friDate = new Date(curr.getTime() - 4 * 24 * 60 * 60 * 1000);
-                var monDate = new Date(curr.getTime() - 1 * 24 * 60 * 60 * 1000);
-                var sunDate = new Date(curr.getTime() - 2 * 24 * 60 * 60 * 1000);
-                var satDate = new Date(curr.getTime() - 3 * 24 * 60 * 60 * 1000);
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
-            }
-
-            if (currDay == 'wed') {
-                $(document).find('input.show-date').each(function () {
-                    $(this).remove();
-                });
-                var wedDate = curr;
-                var thuDate = new Date(curr.getTime() + 1 * 24 * 60 * 60 * 1000);
-                var friDate = new Date(curr.getTime() - 5 * 24 * 60 * 60 * 1000);
-                var satDate = new Date(curr.getTime() - 4 * 24 * 60 * 60 * 1000);
-                var tueDate = new Date(curr.getTime() - 1 * 24 * 60 * 60 * 1000);
-                var monDate = new Date(curr.getTime() - 2 * 24 * 60 * 60 * 1000);
-                var sunDate = new Date(curr.getTime() - 3 * 24 * 60 * 60 * 1000);
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
-            }
-
-            if (currDay == 'thu') {
-                $(document).find('input.show-date').each(function () {
-                    $(this).remove();
-                });
-                var thuDate = curr;
-                var friDate = new Date(curr.getTime() - 6 * 24 * 60 * 60 * 1000);
-                var satDate = new Date(curr.getTime() - 5 * 24 * 60 * 60 * 1000);
-                var sunDate = new Date(curr.getTime() - 4 * 24 * 60 * 60 * 1000);
-                var wedDate = new Date(curr.getTime() - 1 * 24 * 60 * 60 * 1000);
-                var tueDate = new Date(curr.getTime() - 2 * 24 * 60 * 60 * 1000);
-                var monDate = new Date(curr.getTime() - 3 * 24 * 60 * 60 * 1000);
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
-                $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
-            }
         });
+
     </script>
 @stop

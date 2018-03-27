@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\CounterManagement;
 
+use App\CounterModel;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -23,9 +24,10 @@ class IndexController extends Controller
         $data = $request->all();
 
         $check  = Auth::guard('counter')->attempt([
-            'email'=>$data['username'],
-            'password'=>$data['password']
+            'email' => $data['username'],
+            'password' => $data['password']
         ]);
+
 
         if($check)
         {

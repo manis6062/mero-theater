@@ -8,4 +8,5 @@ class ScreenSeat extends Model
 {
     protected $table = 'screen_seats';
     protected $guarded = ['id'];
+
 }

@@ -13,4 +13,9 @@ class Screen extends Model
     {
         return $this->hasOne('App\Screen\ScreenSeat', 'screen_id');
     }
+
+    public function screenSeatCategories()
+    {
+        return $this->hasMany('App\Screen\ScreenSeatCategories', 'screen_id');
+    }
 }
