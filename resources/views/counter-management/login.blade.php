@@ -1,4 +1,4 @@
-@extends('admin.layout.loginMaster')
+@extends('counter-management.layout.loginMaster')
 
 @section('styles')
     <style>
