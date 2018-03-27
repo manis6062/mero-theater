@@ -50,7 +50,7 @@ class ArtistsController extends Controller
         ]);
 
 		$data = array(
-            'artists_name' => $request->artist_name,
+            'artists_name' => ucwords($request->artist_name),
             'artists_achievements'=>$request->artist_achievements,
             'artists_current_status'=>$request->artist_current_status,
             'artists_early_life'=>$request->artist_early_life,
@@ -94,7 +94,7 @@ class ArtistsController extends Controller
         ]);
 
         $data = array(
-            'artists_name' => $request->artist_name,
+            'artists_name' => ucwords($request->artist_name),
             'artists_achievements'=>$request->artist_achievements,
             'artists_current_status'=>$request->artist_current_status,
             'artists_early_life'=>$request->artist_early_life,
@@ -116,10 +116,15 @@ class ArtistsController extends Controller
       return redirect('admin/box-office/artist?status=error-updating');
     }
 
-    public function deleteartist($artistid)
+      public function delete(Request $request)
     {
-       $deleted = $this->artist->deletedata($artistid);
-       if($deleted)
-        return redirect('admin/box-office/artist?status=successfully-deleted');
+       $deleted = $this->artist->deletedata($request->artistId);
+       if($deleted){
+         return 'true';
+       }
+    else{
+          return 'false';
     }
+}
+
 }

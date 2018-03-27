@@ -23,7 +23,9 @@ class PromotionalBannerController extends Controller
    {
 	   	$this->validate($request,[
 	   		'banner_name' => 'required',
-	   		'image'=>'required|dimensions:width=25,height=25|mimes:jpeg,jpg,bmp,png,svg'
+	   		'image'=>'required|dimensions:width=200,height=200|mimes:jpeg,jpg,bmp,png,svg',
+	   		'link'=>'url',
+
 	   	]);
 
 	   	$data = array(
@@ -57,7 +59,9 @@ class PromotionalBannerController extends Controller
    {
    		$this->validate($request,[
 	   		'banner_name' => 'required',
-	   		'image'=>'sometimes|required|dimensions:width=25,height=25|mimes:jpeg,jpg,bmp,png,svg'
+	   		'image'=>'sometimes|required|dimensions:width=200,height=200|mimes:jpeg,jpg,bmp,png,svg',
+	   			   		'link'=>'url',
+
 	   	]);
 
 	   	$data = array(

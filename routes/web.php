@@ -41,14 +41,32 @@ Route::group(['prefix'=>'admin','middleware'=> 'admin'], function(){
         //Route for contact ends
 
         // Route for Contact Group
+
         Route::post('group/mass-delete', 'Admin\smsCampaign\GroupController@postMassDelete');
         Route::resource('group', 'Admin\smsCampaign\GroupController');
         Route::post('group/add-contacts', 'Admin\smsCampaign\GroupController@postAddContactsToGroup');
         Route::post('group/delete-contacts', 'Admin\smsCampaign\GroupController@postDeleteContactsFromGroup');
-           // Route for Contact Group End
+
+        // Route for Contact Group End
 
         //Route for Campaign sms
         Route::resource('campaign', 'Admin\smsCampaign\sms\CampaignController');
+        Route::get('campaigns/to-autocomplete', 'Admin\smsCampaign\sms\CampaignController@getContactAndGroupForAutocomplete');
+        Route::post('campaigns/save-message-template', 'Admin\smsCampaign\sms\CampaignController@saveMessageTemplate');
+        Route::get('campaigns/get-message-templates', 'Admin\smsCampaign\sms\CampaignController@getMessageTemplates');
+
+        Route::post('campaign/sendBulksms', "Admin\smsCampaign\sms\CampaignController@sendSMS");
+
+        Route::get('message/history', 'Admin\smsCampaign\sms\CampaignController@messageHistory');
+
+        //campaign csv sample download
+        Route::get('sampleCsv1/download/{name}', 'Admin\smsCampaign\sms\CampaignController@downloadSample');
+
+        Route::post('template/mass-delete', 'Admin\smsCampaign\sms\TemplateController@postMassDelete');
+        Route::delete('/template/destroy/{id}', 'Admin\smsCampaign\sms\TemplateController@destroy')->name('template.destroy');
+        Route::resource('template/save', 'Admin\smsCampaign\sms\TemplateController@saveTemplate');
+        Route::resource('template', 'Admin\smsCampaign\sms\TemplateController');
+
 
         //Route end for Campaign sms
 
@@ -63,7 +81,7 @@ Route::group(['prefix'=>'admin','middleware'=> 'admin'], function(){
 	   Route::get('{movieid}/edit','Admin\MovieController@editmovie');
        Route::get('{movieid}/view','Admin\MovieController@viewmovie');
 	   Route::post('update/{movieid}','Admin\MovieController@update');
-	   Route::get('delete/{movieid}','Admin\MovieController@deletemovie');
+       Route::get('/delete', 'Admin\MovieController@delete');
        Route::get('addmovieartists','Admin\MovieController@addartistformovie');
 	});
     // Route for movies end
@@ -76,7 +94,8 @@ Route::group(['prefix'=>'admin','middleware'=> 'admin'], function(){
        Route::get('{artistsid}/edit','Admin\ArtistsController@editartist');
        Route::get('{artistsid}/view','Admin\ArtistsController@viewartist');
        Route::post('update/{artistsid}','Admin\ArtistsController@update');
-       Route::get('delete/{artistsid}','Admin\ArtistsController@deleteartist');
+       Route::get('/delete', 'Admin\ArtistsController@delete');
+
     });
     // Route for artists end
 
@@ -152,7 +171,7 @@ Route::group(['prefix'=>'admin','middleware'=> 'admin'], function(){
             Route::post('movie-banner/submit','Admin\MovieBannerController@store');
             Route::get('movie-banner/{id}/edit','Admin\MovieBannerController@edit');
             Route::post('movie-banner/update/{id}','Admin\MovieBannerController@update');
-            Route::get('movie-banner/delete','Admin\MovieBannerController@destroy');
+            Route::get('movie-banner/delete','Admin\MovieBannerController@delete');
 
             Route::get('payment-gateway','Admin\PaymentController@index');
             Route::get('payment-gateway/create','Admin\PaymentController@create');
@@ -214,13 +233,54 @@ Route::group(['prefix'=>'admin','middleware'=> 'admin'], function(){
     });
     //    Route for box office PCM
 
+     //    Route for CRM
+    Route::group(['prefix'=>'crm', 'namespace' => 'Admin'], function() {
+        Route::get('/', 'CrmController@index');
+        Route::get('user/create', 'CrmController@create');
+        Route::post('user/submit', 'CrmController@store');
+        Route::post('user/import/excel', 'CrmController@importExcel');
+        Route::get('user/{id}/edit', 'CrmController@edit');
+        Route::post('user/{id}/update', 'CrmController@update');
+        Route::get('user/delete', 'CrmController@destroy');
+        Route::get('user/suspend', 'CrmController@suspend');
+        
+        //Route::get('get-seat-categories', 'PriceCardController@getSeatCategories');
+    });
+    //    Route for box office CRM
+
+    //    Route for counter-management
+    Route::group(['prefix'=>'counter', 'namespace' => 'Admin'], function() {
+        Route::get('/', 'CounterController@index');
+        Route::get('counteruser/create', 'CounterController@create');
+        Route::post('counteruser/submit', 'CounterController@store');
+        Route::get('counteruser/{id}/edit', 'CounterController@edit');
+        Route::post('counteruser/{id}/update', 'CounterController@update');
+        Route::get('counteruser/delete', 'CounterController@destroy');
+        Route::get('counteruser/suspend', 'CounterController@suspend');
+        //Route::get('get-seat-categories', 'PriceCardController@getSeatCategories');
+    });
+    //    Route for counter-manaement
+
 
 
     //    Route for box office PCM
     Route::group(['prefix'=>'programming', 'namespace' => 'Admin'], function() {
         Route::get('/', 'ProgrammingController@index');
+        Route::post('submit', 'ProgrammingController@submit');
+        Route::get('get-pricecard-time', 'ProgrammingController@getPriceCardTime');
         Route::get('add-show', 'ProgrammingController@addShow');
         Route::get('add-show/get-pricecard', 'ProgrammingController@getPriceCards');
     });
     //    Route for box office PCM
+
+
+    // Route for coupon
+    Route::group(['prefix'=>'coupon'], function(){
+       Route::get('/', 'Admin\CouponController@index');
+       Route::get('/create','Admin\CouponController@create');
+       Route::post('/submit','Admin\CouponController@store');
+       Route::get('{couponid}/edit','Admin\CouponController@edit');
+       Route::post('update/{couponid}','Admin\CouponController@update');
+       Route::get('/delete', 'Admin\CouponController@destroy');
+    });
 });

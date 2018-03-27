@@ -39,4 +39,23 @@
 {{--alertify--}}
 <script src="{{asset('admins/plugins/alertify/alertify.min.js')}}"></script>
 
+<script type="text/javascript" src="{{asset('admins/theme/js/bootstrap-datepicker.min.js')}}"></script>
+
+
+
+<!-- datepicker -->
 <script src="{{asset('admins/plugins/datepicker/bootstrap-datepicker.js')}}"></script>
+<!-- timepicker -->
+<script src="{{asset('admins/plugins/timepicker/bootstrap-timepicker.js')}}"></script>
+
+
+
+
+
+
+
+
+
+
+
+

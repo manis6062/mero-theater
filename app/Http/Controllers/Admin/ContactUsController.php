@@ -70,7 +70,8 @@ class ContactUsController extends Controller
             'name'=>$request->name,
             'email'=>$request->email,
             'phone_no'=>$request->phone_no,
-            'message'=>$request->message
+            'message'=>$request->message,
+             'status'=>$request->status
         );
 
         ContactUsModel::where('id',$id)->update($data);

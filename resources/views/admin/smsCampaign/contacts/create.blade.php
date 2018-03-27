@@ -150,9 +150,12 @@
                                     </span>
                                         @endif
                                         <label for="">Download :
-                                            <a href="{{url('/uploads/import/contacts-sample-1.xls')}}" target="_blank">Sample 1</a>
+                                            <a href="{{url('admin/box-office/smsCampaigns/sampleCsv1/download/sample3')}}"
+                                               target="_blank">
+                                                Sample1
+                                            </a>
                                             |
-                                            <a href="{{url('/uploads/import/contacts.xlsx')}}" target="_blank">Sample 2</a>
+                                            <a href="{{url('admin/box-office/smsCampaigns/sampleCsv1/download/sample4')}}" target="_blank">Sample 2</a>
                                         </label>
                                     </div>
                                 </div>

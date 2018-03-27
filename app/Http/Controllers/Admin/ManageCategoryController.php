@@ -24,11 +24,11 @@ class ManageCategoryController extends Controller
     public function store(Request $request)
     {
         $this->validate($request,[
-            'category'=> 'required'
+            'category_name'=> 'required',
         ]);
 
         $data = array(
-            'category_name'=>$request->category,
+            'category_name'=>$request->category_name,
             'description'=>$request->description
         );
 
@@ -54,12 +54,11 @@ class ManageCategoryController extends Controller
     public function update(Request $request, $id)
     {
         $this->validate($request,[
-            'category'=> 'required',
-            'description'=>'required'
+            'category_name'=> 'required',
         ]);
 
         $data = array(
-            'category_name'=>$request->category,
+            'category_name'=>$request->category_name,
             'description'=>$request->description
         );
 

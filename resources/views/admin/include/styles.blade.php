@@ -19,5 +19,5 @@
 <link rel="stylesheet" href="{{asset('admins/plugins/alertify/alertify.min.css')}}">
 
 <!-- date picker -->
-<link rel="stylesheet" href="{{asset('admins/plugins/datepicker/datepicker3.css')}}">
+<link rel="stylesheet" type="text/css" href="{{asset('admins/theme/css/bootstrap-datepicker.min.css')}}">
 

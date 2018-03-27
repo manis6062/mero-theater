@@ -1,84 +1,167 @@
-@extends('admin.layout.master')
+@extends('admin.layout.master1')
+
+@section('styles')
+    <style>
+        .create-form {
+            width: 70%;
+            margin-left: 15%;
+            margin-right: 15%;
+            margin-top: 5%;
+            margin-bottom: 5%;
+            border: 1px solid #ddd;
+            padding: 2%;
+        }
+
+
+        .help-block {
+            display: block;
+            color: red;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .info-span{
+            font-size: 18px;
+            text-align: center;
+            font-weight: 600;
+            color: magenta;
+        }
+
+        small{
+            color: red;
+        }
+
+        span.note{
+            font-size: 11px;
+            margin: 0;
+            padding: 0;
+        }
+
+       .artist-avatar-error{
+        text-transform: lowercase;
+       }
+
+       .subModalBtn{
+       background-color: #DA1113;
+       }
+
+    </style>
+@stop
 
 @section('main-body')
-    <!-- Content Header (Page header) -->
-    <section class="content-header">
-        <h1>
-            Dashboard
-            <small>Edit Category</small>
-        </h1>
-        <ol class="breadcrumb">
-            <li><a href="{{url('admin/dashboard')}}"><i class="fa fa-dashboard"></i> Home</a></li>
-            <li><a href="{{url('admin/content-management/manage-news/manage-category')}}"><i class="fa fa-meh-o"></i> Category</a></li>
-            <li class="active">Edit</li>
-        </ol>
-    </section>
-
-    <!-- Main content -->
-    <section class="content">
-        <!-- Small boxes (Stat box) -->
-        <div class="row">
-            <hr>
-            <div class="site-setting-general">
-
-                <!-- Panels Start -->
-                <div class="mws-panel grid_8">
-                    <div class="mws-panel-header">
-                        <span><i class="icol32-add"></i> Edit Category</span>
+    <!-- BEGIN .app-main -->
+    <div class="app-main">
+        <!-- BEGIN .main-heading -->
+        <header class="main-heading">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8">
+                        <div class="page-icon">
+                            <i class="icon-border_outer"></i>
+                        </div>
+                        <div class="page-title">
+                            <h5>Edit Category</h5>
+                            <h6 class="sub-heading">Welcome to Merotheatre Admin</h6>
+                        </div>
                     </div>
-                    <div class="mws-panel-body no-padding">
-                        <form style="padding: 1% 3%;" action="{{url('admin/content-management/manage-news/manage-category/update/'.$editdata->id)}}" class="form-horizontal" method="post" id="createForm" enctype="multipart/form-data">
-                            {{csrf_field()}}
+                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4">
+                        <div class="right-actions">
+                            @include('admin.last-login-time')
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- END: .main-heading -->
 
-                            <div class="form-group row">
-                                <label for="Name" class="col-sm-2 control-label">Category Name: <span class="req">*</span></label>
-                                <div class="col-sm-4">
-                                    <input type="text" id="category" name="category" class="form-control" value="{{$editdata->category_name}}">
-                                </div>
-                                @if($errors->has('name'))
-                                    <span class="help-block">
-                                        <strong>{{$errors->first('name')}}</strong>
-                                    </span>
-                                @endif
-                            </div>
+<!-- BEGIN .main-content -->
+                    <div class="main-content">
+                        
+                        <!-- Row start -->
+                        <div class="row gutters form-wrapper">
+                            <div class=" col-md-12 col-sm-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="artist-form">
+            <form class="form" role="form" autocomplete="off" action="{{url('admin/content-management/manage-news/manage-category/update/'.$editdata->id)}}"  method="post" id="createForm" enctype="multipart/form-data">
+                                                        {{csrf_field()}}
+                                                        <div class="form-group row">
+                                            <label class="col-lg-3 col-form-label form-control-label">Category Name <span class="req">*</span></label>
+                                            <div class="col-lg-9">
+                                                <input class="form-control" type="text" id="category_name" value="{{$editdata->category_name}}" name="category_name" onfocus="removeError();" placeholder="Enter Category Name">
+                                                 @if($errors->has('category_name'))
+                                                    <span class="help-block">
+                                                        <strong>
+                                                            {{$errors->first('category_name')}}
+                                                        </strong>
+                                                    </span>
+                                                @endif
+                                                <span class="category_name-error error help-block"></span>
+                                            </div>
+                                        </div>
 
-                            <div class="form-group row">
-                                <label for="Description" class="col-sm-2 control-label" >Description: </label>
-                                <div class="col-sm-10">
-                                    <textarea class="form-control" rows="10" name="description" >{{isset($editdata->description)?$editdata->description:old('description')}}</textarea>
-                                </div>
-                                @if($errors->has('description'))
+                                          <div class="form-group row">
+                                                            <label class="col-lg-3 col-form-label form-control-label">Description<span class="req">*</span></label>
+                                                            <div class="col-lg-9">
+ <textarea name="description"  id="description" rows="5" class="form-control" placeholder="Type Description" onfocus="removeError();" >{{$editdata->description}}</textarea>
+   @if($errors->has('body'))
                                     <span class="help-block">
                                         <strong>{{$errors->first('description')}}</strong>
                                     </span>
                                 @endif
-                            </div>
+                                                <span class="description-error error help-block"></span>
+                                                            </div>
+                                                        </div>
 
-                            <div class="form-group">
-                                <div class="col-sm-2"></div>
-                                <div class="col-sm-10">
-                                    <input type="submit" class="btn btn-danger subModalBtn " value="Create">
+                                       
+
+                                        <div class="form-group row">
+                                            <label class="col-lg-3 col-form-label form-control-label"></label>
+                                            <div class="col-lg-9">
+                                                <button type="submit" class="btn btn-primary">Update</button>
+                                            </div>
+                                        </div>
+                                                    </form>
+                                                    
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
+                        </div>
+                        <!-- Row end -->
 
-                        </form>
                     </div>
-                </div>
-            </div>
-        </div>
-    </section>
+                    <!-- END: .main-content -->
+    </div>
+    <!-- END: .app-main -->
 @stop
-
 
 @section('scripts')
     <script>
-        $('#createForm').on('submit', function (e) {
-            if ( $('#category').val() == '') 
-            {
+     
+             $('#createForm').on('submit', function (e) {
+
+           $('.error').html('');
+            if ($('#category_name').val() == '') {
                 e.preventDefault();
-                alertify.alert('Please fill up all required fields !');
+                $('.category_name-error').html('<strong>Please enter the category name.</strong>');
             }
+
+             if ($('#description').val() == '') {
+                e.preventDefault();
+                $('.description-error').html('<strong>Please enter the description.</strong>');
+            }
+
         });
+
+
+ function removeError() {
+            $('.error').html('');
+        }
 
     </script>
 @stop

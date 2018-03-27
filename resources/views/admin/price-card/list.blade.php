@@ -58,34 +58,14 @@
                                         @foreach($priceCards as $pc)
                                             <tr>
                                                 <th scope="row"><a href="#"> {{$pc->name}}</a></th>
-                                                @php $scIds = json_decode($pc->screen_ids, true); @endphp
-                                                <td>
-                                                    @foreach($scIds as $scid)
-                                                        @if(\App\Screen\Screen::find($scid) != null)
-                                                            <span style="display: block;">{{\App\Screen\Screen::find($scid)->name}}</span>
-                                                        @endif
-                                                    @endforeach
-                                                </td>
+                                                <td><span style="display: block;">{{\App\Screen\Screen::find($pc->screen_ids)->name}}</span></td>
 
-                                                @php $seatCtegories = json_decode($pc->seat_categories, true); @endphp
-                                                <td>
-                                                    @foreach($seatCtegories as $scat)
-                                                        <span style="display: block;">{{$scat}}</span>
-                                                    @endforeach
-                                                </td>
-
-                                                @php $ttIds = json_decode($pc->ticket_types_ids, true); @endphp
-                                                <td>
-                                                    @foreach($ttIds as $ttId)
-                                                        @if(\App\TicketTypeModel\TicketType::find($ttId) != null)
-                                                            <span style="display: block;">{{\App\TicketTypeModel\TicketType::find($ttId)->label}}</span>
-                                                        @endif
-                                                    @endforeach
-                                                </td>
+                                                <td><span style="display: block;">{{$pc->seat_categories}}</span></td>
+                                                <td><span style="display: block;">{{\App\TicketTypeModel\TicketType::find($pc->ticket_types_ids)->label}}</span></td>
                                                 <td>{{implode(',', json_decode($pc->selected_days, true))}}</td>
                                                 <td>{{$pc->time_range}}</td>
-                                                <td>{{implode(',', json_decode($pc->sequences, true))}}</td>
-                                                <td>{{implode(',', json_decode($pc->prices, true))}}</td>
+                                                <td>{{$pc->sequences}}</td>
+                                                <td>{{$pc->prices, true}}</td>
                                                 <td>{{$pc->status}}</td>
                                                 <td>{{date('M d, Y', strtotime($pc->created_at))}}</td>
                                                 <td>

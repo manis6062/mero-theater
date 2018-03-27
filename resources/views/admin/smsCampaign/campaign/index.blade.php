@@ -18,21 +18,41 @@
          .bootstrap-tagsinput {
              width: 100%;
          }
-        .form-horizontal .form-group input{
-            border:none;
+        .alert-danger {
+            color: red;
         }
-
-
 
         .bootstrap-tagsinput .tag {
             margin-right: 2px;
-            color: #11dc2a;
+            color: white;
+            background-color: #00c0ef !important;
+            border-radius:24px;
+            -webkit-border-radius:24px;
+            -moz-border-radius:24px;
+            -ms-border-radius:24px;
+            padding:3px 8px;
+        }
+        .tt-menu {
+            box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 2px 10px 0 rgba(0,0,0,0.12);
+            width: 100%;
+            cursor: pointer;
+
+            padding: 14px 16px;
+            background: white;
+        }
+        .tt-menu .tt-suggestion.tt-selectable {
+            border-bottom: 1px solid #ddd;
         }
 
-        /*textarea.preetyFonts {*/
-            /*font-family: "preety", "Times New Roman", Times, serif;*/
-            /*font-size: 12px;*/
-        /*}*/
+        .tt-menu .tt-suggestion.tt-selectable {
+            padding-top: 14px;
+            padding-bottom: 14px;
+        }
+        .twitter-typeahead{
+            width: 100%;
+        }
+
+
     </style>
 @endsection
 
@@ -121,11 +141,11 @@
                                                         <i class="fa fa-info-circle pull-right"></i></a>
                                                     <input type="file" name="contacts" class="form-control" accept=".csv" id="contactsCSVFile" onchange="checkfile(this);">
                                                     <div class="">
-                                                        <a href="{{url('/uploads/import/compose-contacts-1.csv')}}"
+                                                        <a href="{{url('admin/box-office/smsCampaigns/sampleCsv1/download/sample1')}}"
                                                            target="_blank">
                                                             Sample 1
                                                         </a>
-                                                        <a href="{{url('/uploads/import/compose-contacts.csv')}}"
+                                                        <a href="{{url('admin/box-office/smsCampaigns/sampleCsv1/download/sample2')}}"
                                                            target="_blank">
                                                             Sample 2
                                                         </a>
@@ -342,7 +362,6 @@
 
 
 @section('scripts')
-
     <script src="{{url('/custom/js/bootstrap-tagsinput.min.js')}}"></script>
     <script src="{{url('/custom/js/typeahead.js')}}"></script>
     <script src="{{url('/custom/js/compose.js')}}"></script>
@@ -356,6 +375,9 @@
         }, 800);
     </script>
     <script >
+
+
+
         $('.template-view').hide();
         $('.radio-template').on('change', function () {
             if ($(this).val() == 'yes') {

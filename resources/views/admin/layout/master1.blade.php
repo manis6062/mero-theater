@@ -11,6 +11,10 @@
     <meta name="author" content="Bootstrap Gallery" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="shortcut icon" href="{{asset('admins/theme/img/favicon.png')}}" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
+
+
+
     <title>MeroTheatre Dashboard</title>
 
     <!-- Common CSS -->
@@ -23,6 +27,15 @@
 
     @yield('styles')
     @include('admin.include.scripts1')
+    <script src="{{url('/custom/js/jquery.toaster.js')}}"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
+    <script type="text/javascript">
+        $.toaster({ settings : {timeout : 5000} });
+
+
+    </script>
+
+
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -53,8 +66,8 @@
 
     @include('admin.include.footer1')
 </div>
-
-@yield('scripts')
+</body>
+</html>
 <script>
     var baseurl = "<?php echo URL::to('/') ?>";
     $.ajaxSetup({
@@ -66,5 +79,5 @@
         $('.responseMessageDiv').hide();
     });
 </script>
-</body>
-</html>
+@yield('scripts')
+

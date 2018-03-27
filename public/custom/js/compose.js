@@ -1,7 +1,9 @@
-var v1_url = js_base_url + '/api/v1/compose/to-autocomplete';
+var v1_url = baseurl + '/admin/box-office/smsCampaigns/campaigns/to-autocomplete';
+
 var data;
 $.getJSON(v1_url, function (json) {
     data = (json.message);
+    console.log("data value is ",data);
 
 });
 window.onload = function () {
@@ -111,7 +113,7 @@ var substringMatcher = function (strs) {
         cb(matches);
     };
 };
-var v1_url_templates = js_base_url + '/api/v1/compose/get-message-templates';
+var v1_url_templates = baseurl + '/admin/box-office/smsCampaigns/campaigns/get-message-templates';
 var v1_url_templates_data;
 var templates = [];
 var templateBody = [];
@@ -147,7 +149,7 @@ window.onload = function () {
             $.toaster({ priority : 'danger', title : 'Error', message : $toastContent});
             return false;
         }
-        var v1_url = js_base_url + '/api/v1/compose/save-message-template';
+        var v1_url = baseurl + '/admin/box-office/smsCampaigns/campaigns/save-message-template';
         var n = message.includes(":via aakashsms.com");
         var strip_message = message.replace(":via aakashsms.com", "");
         var send = {
@@ -187,11 +189,12 @@ $('#send-message').click(function (event) {
     console.log(string);
     var array = string.split(',');
     var arr = [];
-    if ( (array == "") && (document.getElementById("contactsCSVFile").files.length == 0) && ($('#contact').val() == null) ) {
+    if ( (array == "") && (document.getElementById("contactsCSVFile").files.length == 0) && ($('#contact').val() == "") ) {
         $("input[name='recipients']").val('');
         console.log("PLEASE MAKE TO OR CHOOSE CONTACTS FILE OR SELECT GROUP");
         $.toaster({ priority : 'danger', title : 'Error', message : "Please Provide at least one Recipient Number"});
         return 0;
+
     }
     $.each(array, function (i, e) {
         var obj = data.filter(function (obj) {
@@ -211,16 +214,12 @@ $('#send-message').click(function (event) {
     });
     $("input[name='recipients']").val(JSON.stringify(arr));
 
-    var v1_url = js_base_url + '/sms/v1/compose/bulk';
+    var v1_url = baseurl + '/admin/box-office/smsCampaigns/campaign/sendBulksms';
     console.log(v1_url);
-
-
 
     var form = $('form#compose-form');
     var formData = new FormData($(form)[0]);
     console.log(formData);
-
-
 
     $.ajax({
         type: 'post',
