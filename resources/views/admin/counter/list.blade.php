@@ -39,6 +39,7 @@
 								<thead>
 									<tr>
 										<th>counter number</th>
+										<th>Admin Name</th>
 										<th>First name</th>				
 										<th>Last name</th>
 										<th>Designation</th>
@@ -55,6 +56,7 @@
 									<tr>
 
 										<th scope="row"><a href="#">{{$dt->counter_number}}</a></th>
+										<td>{{$dt->admin->first_name}}</td>
 										<td>{{$dt->first_name}}</td>
 										<td>{{$dt->last_name}}</td>
 										<td>{{$dt->designation}}</td>

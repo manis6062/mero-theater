@@ -12,7 +12,7 @@ class CounterController extends Controller
 
     public function index()
     {
-        $data = CounterModel::paginate(10);
+        $data=\App\CounterModel::with('admin')->paginate(10);
         return view('admin.counter.list', compact('data'));
     }
 
@@ -26,6 +26,8 @@ class CounterController extends Controller
     {
         $password = $request->password;
         $passwordenc = bcrypt($password);
+        $id=\Auth::guard('admin')->id();
+       
         $this->validate($request, [
             'counter_number' => 'required | unique:counter_tbl',
             'fname' => 'required',
@@ -38,6 +40,7 @@ class CounterController extends Controller
         ]);
 
         $data = array(
+            'admin_id' => $id,
             'counter_number' => $request->counter_number,
             'first_name' => $request->fname,
             'last_name' => $request->lname,
