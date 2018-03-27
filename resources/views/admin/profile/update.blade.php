@@ -110,7 +110,7 @@
 										<div class="form-group row">
 											<label class="col-lg-3 col-form-label form-control-label">Phone <span class="req">*</span></label>
 											<div class="col-lg-9">
-												<input class="form-control" type="number" name ="mobile" value="{{$edt->admin->mobile}}" id="mobile"
+												<input class="form-control" type="text" name ="mobile" value="{{$edt->admin->mobile}}" id="mobile-number"
                                                 onfocus="removeError();">
                                                 @if($errors->has('moble'))
                                                 <span class="help-block">
@@ -353,6 +353,23 @@
             $('.address2-error').html('<strong>Please enter your second address.</strong>');
 
         }
+    });
+		 function isNumber(evt, element) {
+
+        var charCode = (evt.which) ? evt.which : event.keyCode
+
+        if (
+            (charCode < 48 || charCode > 57) &&
+            (charCode != 8) &&
+            (charCode != 110))
+            return false;
+
+        return true;
+    }
+
+
+    $('input#mobile-number').keypress(function (event) {
+        return isNumber(event, this)
     });
 
 	</script>

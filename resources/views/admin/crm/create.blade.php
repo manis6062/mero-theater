@@ -300,11 +300,7 @@ span.note{
     $('input#mobile-number').keypress(function (event) {
         return isNumber(event, this)
     });
-
-    $('input#wheel-chair-seats').keypress(function (event) {
-        return isNumber(event, this)
-    });
-
+    
     function removeError() {
         $('.error').html('');
     }
