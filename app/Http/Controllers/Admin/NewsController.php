@@ -52,9 +52,10 @@ class NewsController extends Controller
             $data['featured_image'] = $filename;
         }
 
-        NewsModel::create($data);
+        $result = NewsModel::create($data);
 
-        return redirect('admin/content-management/manage-news/news');
+         if (isset($result))
+            return redirect('admin/content-management/manage-news/news')->with('message', 'News Successfully Created !');
     }
 
     public function show($id)
@@ -102,9 +103,10 @@ class NewsController extends Controller
             $data['featured_image'] = $filename;
         }
 
-        NewsModel::where('id',$id)->update($data);
+       $result = NewsModel::where('id',$id)->update($data);
 
-        return redirect('admin/content-management/manage-news/news');
+          if (isset($result))
+            return redirect('admin/content-management/manage-news/news')->with('message', 'News Successfully Updated !');
     }
 
     public function destroy(Request $request)

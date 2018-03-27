@@ -35,6 +35,12 @@
                     <div class="card">
                         <div class="card-header artist-header"><a href="{{url('admin/box-office/movies/create')}}"> Create Movie</a></div>
                         <div class="card-body">
+                            @if(\Illuminate\Support\Facades\Session::has('message'))
+                                <div class="alert alert-success">
+                                    <i class="fa fa-times pull-right closeMessage"></i>
+                                    <p class="text-center">{{\Illuminate\Support\Facades\Session::get('message')}}</p>
+                                </div>
+                            @endif
                             <div class="table-responsive">
                                  <table class="table m-0 table-bordered common-table ticket-type-table">
             <thead>
@@ -53,7 +59,7 @@
                         <th><a href="{{url('admin/box-office/movies/'.$dat->id.'/view')}}">{{ucwords($dat->movie_title)}}({{ucwords($dat->movie_short_name)}})</a></th>
                         <td>{{ucwords($dat->distributor)}}</td>
                         <td>{{$dat->duration }} Min</td>
-                        <td>{{date('d/m/Y', strtotime($dat->openingdate))}}</td>
+                        <td>{{date('M d, Y', strtotime($dat->openingdate))}}</td>
                         <td>{{ucwords($dat->genre)}}</td>
                         <td>
 
@@ -88,6 +94,13 @@
 
 @section('scripts')
     <script>
+
+$(document).find('.closeMessage').on('click', function () {
+            $(this).parent('div').remove();
+        });
+        
+
+        
         $('.delete-movie').on('click', function (e) {
             e.preventDefault();
             var movieId = $(this).data('movieid');

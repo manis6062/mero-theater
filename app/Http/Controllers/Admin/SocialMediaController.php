@@ -45,9 +45,10 @@ class SocialMediaController extends Controller
             $data['icon'] = $filename;
         }
 
-        SocialMediaModel::create($data);
+        $result = SocialMediaModel::create($data);
 
-        return redirect('admin/content-management/social-media');
+         if (isset($result))
+            return redirect('admin/content-management/social-media')->with('message', 'Social Media Successfully Created !');
     }
 
     
@@ -88,9 +89,10 @@ class SocialMediaController extends Controller
             $data['icon'] = $filename;
         }
 
-        SocialMediaModel::where('id',$id)->update($data);
+        $result = SocialMediaModel::where('id',$id)->update($data);
 
-        return redirect('admin/content-management/social-media');
+          if (isset($result))
+            return redirect('admin/content-management/social-media')->with('message', 'Social Media Successfully Updated !');
     }
 
    

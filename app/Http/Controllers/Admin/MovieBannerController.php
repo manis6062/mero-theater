@@ -46,9 +46,10 @@ class MovieBannerController extends Controller
             $data['image'] = $filename;
         }
 
-        MovieBannerModel::create($data);
+        $result = MovieBannerModel::create($data);
 
-        return redirect('admin/content-management/movie-banner');
+         if (isset($result))
+            return redirect('admin/content-management/movie-banner')->with('message', 'Movie Banner Successfully Created !');
     }
 
     public function show($id)
@@ -90,9 +91,10 @@ class MovieBannerController extends Controller
             $data['image'] = $filename;
         }
 
-        MovieBannerModel::where('id',$id)->update($data);
+       $result = MovieBannerModel::where('id',$id)->update($data);
 
-        return redirect('admin/content-management/movie-banner');
+          if (isset($result))
+            return redirect('admin/content-management/movie-banner')->with('message', 'Movie Banner Successfully Updated !');
     }
 
     public function destroy($id)

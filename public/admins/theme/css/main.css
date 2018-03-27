@@ -4626,6 +4626,10 @@ max-width: 20%;
     margin-left:15px;
 }
 
+.add-new-show{
+  font-size: 14px;
+}
+
 @media screen and (max-width: 1068px){
   .fifth-item{
   flex: 0 0 25%;
@@ -4742,3 +4746,4 @@ max-width: 20%;
     flex:0 0 100%;
   }
 }
+

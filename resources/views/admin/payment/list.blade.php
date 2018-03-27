@@ -34,14 +34,23 @@
                     <div class="card">
                         <div class="card-header artist-header"><a href="{{url('admin/content-management/payment-gateway/create')}}"> Create Payment Gateway</a></div>
                         <div class="card-body">
+                                 @if(\Illuminate\Support\Facades\Session::has('message'))
+                                <div class="alert alert-success">
+                                    <i class="fa fa-times pull-right closeMessage"></i>
+                                    <p class="text-center">{{\Illuminate\Support\Facades\Session::get('message')}}</p>
+                                </div>
+                            @endif
                             <div class="table-responsive">
         <table class="table m-0 table-bordered common-table">
 							<thead>
 								<tr>
-									<th>Name</th>
-									<th>Image</th>
-									<th>Description</th>
-									<th>Link</th>
+                                    <th>ID</th>
+									<th>Company Name</th>
+									<!-- <th>Description</th> -->
+									<!-- <th>Link</th> -->
+                                    <th>Authorized Person</th>
+                                     <th>Number</th>
+                                     <th>Logo</th>
 									<th>Status</th>
 									<th class="table-action">Action</th>
 								</tr>
@@ -50,18 +59,25 @@
 								@if(isset($data) && $data->count() > 0)
                     				@foreach($data as $dat)
 										<tr>
-											<th scope="row">{{$dat->name}}</th>
-											<th><img width="30" height="30" src="{{asset('payment/'.$dat->image)}}" class="img img-responsive"></th>
-											<td>{{$dat->description}}</td>
-											<td>{{$dat->link}}</td>
+											<th scope="row">{{$dat->gateway_id}}</th>
+                                            <th scope="row">{{$dat->name}}</th>
+											<!-- <td>{{$dat->description}}</td> -->
+											<!-- <td>{{$dat->link}}</td> -->
+                                            <td>{{$dat->contact_person}}</td>
+                                            <td>{{$dat->phone}}</td>
+                                            <td><img width="30" height="30" src="{{asset('payment/'.$dat->image)}}" class="img img-responsive"></td>
 											<td>{{ucwords($dat->status)}}</td>
 											<td>
 												<a href="{{url('admin/content-management/payment-gateway/'.$dat->id.'/edit')}}" class="table-content-edit" data-toggle="tooltip" data-placement="top" title="" data-original-title="Edit">
-													<i class="icon-edit2"></i>Edit
+													<i class="icon-edit2"></i>
 												</a>
-												<a href="#" class="table-content-delete" data-toggle="tooltip" data-placement="top" title="" data-original-title="Delete" data-id="{{$dat->id}}">
-													<i class="icon-delete2"></i>Delete
-												</a>
+                                                <a href="{{url('admin/content-management/payment-gateway/'.$dat->id.'/api_details')}}" class="table-content-edit" data-toggle="tooltip" data-placement="top" title="" data-original-title="API">
+                                                    <i class="icon-link"></i>
+                                                </a>
+												<!-- <a href="#" class="table-content-delete" data-toggle="tooltip" data-placement="top" title="" data-original-title="Suspensed" data-id="{{$dat->id}}">
+													<i class="icon-delete2"></i>
+												</a> -->
+                                                
 											</td>
 										</tr>
 									@endforeach
@@ -86,29 +102,37 @@
 @stop
 @section('scripts')
     <script>
-        $('.table-content-delete').on('click', function (e) {
-            e.preventDefault();
-            var Id = $(this).data('id');
-            alertify.confirm("Delete It confirm ?",
-                function () {
-                    $.ajax({
-                        url: baseurl + '/admin/content-management/payment-gateway/delete?Id='+Id,
-                        type: 'get',
-                        success: function (data) {
-                            if (data == 'true') {
-                                window.location.reload();
-                            } else {
-                                alertify.alert("Oops ! something went wrong. Please try again.");
-                            }
-                        }, error: function (data) {
 
-                        }
-                    });
-                },
-                function () {
-
-                });
+        $(document).find('.closeMessage').on('click', function () {
+            $(this).parent('div').remove();
         });
+        
+        // $('.table-content-delete').on('click', function (e) {
+        //     e.preventDefault();
+        //     var Id = $(this).data('id');
+        //     alertify.confirm("Delete It confirm ?",
+        //         function () {
+        //             $.ajax({
+        //                 url: baseurl + '/admin/content-management/payment-gateway/delete?Id='+Id,
+        //                 type: 'get',
+        //                 success: function (data) {
+        //                     if (data == 'true') {
+        //                         window.location.reload();
+        //                     } else {
+        //                         alertify.alert("Oops ! something went wrong. Please try again.");
+        //                     }
+        //                 }, error: function (data) {
+
+        //                 }
+        //             });
+        //         },
+        //         function () {
+
+        //         });
+        // });
+
+
+        
     </script>
 @stop
 

@@ -109,11 +109,11 @@
                                                             </label>
                                                             <div class="col-lg-9">
                                                                 <div class="form-check">
-                                                                   <input class="form-check-input" type="radio" value="percentage" name="discount_type"> 
+                                                                   <input class="form-check-input" type="radio" value="percentage" name="discount_type" @if($editdata->discount_type == 'percentage') {{'checked'}} @endif> 
                                                                    <label class="form-check-label" for="gridCheck">
                                                                         Percentage
                                                                     </label>
-                                                                    <input class="form-check-input" type="radio" value="fixed" name="discount_type" checked="checked">
+                                                                    <input class="form-check-input" type="radio" value="fixed" name="discount_type"@if($editdata->discount_type == 'fixed') {{'checked'}} @endif>
                                                                     <label class="form-check-label" for="gridCheck" >
                                                                         Fixed Amount
                                                                     </label>
@@ -171,11 +171,11 @@
                                                             <label class="col-lg-3 col-form-label form-control-label">Active <span class="req">*</span></label>
                                                             <div class="col-lg-9">
                                                                 <div class="form-check">
-                                                                   <input class="form-check-input" type="radio" value="yes" name="status" checked="checked"> 
+                                                                   <input class="form-check-input" type="radio" value="yes" name="status" @if($editdata->status == 'yes') {{'checked'}} @endif> 
                                                                    <label class="form-check-label" for="gridCheck">
                                                                         Yes
                                                                     </label>
-                                                                    <input class="form-check-input" type="radio" value="no" name="status" >
+                                                                    <input class="form-check-input" type="radio" value="no" name="status" @if($editdata->status == 'no') {{'checked'}} @endif>
                                                                     <label class="form-check-label" for="gridCheck">
                                                                         No
                                                                     </label>

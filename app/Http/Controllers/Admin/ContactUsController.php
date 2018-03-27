@@ -38,9 +38,10 @@ class ContactUsController extends Controller
             'message'=>$request->message
         );
 
-        ContactUsModel::create($data);
+        $result = ContactUsModel::create($data);
 
-        return redirect('admin/content-management/contact-us');
+         if (isset($result))
+            return redirect('admin/content-management/contact-us')->with('message', 'Contact Us Successfully Created !');
     }
 
     
@@ -74,9 +75,10 @@ class ContactUsController extends Controller
              'status'=>$request->status
         );
 
-        ContactUsModel::where('id',$id)->update($data);
+       $result =  ContactUsModel::where('id',$id)->update($data);
 
-        return redirect('admin/content-management/contact-us');
+       if (isset($result))
+            return redirect('admin/content-management/contact-us')->with('message', 'Contact Us Successfully Updated !');
     }
 
     public function destroy(Request $request)

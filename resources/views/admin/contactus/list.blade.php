@@ -34,6 +34,12 @@
                 <div class=" col-md-12 col-sm-12">
                     <div class="card">
                         <div class="card-body">
+                            @if(\Illuminate\Support\Facades\Session::has('message'))
+                                <div class="alert alert-success">
+                                    <i class="fa fa-times pull-right closeMessage"></i>
+                                    <p class="text-center">{{\Illuminate\Support\Facades\Session::get('message')}}</p>
+                                </div>
+                            @endif
                             <div class="table-responsive">
               @if(isset($data) && $data->count() >= 1)
 
@@ -93,6 +99,12 @@
 
 @section('scripts')
     <script>
+
+$(document).find('.closeMessage').on('click', function () {
+            $(this).parent('div').remove();
+        });
+        
+        
         $('.delete-contactus').on('click', function (e) {
             e.preventDefault();
             var Id = $(this).data('id');

@@ -108,8 +108,11 @@ class MovieController extends Controller
         }
 
 
-        $this->movie->store($data);
-        return  redirect('admin/box-office/movies');
+      $result = $this->movie->store($data);
+
+
+          if (isset($result))
+            return redirect('admin/box-office/movies')->with('message', 'Movie Successfully Created !');
 
 	}
 
@@ -211,7 +214,8 @@ class MovieController extends Controller
 
        $updated = $this->movie->updatedata($data,$movieid);
 
-        return redirect('admin/box-office/movies?status=successfully-updated');
+         if (isset($updated))
+            return redirect('admin/box-office/movies?status=successfully-updated')->with('message', 'Movie Successfully Updated !');
     }
 
 

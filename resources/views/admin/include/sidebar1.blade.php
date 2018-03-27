@@ -298,7 +298,7 @@
                                         <span class="has-icon">
                                             <i class="icon-tags"></i>
                                         </span>
-                                <span class="nav-title">Manage News Category</span>
+                                <span class="nav-title">Manage Category</span>
                             </a>
                         </li>
                         <li>
@@ -317,14 +317,14 @@
                                 <span class="nav-title">List of Notification </span>
                             </a>
                         </li>
-                        <li>
+                      <!--   <li>
                             <a href="{{url('admin/content-management/payment-gateway')}}">
 										<span class="has-icon">
 											<i class="icon-credit-card"></i>
 										</span>
                                 <span class="nav-title">List of Payment Gateway </span>
                             </a>
-                        </li>
+                        </li> -->
                         <li>
                             <a href="{{url('admin/content-management/social-media')}}">
 										<span class="has-icon">
@@ -359,14 +359,42 @@
                         </li>
                     </ul>
                 </li>
-                <li>
-                    <a href="#">
-								<span class="has-icon">
-									<i class="icon-payment"></i>
-								</span>
-                        <span class="nav-title">Payment Integration</span>
+
+
+  <li>
+                    <a href="#" class="has-arrow" aria-expanded="false">
+                                <span class="has-icon">
+                                    <i class="icon-credit-card"></i>
+                                </span>
+                        <span class="nav-title">Payments</span>
+                    </a>
+                    <ul aria-expanded="false" class="collapse">
+                         <li>
+                    <a href="{{url('admin/content-management/payment-gateway')}}">
+                                <span class="has-icon">
+                                    <i class="icon-credit-card"></i>
+                                </span>
+                        <span class="nav-title">Payment Method</span>
                     </a>
                 </li>
+                  <li>
+                    <a href="{{url('admin/payments/transactionlog')}}">
+                                <span class="has-icon">
+                                    <i class="icon-price-tag"></i>
+                                </span>
+                        <span class="nav-title">Transaction Log</span>
+                    </a>
+                </li>
+                    </ul>
+                </li>
+
+
+
+
+
+
+
+              
                 <li>
                     <a href="{{url('admin/crm')}}">
 								<span class="has-icon">
@@ -400,7 +428,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="{{url('admin/profile')}}">
 								<span class="has-icon">
 									<i class="icon-account_circle"></i>
 								</span>
@@ -408,7 +436,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#">
+                    <a href="{{url('admin/settings')}}">
 								<span class="has-icon">
 									<i class="icon-settings"></i>
 								</span>

@@ -179,6 +179,14 @@ Route::group(['prefix'=>'admin','middleware'=> 'admin'], function(){
             Route::get('payment-gateway/{id}/edit','Admin\PaymentController@edit');
             Route::post('payment-gateway/update/{id}','Admin\PaymentController@update');
             Route::get('payment-gateway/delete','Admin\PaymentController@destroy');
+            Route::get('payment-gateway/{id}/api_details','Admin\PaymentController@api_details');
+             Route::post('payment-gateway/payment_api_field_live','Admin\PaymentController@payment_api_field_live');
+            Route::post('payment_api_update/{id}','Admin\PaymentController@payment_api_update');
+             Route::post('payment-gateway/payment_api_field_test','Admin\PaymentController@payment_api_field_test');
+            Route::post('payment_api_insert/submit','Admin\PaymentController@payment_api_insert_live');
+            Route::post('payment_api_live_note/update/{id}','Admin\PaymentController@payment_api_live_note');
+            Route::post('payment_api_test_note/update/{id}','Admin\PaymentController@payment_api_test_note');
+             Route::get('payment_api/delete','Admin\PaymentController@payment_api_delete');
 
         });
     // Route for Content Management Ends
@@ -236,9 +244,11 @@ Route::group(['prefix'=>'admin','middleware'=> 'admin'], function(){
      //    Route for CRM
     Route::group(['prefix'=>'crm', 'namespace' => 'Admin'], function() {
         Route::get('/', 'CrmController@index');
+        Route::get('user/filter','CrmController@filter');
         Route::get('user/create', 'CrmController@create');
         Route::post('user/submit', 'CrmController@store');
         Route::post('user/import/excel', 'CrmController@importExcel');
+        Route::get('user/download', 'CrmController@getDownload');
         Route::get('user/{id}/edit', 'CrmController@edit');
         Route::post('user/{id}/update', 'CrmController@update');
         Route::get('user/delete', 'CrmController@destroy');
@@ -256,31 +266,66 @@ Route::group(['prefix'=>'admin','middleware'=> 'admin'], function(){
         Route::get('counteruser/{id}/edit', 'CounterController@edit');
         Route::post('counteruser/{id}/update', 'CounterController@update');
         Route::get('counteruser/delete', 'CounterController@destroy');
-        Route::get('counteruser/suspend', 'CounterController@suspend');
-        //Route::get('get-seat-categories', 'PriceCardController@getSeatCategories');
+        Route::get('counteruser/suspend', 'CounterController@suspend');        
     });
     //    Route for counter-manaement
 
 
+     //    Route for Profile
+    Route::group(['prefix'=>'profile', 'namespace' => 'Admin'], function() {
+        Route::get('/', 'ProfileController@index');
+        Route::post('master/{id}/update','ProfileController@update');
+    });
+    //    Route for Profile
 
     //    Route for box office PCM
     Route::group(['prefix'=>'programming', 'namespace' => 'Admin'], function() {
         Route::get('/', 'ProgrammingController@index');
         Route::post('submit', 'ProgrammingController@submit');
+        Route::post('update', 'ProgrammingController@update');
+        Route::get('delete-schedule', 'ProgrammingController@deleteSchedule');
+        Route::get('events', 'ProgrammingController@events');
+        Route::get('getScheduleData', 'ProgrammingController@getScheduleData');
         Route::get('get-pricecard-time', 'ProgrammingController@getPriceCardTime');
         Route::get('add-show', 'ProgrammingController@addShow');
         Route::get('add-show/get-pricecard', 'ProgrammingController@getPriceCards');
     });
-    //    Route for box office PCM
-
-
+    
     // Route for coupon
-    Route::group(['prefix'=>'coupon'], function(){
-       Route::get('/', 'Admin\CouponController@index');
-       Route::get('/create','Admin\CouponController@create');
-       Route::post('/submit','Admin\CouponController@store');
-       Route::get('{couponid}/edit','Admin\CouponController@edit');
-       Route::post('update/{couponid}','Admin\CouponController@update');
-       Route::get('/delete', 'Admin\CouponController@destroy');
+    Route::group(['prefix'=>'coupon'], function() {
+        Route::get('/', 'Admin\CouponController@index');
+        Route::get('/create', 'Admin\CouponController@create');
+        Route::post('/submit', 'Admin\CouponController@store');
+        Route::get('{couponid}/edit', 'Admin\CouponController@edit');
+        Route::post('update/{couponid}', 'Admin\CouponController@update');
+        Route::get('/delete', 'Admin\CouponController@destroy');
     });
+
+       //    Route for Payment Transaction Log
+     Route::group(['prefix'=>'payments'], function(){
+       Route::get('transactionlog', 'Admin\TransactionLogController@index');
+        Route::post('transactionlog/searchByUser', 'Admin\TransactionLogController@searchByUser');
+         Route::get('transactionlog/searchByUser', 'Admin\TransactionLogController@index');
+         Route::post('transactionlog/searchByPaymentType', 'Admin\TransactionLogController@searchByPaymentType');
+         Route::post('transactionlog/searchByState', 'Admin\TransactionLogController@searchByState');
+         Route::post('transactionlog/searchByStartdate', 'Admin\TransactionLogController@searchByStartdate');
+         Route::post('transactionlog/transactionType', 'Admin\TransactionLogController@show');
+    });
+
+
+      //    Route for Setting
+     Route::group(['prefix'=>'settings'], function(){
+       Route::get('/', 'Admin\SettingsController@index');
+    });
+});
+
+
+//    Routes for counter management
+Route::group(['prefix' => 'counter-management', 'namespace' => 'CounterManagement'], function(){
+    Route::get('/', 'IndexController@index');
+    Route::post('login-validation', 'IndexController@validation');
+    Route::group(['middleware' => 'counter'], function (){
+        Route::get('dashboard', 'DashboardController@index');
+    });
+
 });

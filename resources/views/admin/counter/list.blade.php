@@ -80,7 +80,6 @@
 												<i class="icon-email"></i>
 												Email
 											</a>
-
 										</td>
 									</tr>
 									@endforeach

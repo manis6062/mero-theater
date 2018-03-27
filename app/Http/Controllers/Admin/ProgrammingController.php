@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\MovieModel;
 use App\PriceCardModel\PriceCard;
 use App\ProgrammingModel\Program;
+use App\ProgrammingModel\ScheduledMovie;
 use App\Screen\Screen;
+use App\Screen\ScreenSeatCategories;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -16,33 +18,45 @@ class ProgrammingController extends Controller
     {
         $films = MovieModel::where('status', 'active')->get();
         $screens = Screen::where('admin_id', Auth::guard('admin')->user()->id)->orderBy('screen_number', 'ASC')->get();
-        $priceCards = PriceCard::orderBy('sequences', 'ASC')->get();
-        $schedules = Program::all();
-        if($schedules->count() > 0)
-        {
-            $scheduleData = [];
-            foreach ($schedules as $sd)
-            {
-                $showDates = json_decode($sd->show_dates, true);
-                foreach ($showDates as $dates)
-                {
-                    $showTimes = json_decode($sd->show_time, true);
-                    foreach ($showTimes as $times)
-                    {
-                        $arrData['id'] = $sd->id;
-                        $arrData['movie_name'] = MovieModel::find($sd->movie_id)->first()->movie_title;
-                        $arrData['start_time'] = $dates.'T'.$times;
-                        $scheduleData[] = $arrData;
+        $sendScreeObject = collect();
+        foreach ($screens as $screen) {
+            if ($screen->screenSeats != null) {
+                $alphabetsOfScreen = json_decode($screen->screenSeats->alphabets, true);
+                $screenSeatCategories = $screen->screenSeatCategories;
+                $screenSeatCategoriesAlphabets = [];
+
+                foreach ($screenSeatCategories as $ssc) {
+                    foreach (range($ssc->category_from_row, $ssc->category_to_row) as $alpha) {
+                        $screenSeatCategoriesAlphabets[] = $alpha;
                     }
                 }
+                if (count($screenSeatCategoriesAlphabets) == count($alphabetsOfScreen)) {
+                    $sendScreeObject->push($screen);
+                }
             }
-        }else{
-            $scheduleData = null;
+        }
+        $screens = $sendScreeObject;
+        if (ScheduledMovie::count() > 0) {
+            $today = date('Y-m-d');
+            $scheduleData = ScheduledMovie::all();
+            $events = [];
+            $count = 0;
+            foreach ($scheduleData as $sd) {
+                $count++;
+                $events[] = array(
+                    'id' => $count,
+                    'title' => MovieModel::find($sd->movie_id)->movie_title,
+                    'start' => $sd->show_date . 'T' . date('G:i', strtotime($sd->show_time_start)),
+                    'end' => $sd->show_date . 'T' . date('G:i', strtotime($sd->show_time_end)),
+                    'unique_id' => $sd->id
+                );
+
+            }
+        } else {
+            $events = null;
         }
 
-
-
-        return view('admin.programming.index', compact('films', 'screens', 'priceCards', 'scheduleData'));
+        return view('admin.programming.index', compact('films', 'screens', 'events'));
     }
 
     public function addShow()
@@ -99,215 +113,147 @@ class ProgrammingController extends Controller
     public function submit(Request $request)
     {
         $data = $request->except('_token');
-        $showDatesArr = [];
+        $movieDuration = MovieModel::find($data['film'])->duration;
+        $conflict = 0;
+        $conflictedTime = [];
 
-        $scheduledData = Program::all();
-        foreach ($scheduledData as $sd) {
-            $decodeDatesArr = json_decode($sd->show_dates, true);
-
-            foreach ($decodeDatesArr as $sda) {
-                $showDatesArr[] = $sda;
+        foreach ($data['choosed_show_dates'] as $csd) {
+            foreach ($data['screen_id'] as $sid) {
+                foreach (ScheduledMovie::all() as $sd)
+                {
+                    if($sd->show_date == $csd && $sd->screen_id == $sid)
+                    {
+                        $conflict = 1;
+                        $conflictedTime[] = $sd->total_occupied_time;
+                    }
+                }
             }
         }
 
-        $choosedDateArray = $data['choosed_show_dates'];
-        $check = array_intersect($showDatesArr, $choosedDateArray);
-        if (count($check) > 0) {
-            $screensArr = [];
-            foreach ($scheduledData as $sd) {
-                $decodeDatesArr = json_decode($sd->show_dates, true);
-                $choosedDateArray = $data['choosed_show_dates'];
+        if($conflict == 0)
+        {
+            foreach ($data['choosed_show_dates'] as $csd) {
+                foreach ($data['show_time'] as $st) {
+                    foreach ($data['screen_id'] as $sid) {
+                        $totalDuration = MovieModel::find($data['film'])->duration;
+                        $shStTi = date('h:i A', strtotime($st));
+                        $shEnTi = date("h:i A", strtotime('+' . $totalDuration . ' minutes', strtotime($shStTi)));
+                        $totatShowDuration = $shStTi . '-' . date("h:i A", strtotime('+' . $data['clean_up_time'] . ' minutes', strtotime($shEnTi)));
+                        $dayOfWeek = strtotime($csd);
+                        $dayOfWeek = date("l", $dayOfWeek);
+                        $seatCategories = ScreenSeatCategories::where('screen_id', $sid)->get();
+                        $catWithPrice = [];
+                        foreach ($seatCategories as $seCa) {
+                            $arrForSc['category_name'] = $seCa->category_name;
+                            $arrForSc['category_price'] = PriceCard::where('name', $data['price_card'])->where('screen_ids', $sid)->where('seat_categories', $arrForSc['category_name'])->first()->prices;
+                            $catWithPrice[] = $arrForSc;
+                        }
 
-                if (count(array_intersect($decodeDatesArr, $choosedDateArray)) > 0) {
-                    $decodeScreenArr = json_decode($sd->screen_ids, true);
-                    foreach ($decodeScreenArr as $dsa) {
-                        $screensArr[] = $dsa;
+
+                        $dataToStore['admin_id'] = Auth::guard('admin')->user()->id;
+                        $dataToStore['movie_id'] = $data['film'];
+                        $dataToStore['screen_id'] = $sid;
+                        $dataToStore['show_time_start'] = $shStTi;
+                        $dataToStore['show_time_end'] = $shEnTi;
+                        $dataToStore['clean_up_time'] = $data['clean_up_time'];
+                        $dataToStore['total_occupied_time'] = $totatShowDuration;
+                        $dataToStore['show_date'] = $csd;
+                        $dataToStore['show_day'] = $dayOfWeek;
+                        $dataToStore['price_card_name'] = $data['price_card'];
+                        $dataToStore['seat_categories_with_price'] = json_encode($catWithPrice);
+                        $dataToStore['sales_via'] = json_encode($data['sales_via']);
+                        $dataToStore['seating'] = $data['seating'];
+                        $dataToStore['comps'] = $data['comps'];
+                        $dataToStore['status'] = $data['status'];
+                        $dataToStore['show_type'] = $data['show_type'];
+
+                        $result = ScheduledMovie::create($dataToStore);
                     }
                 }
             }
-            $choosedScreenArr = $data['screen_id'];
-            $checkScreen = array_intersect($screensArr, $choosedScreenArr);
-            if (count($checkScreen) > 0) {
-                foreach ($scheduledData as $sd) {
-                    $decodeDatesArr = json_decode($sd->show_dates, true);
-                    $decScrAr = json_decode($sd->screen_ids, true);
-                    $choosedScrArr = $data['screen_id'];
-                    $choosedDtArray = $data['choosed_show_dates'];
 
-                    $checkDat = array_intersect($decodeDatesArr, $choosedDtArray);
-                    $checkScr = array_intersect($decScrAr, $choosedScrArr);
-
-                    if (count($checkDat) > 0 && count($checkScr) > 0) {
-                        $decodeShowTimeArr1 = json_decode($sd->show_time, true);
-                        foreach ($decodeShowTimeArr1 as $dstarr) {
-                            $clnTime = $sd->clean_up_time;
-                            $mdur = MovieModel::find($sd->movie_id)->duration;
-                            $tdura = ($clnTime + $mdur);
-                            $alreadyExistingShowTimesStart = $dstarr;
-                            $alreadyExistingShowTimesEnd = date("G:i", strtotime('+' . $tdura . ' minutes', strtotime($alreadyExistingShowTimesStart)));
-                            $decodeShowTimeArrRange[] = $alreadyExistingShowTimesStart.'-'.$alreadyExistingShowTimesEnd;
-                        }
-                    }
-                }
-
-                $conflict = 0;
-                foreach ($decodeShowTimeArrRange as $dsta) {
-                    $ar = array_map('trim', explode('-', $dsta));
-                    $alreadyExistingShowTimesStart = $ar['0'];
-                    $alreadyExistingShowTimesEnd = $ar['1'];
-                    $formChoosedShowTimes = $data['show_time'];
-                    $movieDurations = MovieModel::find($data['film'])->duration;
-                    $cleanUpDurations = $data['clean_up_time'];
-                    $totalDuration = ($movieDurations + $cleanUpDurations);
-
-                    foreach ($formChoosedShowTimes as $fcst) {
-                        $stTime = $fcst;
-                        $endTime = date("G:i", strtotime('+' . $totalDuration . ' minutes', strtotime($stTime)));
-                        $date1 = \DateTime::createFromFormat('G:i', $stTime);
-                        $date2 = \DateTime::createFromFormat('G:i', $endTime);
-                        $date3 = \DateTime::createFromFormat('G:i', $alreadyExistingShowTimesStart);
-                        $date4 = \DateTime::createFromFormat('G:i', $alreadyExistingShowTimesEnd);
-
-                        if ($date1 >= $date3 && $date1 <= $date4) {
-                            $conflict = 1;
-                        }
-
-                        if ($date2 >= $date3 && $date2 <= $date4) {
-                            $conflict = 1;
-                        }
-                    }
-                }
-                if ($conflict == 1) {
-                    return 'conflict';
-                } else {
-                    $dataToSave['movie_id'] = $data['film'];
-                    $dataToSave['screen_ids'] = json_encode($data['screen_id']);
-                    $dataToSave['price_card'] = $data['price_card'];
-                    $dataToSave['days'] = json_encode($data['days']);
-                    $dataToSave['clean_up_time'] = $data['clean_up_time'];
-                    $dataToSave['show_time'] = json_encode($data['show_time']);
-                    $dataToSave['sales_via'] = json_encode($data['sales_via']);
-                    $dataToSave['show_dates'] = json_encode($data['choosed_show_dates']);
-                    $dataToSave['seating'] = $data['seating'];
-                    $dataToSave['comps'] = $data['comps'];
-                    $dataToSave['status'] = $data['status'];
-                    $dataToSave['show_type'] = $data['show_type'];
-
-                    $result = Program::create($dataToSave);
-                    if ($result) {
-                        return 'success';
-                    }
-
-                    return 'unsuccess';
-                }
-            } else {
-                $dataToSave['movie_id'] = $data['film'];
-                $dataToSave['screen_ids'] = json_encode($data['screen_id']);
-                $dataToSave['price_card'] = $data['price_card'];
-                $dataToSave['days'] = json_encode($data['days']);
-                $dataToSave['clean_up_time'] = $data['clean_up_time'];
-                $dataToSave['show_time'] = json_encode($data['show_time']);
-                $dataToSave['sales_via'] = json_encode($data['sales_via']);
-                $dataToSave['show_dates'] = json_encode($data['choosed_show_dates']);
-                $dataToSave['seating'] = $data['seating'];
-                $dataToSave['comps'] = $data['comps'];
-                $dataToSave['status'] = $data['status'];
-                $dataToSave['show_type'] = $data['show_type'];
-
-                $result = Program::create($dataToSave);
-                if ($result) {
-                    return 'success';
-                }
-
-                return 'unsuccess';
-            }
-
-        } else {
-            $dataToSave['movie_id'] = $data['film'];
-            $dataToSave['screen_ids'] = json_encode($data['screen_id']);
-            $dataToSave['price_card'] = $data['price_card'];
-            $dataToSave['days'] = json_encode($data['days']);
-            $dataToSave['clean_up_time'] = $data['clean_up_time'];
-            $dataToSave['show_time'] = json_encode($data['show_time']);
-            $dataToSave['sales_via'] = json_encode($data['sales_via']);
-            $dataToSave['show_dates'] = json_encode($data['choosed_show_dates']);
-            $dataToSave['seating'] = $data['seating'];
-            $dataToSave['comps'] = $data['comps'];
-            $dataToSave['status'] = $data['status'];
-            $dataToSave['show_type'] = $data['show_type'];
-
-            $result = Program::create($dataToSave);
-            if ($result) {
+            if ($result)
                 return 'success';
-            }
 
             return 'unsuccess';
+        }else{
+            $timeConflict = 0;
+            foreach ($data['show_time'] as $choosedShowTime) {
+                $movieDuration = MovieModel::find($data['film'])->duration;
+                $choosedShowTimeStart = date('h:i A', strtotime($choosedShowTime));
+                $choosedShowTimeEnd = date("h:i A", strtotime('+' . $movieDuration . ' minutes', strtotime($choosedShowTimeStart)));
+                $choosedShowTimeEnd = date("h:i A", strtotime('+' . $data['clean_up_time'] . ' minutes', strtotime($choosedShowTimeEnd)));
+                foreach ($conflictedTime as $ct)
+                {
+                    $confictTimeArray = array_map('trim', explode('-', $ct));
+                    $conflictTimeStart = $confictTimeArray[0];
+                    $conflictTimeEnd = $confictTimeArray[1];
 
+                    $choosedShowStartingTime = \DateTime::createFromFormat('h:i A', $choosedShowTimeStart);
+                    $choosedShowEndingTime = \DateTime::createFromFormat('h:i A', $choosedShowTimeEnd);
+                    $conflictStartingTime = \DateTime::createFromFormat('h:i A', $conflictTimeStart);
+                    $conflictEndingTime = \DateTime::createFromFormat('h:i A', $conflictTimeEnd);
+                    if ($choosedShowStartingTime >= $conflictStartingTime && $choosedShowStartingTime <= $conflictEndingTime) {
+                        $timeConflict = 1;
+                    }
+
+                    if ($choosedShowEndingTime >= $conflictStartingTime && $choosedShowEndingTime <= $conflictEndingTime) {
+                        $timeConflict = 1;
+                    }
+                }
+            }
+
+            if($timeConflict == 0)
+            {
+                foreach ($data['choosed_show_dates'] as $csd) {
+                    foreach ($data['show_time'] as $st) {
+                        foreach ($data['screen_id'] as $sid) {
+                            $totalDuration = MovieModel::find($data['film'])->duration;
+                            $shStTi = date('h:i A', strtotime($st));
+                            $shEnTi = date("h:i A", strtotime('+' . $totalDuration . ' minutes', strtotime($shStTi)));
+                            $totatShowDuration = $shStTi . '-' . date("h:i A", strtotime('+' . $data['clean_up_time'] . ' minutes', strtotime($shEnTi)));
+                            $dayOfWeek = strtotime($csd);
+                            $dayOfWeek = date("l", $dayOfWeek);
+                            $seatCategories = ScreenSeatCategories::where('screen_id', $sid)->get();
+                            $catWithPrice = [];
+                            foreach ($seatCategories as $seCa) {
+                                $arrForSc['category_name'] = $seCa->category_name;
+                                $arrForSc['category_price'] = PriceCard::where('name', $data['price_card'])->where('screen_ids', $sid)->where('seat_categories', $arrForSc['category_name'])->first()->prices;
+                                $catWithPrice[] = $arrForSc;
+                            }
+
+
+                            $dataToStore['admin_id'] = Auth::guard('admin')->user()->id;
+                            $dataToStore['movie_id'] = $data['film'];
+                            $dataToStore['screen_id'] = $sid;
+                            $dataToStore['show_time_start'] = $shStTi;
+                            $dataToStore['show_time_end'] = $shEnTi;
+                            $dataToStore['clean_up_time'] = $data['clean_up_time'];
+                            $dataToStore['total_occupied_time'] = $totatShowDuration;
+                            $dataToStore['show_date'] = $csd;
+                            $dataToStore['show_day'] = $dayOfWeek;
+                            $dataToStore['price_card_name'] = $data['price_card'];
+                            $dataToStore['seat_categories_with_price'] = json_encode($catWithPrice);
+                            $dataToStore['sales_via'] = json_encode($data['sales_via']);
+                            $dataToStore['seating'] = $data['seating'];
+                            $dataToStore['comps'] = $data['comps'];
+                            $dataToStore['status'] = $data['status'];
+                            $dataToStore['show_type'] = $data['show_type'];
+
+                            $result = ScheduledMovie::create($dataToStore);
+                        }
+                    }
+                }
+
+                if ($result)
+                    return 'success';
+
+                return 'unsuccess';
+            }else{
+                return 'conflict';
+            }
         }
     }
-//    else {
-//        $dataToSave['movie_id'] = $data['film'];
-//        $dataToSave['screen_ids'] = json_encode($data['screen_id']);
-//        $dataToSave['price_card'] = $data['price_card'];
-//        $dataToSave['days'] = json_encode($data['days']);
-//        $dataToSave['clean_up_time'] = $data['clean_up_time'];
-//        $dataToSave['show_time'] = json_encode($data['show_time']);
-//        $dataToSave['sales_via'] = json_encode($data['sales_via']);
-//        $dataToSave['show_dates'] = json_encode($data['choosed_show_dates']);
-//        $dataToSave['seating'] = $data['seating'];
-//        $dataToSave['comps'] = $data['comps'];
-//        $dataToSave['status'] = $data['status'];
-//        $dataToSave['show_type'] = $data['show_type'];
-//
-//        $result = Program::create($dataToSave);
-//        if ($result) {
-//            return 'four';
-//            return 'success';
-//        }
-//
-//        return 'unsuccess';
-//    }
-
-//        foreach ($scheduledData as $sd)
-//        {
-//            $showDatesArr = json_decode($sd->show_date, true);
-//            $choosedDateArray = $data['choosed_show_dates'];
-//            $check = array_intersect($showDatesArr, $choosedDateArray);
-//            if (count($check) > 0) {
-//                $screenArr = json_decode($sd->screen_ids, true);
-//                $choosedScreenArr = json_decode($sd->screen_ids, true);
-//                $checkScreen = array_intersect($screenArr, $choosedScreenArr);
-//                if (count($checkScreen) > 0) {
-//
-//                }else{
-//
-//                }
-//            }else{
-//                $dataToSave['movie_id'] = $data['film'];
-//                $dataToSave['screen_ids'] = json_encode($data['screen_id']);
-//                $dataToSave['price_card'] = $data['price_card'];
-//                $dataToSave['days'] = json_encode($data['days']);
-//                $dataToSave['clean_up_time'] = $data['clean_up_time'];
-//                $dataToSave['show_time'] = json_encode($data['show_time']);
-//                $dataToSave['sales_via'] = json_encode($data['sales_via']);
-//                $dataToSave['show_dates'] = json_encode($data['choosed_show_dates']);
-//                $dataToSave['seating'] = $data['seating'];
-//                $dataToSave['comps'] = $data['comps'];
-//                $dataToSave['status'] = $data['status'];
-//                $dataToSave['show_type'] = $data['show_type'];
-//
-//                $result = Program::create($dataToSave);
-//                if($result)
-//                {
-//                    return redirect()->back()->with('message', 'success');
-//                }
-//
-//                return redirect()->back()->with('message', 'unsuccess');
-//            }
-//
-//        }
-
-//    }
 
 
     public function getPriceCardTime(Request $request)
@@ -329,4 +275,211 @@ class ProgrammingController extends Controller
         return array_values(array_unique($returnData, SORT_REGULAR));
     }
 
+    public function events(Request $request)
+    {
+        $data = $request->all();
+        $showDateStart = array_map('trim', explode('T', $data['start']));
+        $showDateStart = $showDateStart[0];
+        $showDateEnd = array_map('trim', explode('T', $data['end']));
+        $showDateEnd = $showDateEnd[0];
+
+        $returnData = ScheduledMovie::where('show_date','>=',$showDateStart)
+            ->where('show_date','<=',$showDateEnd)->get();
+        $count = 0;
+        $events = [];
+        foreach ($returnData as $rd) {
+            $count++;
+            $events[] = array(
+                'id' => (string)$count,
+                'title' => MovieModel::find($rd->movie_id)->movie_title,
+                'start' => $rd->show_date . 'T' . date('H:i', strtotime($rd->show_time_start)),
+                'end' => $rd->show_date . 'T' . date('H:i', strtotime($rd->show_time_end)),
+                'unique_id' => $rd->id,
+                'resourceId' => $rd->screen_id,
+                'className' => 'event-style'
+            );
+        }
+
+        return response()->json($events);
+
+    }
+
+    public function getScheduleData(Request $request)
+    {
+        $sid = $request->sid;
+        $sd = ScheduledMovie::find($sid);
+        $pcArr = [];
+        foreach (PriceCard::where('admin_id', Auth::guard('admin')->user()->id)->where('screen_ids', $sd->screen_id)->get() as $pc) {
+            array_push($pcArr, $pc->name);
+        }
+
+        $returnData = [
+          'scheduleData' =>  $sd,
+            'priceCardData' => array_values(array_unique($pcArr, SORT_REGULAR)),
+            'showTime' => date('H:i', strtotime($sd->show_time_start)),
+            'salesVia' => json_decode($sd->sales_via, true)
+        ];
+
+        return $returnData;
+    }
+
+    public function update(Request $request)
+    {
+        $data = $request->except('_token');
+        $schedueIdToEdit = $data['scheduleIdToEdit'];
+        $movieDuration = MovieModel::find($data['film'])->duration;
+        $conflict = 0;
+        $conflictedTime = [];
+
+        foreach ($data['choosed_show_dates'] as $csd) {
+            foreach ($data['screen_id'] as $sid) {
+                foreach (ScheduledMovie::where('id', '<>', $schedueIdToEdit)->get() as $sd)
+                {
+                    if($sd->show_date == $csd && $sd->screen_id == $sid)
+                    {
+                        $conflict = 1;
+                        $conflictedTime[] = $sd->total_occupied_time;
+                    }
+                }
+            }
+        }
+
+
+        if($conflict == 0)
+        {
+            foreach ($data['choosed_show_dates'] as $csd) {
+                foreach ($data['show_time'] as $st) {
+                    foreach ($data['screen_id'] as $sid) {
+                        $totalDuration = MovieModel::find($data['film'])->duration;
+                        $shStTi = date('h:i A', strtotime($st));
+                        $shEnTi = date("h:i A", strtotime('+' . $totalDuration . ' minutes', strtotime($shStTi)));
+                        $totatShowDuration = $shStTi . '-' . date("h:i A", strtotime('+' . $data['clean_up_time'] . ' minutes', strtotime($shEnTi)));
+                        $dayOfWeek = strtotime($csd);
+                        $dayOfWeek = date("l", $dayOfWeek);
+                        $seatCategories = ScreenSeatCategories::where('screen_id', $sid)->get();
+                        $catWithPrice = [];
+                        foreach ($seatCategories as $seCa) {
+                            $arrForSc['category_name'] = $seCa->category_name;
+                            $arrForSc['category_price'] = PriceCard::where('name', $data['price_card'])->where('screen_ids', $sid)->where('seat_categories', $arrForSc['category_name'])->first()->prices;
+                            $catWithPrice[] = $arrForSc;
+                        }
+
+
+                        $dataToStore['admin_id'] = Auth::guard('admin')->user()->id;
+                        $dataToStore['movie_id'] = $data['film'];
+                        $dataToStore['screen_id'] = $sid;
+                        $dataToStore['show_time_start'] = $shStTi;
+                        $dataToStore['show_time_end'] = $shEnTi;
+                        $dataToStore['clean_up_time'] = $data['clean_up_time'];
+                        $dataToStore['total_occupied_time'] = $totatShowDuration;
+                        $dataToStore['show_date'] = $csd;
+                        $dataToStore['show_day'] = $dayOfWeek;
+                        $dataToStore['price_card_name'] = $data['price_card'];
+                        $dataToStore['seat_categories_with_price'] = json_encode($catWithPrice);
+                        $dataToStore['sales_via'] = json_encode($data['sales_via']);
+                        $dataToStore['seating'] = $data['seating'];
+                        $dataToStore['comps'] = $data['comps'];
+                        $dataToStore['status'] = $data['status'];
+                        $dataToStore['show_type'] = $data['show_type'];
+
+                        $result = ScheduledMovie::find($schedueIdToEdit)->update($dataToStore);
+                    }
+                }
+            }
+
+            if ($result)
+                return 'success';
+
+            return 'unsuccess';
+        }else{
+            $timeConflict = 0;
+            foreach ($data['show_time'] as $choosedShowTime) {
+                $movieDuration = MovieModel::find($data['film'])->duration;
+                $choosedShowTimeStart = date('h:i A', strtotime($choosedShowTime));
+                $choosedShowTimeEnd = date("h:i A", strtotime('+' . $movieDuration . ' minutes', strtotime($choosedShowTimeStart)));
+                $choosedShowTimeEnd = date("h:i A", strtotime('+' . $data['clean_up_time'] . ' minutes', strtotime($choosedShowTimeEnd)));
+                foreach ($conflictedTime as $ct)
+                {
+                    $confictTimeArray = array_map('trim', explode('-', $ct));
+                    $conflictTimeStart = $confictTimeArray[0];
+                    $conflictTimeEnd = $confictTimeArray[1];
+
+                    $choosedShowStartingTime = \DateTime::createFromFormat('h:i A', $choosedShowTimeStart);
+                    $choosedShowEndingTime = \DateTime::createFromFormat('h:i A', $choosedShowTimeEnd);
+                    $conflictStartingTime = \DateTime::createFromFormat('h:i A', $conflictTimeStart);
+                    $conflictEndingTime = \DateTime::createFromFormat('h:i A', $conflictTimeEnd);
+                    if ($choosedShowStartingTime >= $conflictStartingTime && $choosedShowStartingTime <= $conflictEndingTime) {
+                        $timeConflict = 1;
+                    }
+
+                    if ($choosedShowEndingTime >= $conflictStartingTime && $choosedShowEndingTime <= $conflictEndingTime) {
+                        $timeConflict = 1;
+                    }
+                }
+            }
+
+            if($timeConflict == 0)
+            {
+                foreach ($data['choosed_show_dates'] as $csd) {
+                    foreach ($data['show_time'] as $st) {
+                        foreach ($data['screen_id'] as $sid) {
+                            $totalDuration = MovieModel::find($data['film'])->duration;
+                            $shStTi = date('h:i A', strtotime($st));
+                            $shEnTi = date("h:i A", strtotime('+' . $totalDuration . ' minutes', strtotime($shStTi)));
+                            $totatShowDuration = $shStTi . '-' . date("h:i A", strtotime('+' . $data['clean_up_time'] . ' minutes', strtotime($shEnTi)));
+                            $dayOfWeek = strtotime($csd);
+                            $dayOfWeek = date("l", $dayOfWeek);
+                            $seatCategories = ScreenSeatCategories::where('screen_id', $sid)->get();
+                            $catWithPrice = [];
+                            foreach ($seatCategories as $seCa) {
+                                $arrForSc['category_name'] = $seCa->category_name;
+                                $arrForSc['category_price'] = PriceCard::where('name', $data['price_card'])->where('screen_ids', $sid)->where('seat_categories', $arrForSc['category_name'])->first()->prices;
+                                $catWithPrice[] = $arrForSc;
+                            }
+
+
+                            $dataToStore['admin_id'] = Auth::guard('admin')->user()->id;
+                            $dataToStore['movie_id'] = $data['film'];
+                            $dataToStore['screen_id'] = $sid;
+                            $dataToStore['show_time_start'] = $shStTi;
+                            $dataToStore['show_time_end'] = $shEnTi;
+                            $dataToStore['clean_up_time'] = $data['clean_up_time'];
+                            $dataToStore['total_occupied_time'] = $totatShowDuration;
+                            $dataToStore['show_date'] = $csd;
+                            $dataToStore['show_day'] = $dayOfWeek;
+                            $dataToStore['price_card_name'] = $data['price_card'];
+                            $dataToStore['seat_categories_with_price'] = json_encode($catWithPrice);
+                            $dataToStore['sales_via'] = json_encode($data['sales_via']);
+                            $dataToStore['seating'] = $data['seating'];
+                            $dataToStore['comps'] = $data['comps'];
+                            $dataToStore['status'] = $data['status'];
+                            $dataToStore['show_type'] = $data['show_type'];
+
+                            $result = ScheduledMovie::find($schedueIdToEdit)->update($dataToStore);
+                        }
+                    }
+                }
+
+                if ($result)
+                    return 'success';
+
+                return 'unsuccess';
+            }else{
+                return 'conflict';
+            }
+        }
+    }
+
+    public function deleteSchedule(Request $request)
+    {
+        $scheduleId = $request->scheduleId;
+        $result = ScheduledMovie::find($scheduleId)->delete();
+        if($result)
+            return 'true';
+
+        return 'false';
+    }
+
 }
+
+

@@ -42,16 +42,16 @@
 											<div class="crm-title">
 												<h4>Filter Option</h4>
 											</div>
-											<form action="crm_submit" method="get" accept-charset="utf-8">
+											<form action="{{url('admin/crm/user/filter')}}" method="get" accept-charset="utf-8">
 												<div class="row">
 													<div class="col-md-3">
 														<div class="input-group date">
-														  <input id="registeredDatePicker" type="text" class="form-control" placeholder="Select Registered Date">
+														  <input id="registeredDatePicker" name="date" type="text" class="form-control" placeholder="Select Registered Date">
 														  <span class="input-group-addon"><i class="icon-calendar"></i></span>
 														</div>
 													</div>
 													<div class="col-md-3">
-				                                        <select name="" class="custom-select">
+				                                        <select name="registered_type" class="custom-select">
 				                                        	<option value="" class="selected">Registren From</option>
 				                                        	<option value="by admin">Registered by Admin</option>
 				                                        	<option value="from excel">Registered From Excel</option>
@@ -83,7 +83,7 @@
 													<tr>
 
 														<th scope="row"><a href="#">{{$dt->id}}</a></th>
-														<td>{{$dt->created_at}}</td>
+														<td>{{$dt->created_at->format('Y-m-d') }}</td>
 														<td>{{$dt->name}}</td>
 														<td>{{$dt->email}}</td>
 														<td>{{$dt->mobile}}</td>
@@ -113,7 +113,7 @@
 											@endforeach
                                     @else
                                         <tr>
-                                            <td colspan="7" class="text-center">No Any Screen Found !</td>
+                                            <td colspan="7" class="text-center">No Any User Found !</td>
                                         </tr>
                                     @endif									
 												</tbody>
@@ -131,7 +131,7 @@
 @stop
 
 @section('scripts')
-<script type="text/javascript" src="{{asset('admins/theme/js/bootstrap-datepicker.min.js')}}"></script>
+
     <script>
         $(document).find('.closeMessage').on('click', function () {
             $(this).parent('div').remove();

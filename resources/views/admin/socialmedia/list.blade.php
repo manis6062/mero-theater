@@ -34,6 +34,12 @@
                     <div class="card">
                         <div class="card-header artist-header"><a href="{{url('admin/content-management/social-media/create')}}">Add New Social Media</a></div>
                         <div class="card-body">
+                              @if(\Illuminate\Support\Facades\Session::has('message'))
+                                <div class="alert alert-success">
+                                    <i class="fa fa-times pull-right closeMessage"></i>
+                                    <p class="text-center">{{\Illuminate\Support\Facades\Session::get('message')}}</p>
+                                </div>
+                            @endif
                             <div class="table-responsive">
         <table class="table m-0 table-bordered common-table">
                 <thead>
@@ -82,6 +88,11 @@
 @stop
 @section('scripts')
     <script>
+
+ $(document).find('.closeMessage').on('click', function () {
+            $(this).parent('div').remove();
+        });
+        
         $('.delete-socialmedia').on('click', function (e) {
             e.preventDefault();
             var Id = $(this).data('id');
@@ -105,5 +116,7 @@
 
                 });
         });
+
+
     </script>
 @stop

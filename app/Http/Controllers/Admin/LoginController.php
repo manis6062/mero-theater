@@ -27,8 +27,7 @@ class LoginController extends Controller
     	]);
 
     	if($check)
-    	{
-    	    Admin::find(Auth::guard('admin')->user()->id)->update(['login_time' => Carbon::now()]);
+        {
     		return redirect('admin/dashboard');
     	}
     	return redirect('admin')->with('error','Invalid Credential  !')->withInput();
@@ -37,6 +36,7 @@ class LoginController extends Controller
 
     public function logout()
     {
+        Admin::find(Auth::guard('admin')->user()->id)->update(['last_login_time' => Carbon::now()]);
         Auth::guard('admin')->logout();
         return redirect('admin');
     }
