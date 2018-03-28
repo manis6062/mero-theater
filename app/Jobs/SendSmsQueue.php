@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Http\Controllers\Admin\smsCampaign\sms\CampaignController;
 use App\Models\MessageHistory;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -37,9 +38,10 @@ class SendSmsQueue extends Job implements ShouldQueue
      */
     public function handle()
     {
+        $campaign=new CampaignController();
         $message =  $this->message;
         $messageId =  $this->message_id;
-        MessageHistory::whereIn('id', $this->message_id)->chunk('300', function ($histories) use ($message,&$messageId) {
+        MessageHistory::whereIn('id', $this->message_id)->chunk('300', function ($histories) use ($message,&$messageId,&$campaign) {
             $toNumber = [];
 
 
@@ -66,7 +68,7 @@ class SendSmsQueue extends Job implements ShouldQueue
                             'form_params' => array(
                                 'from' => '31001',
                                 'to' => $smsNumber,
-                                'auth_token' => 'e4bba6043c52ec53a8c7e4f2b2da1e87419e011c17e775fe82e18ffe5f14e4de',
+                                'auth_token' => $campaign->tokenValue(),
                                 'text' => $message
                             )
                         )

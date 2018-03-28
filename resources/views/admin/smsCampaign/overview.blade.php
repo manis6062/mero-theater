@@ -37,7 +37,7 @@
                                     <h4>Delivered SMS</h4>
                                 </div>
                                 <div class="overview-info">
-                                    <span>0.00%</span>
+                                    <span>{{$sms_sent}}</span>
                                 </div>
                             </div>
                         </div>
@@ -51,7 +51,7 @@
                                     <h4>Remaining Credit</h4>
                                 </div>
                                 <div class="overview-info">
-                                    <span>0.00%</span>
+                                    <span>{{$available_credit}}</span>
                                 </div>
                             </div>
                         </div>
@@ -62,10 +62,10 @@
                         <div class="card-body">
                             <div class="email-overview-wrapper">
                                 <div class="card-header">
-                                    <h4>Total Send SMS</h4>
+                                    <h4>Total Contact</h4>
                                 </div>
                                 <div class="overview-info">
-                                    <span>0.00%</span>
+                                    <span>{{$total_contact}}</span>
                                 </div>
                             </div>
                         </div>

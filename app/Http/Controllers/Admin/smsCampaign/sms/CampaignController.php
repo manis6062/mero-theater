@@ -618,7 +618,7 @@ class CampaignController extends Controller
         return $data;
     }
 
-    private function tokenValue(){
+    public function tokenValue(){
 
         return 'e4bba6043c52ec53a8c7e4f2b2da1e87419e011c17e775fe82e18ffe5f14e4de';
     }
