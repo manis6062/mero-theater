@@ -24,7 +24,7 @@ class CrmController extends Controller
      if($date!='' || $type!=''){
        $data = CrmModel::whereDate('created_at', '=', date('Y-m-d', strtotime($date)))
        ->orwhere('registered_type',$type)
-       ->get();
+       ->paginate(10)->appends(['date','registered_type']);
        return view('admin.crm.list',compact('data'));
    }
    else{
