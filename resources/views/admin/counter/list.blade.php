@@ -35,10 +35,17 @@
 				<div class="card">
 					<div class="card-body">
 						<div class="table-responsive">
+							 @if(\Session::has('message'))
+                                <div class="alert alert-success">
+                                    <i class="fa fa-times pull-right closeMessage"></i>
+                                    <p class="text-center">{{\Session::get('message')}}</p>
+                                </div>
+                            @endif
 							<table class="table m-0 table-bordered common-table ticket-type-table">
 								<thead>
 									<tr>
 										<th>counter number</th>
+										<th>Admin Name</th>
 										<th>First name</th>				
 										<th>Last name</th>
 										<th>Designation</th>
@@ -55,6 +62,7 @@
 									<tr>
 
 										<th scope="row"><a href="#">{{$dt->counter_number}}</a></th>
+										<td>{{$dt->admin->first_name}}</td>
 										<td>{{$dt->first_name}}</td>
 										<td>{{$dt->last_name}}</td>
 										<td>{{$dt->designation}}</td>
@@ -85,7 +93,7 @@
 									@endforeach
 									@else
 									<tr>
-										<td colspan="7" class="text-center">No Any Screen Found !</td>
+										<td colspan="7" class="text-center">No Any Counter User Found !</td>
 									</tr>
 									@endif									
 								</tbody>

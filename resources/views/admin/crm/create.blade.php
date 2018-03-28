@@ -270,12 +270,12 @@ span.note{
         } else {
 
             var ext = $('input#excel_file').val().split('.').pop().toLowerCase();
-            if ($.inArray(ext, ['xlxc','xls']) == -1) {
+            if ($.inArray(ext, ['xlsx','xls']) == -1) {
                 e.preventDefault();
                 $('.excel-file-error').html('<strong>Invalid File Format !</strong>');
             } else {
                 var fileSize = $('input#excel_file')[0].files[0].size;
-                if (fileSize > 2048) {
+                if (fileSize > 204800) {
                     e.preventDefault();
                     $('.excel-file-error').html('<strong>File Size exceed max allowed size !</strong>');
                 }

@@ -9,4 +9,9 @@ class CounterModel extends Authenticatable
 {
     protected $table = 'counter_tbl';
     protected $guarded = ['id'];
+
+     public function admin()
+    {
+        return $this->belongsTo('App\Admin','admin_id');
+    }
 }

@@ -12,7 +12,7 @@ class CounterController extends Controller
 
     public function index()
     {
-        $data = CounterModel::paginate(10);
+        $data=\App\CounterModel::with('admin')->paginate(10);
         return view('admin.counter.list', compact('data'));
     }
 
@@ -26,18 +26,21 @@ class CounterController extends Controller
     {
         $password = $request->password;
         $passwordenc = bcrypt($password);
+        $id=\Auth::guard('admin')->id();
+       
         $this->validate($request, [
             'counter_number' => 'required | unique:counter_tbl',
             'fname' => 'required',
             'lname' => 'required',
             'designation' => 'required',
             'username' => 'required',
-            'password' => 'required',
+            'password' => 'required | min:8',
             'email' => 'required | unique:counter_tbl',
             'mobile' => 'unique:counter_tbl'
         ]);
 
         $data = array(
+            'admin_id' => $id,
             'counter_number' => $request->counter_number,
             'first_name' => $request->fname,
             'last_name' => $request->lname,
@@ -47,9 +50,9 @@ class CounterController extends Controller
             'email' => $request->email,
             'mobile' => $request->mobile
         );
-        CounterModel::create($data);
-
-        return redirect('admin/counter');
+        $result=CounterModel::create($data);
+        if (isset($result))
+            return redirect('admin/counter')->with('message', 'Counter User Successfully Created !');
     }
 
     public function edit($id)
@@ -84,7 +87,7 @@ class CounterController extends Controller
                 'email' => $request->email,
                 'mobile' => $request->mobile
             );
-            CounterModel::find($id)->update($data);
+           $result= CounterModel::find($id)->update($data);
         } else {
             $passwordenc = bcrypt($password);
             $data = array(
@@ -97,16 +100,17 @@ class CounterController extends Controller
                 'email' => $request->email,
                 'mobile' => $request->mobile
             );
-            CounterModel::find($id)->update($data);
+             $result=CounterModel::find($id)->update($data);
         }
-        return redirect('admin/counter');
+            return redirect('admin/counter')->with('message', 'Counter User Successfully Updated !');
     }
 
     public function destroy(Request $request)
     {
+            
         $result = CounterModel::find($request->uid)->delete();
         if ($result) {
-            return 'true';
+            return  'true';
         }
         return 'false';
     }

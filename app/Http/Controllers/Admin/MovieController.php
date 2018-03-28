@@ -56,6 +56,8 @@ class MovieController extends Controller
             'image' => 'sometimes|required|mimes:jpeg,jpg,bmp,png,svg',
             'bannerimage' => 'sometimes|required|mimes:jpeg,jpg,bmp,png,svg',
             'trailerurl' => 'nullable|url',
+            'rating' => 'required',
+            'language' => 'required',
         ]);
 
 		$data = array(
@@ -72,7 +74,9 @@ class MovieController extends Controller
             'filmformat'=>$request->filmformat,
             'trailerurl'=>$request->trailerurl,
             'status'=>$request->status,
-            'direct_artist'=>$request->directartist
+            'direct_artist'=>$request->directartist,
+            'rating'=>$request->rating,
+            'language'=>$request->language
             );
 
         if ($request->hasFile('image')) {
@@ -108,9 +112,7 @@ class MovieController extends Controller
         }
 
 
-      $result = $this->movie->store($data);
-
-
+          $result = MovieModel::create($data);
           if (isset($result))
             return redirect('admin/box-office/movies')->with('message', 'Movie Successfully Created !');
 
@@ -156,6 +158,8 @@ class MovieController extends Controller
             'image' => 'sometimes|required|mimes:jpeg,jpg,bmp,png,svg',
             'bannerimage' => 'sometimes|required|mimes:jpeg,jpg,bmp,png,svg',
             'trailerurl' => 'nullable|url',
+             'rating' => 'required',
+            'language' => 'required',
         ]);
 
         $data = array(
@@ -172,7 +176,9 @@ class MovieController extends Controller
             'filmformat'=>$request->filmformat,
             'trailerurl'=>$request->trailerurl,
             'status'=>$request->status,
-            'direct_artist'=>$request->directartist
+            'direct_artist'=>$request->directartist,
+            'rating'=>$request->rating,
+            'language'=>$request->language
             );
 
         if($request->has('artist'))

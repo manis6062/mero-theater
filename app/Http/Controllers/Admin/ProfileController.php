@@ -14,7 +14,7 @@ class ProfileController extends Controller
 
 	public function index()
 	{
-		 $editdata=\App\CompanyModel::with('admin')->get();;
+		 $editdata=\App\CompanyModel::with('admin')->get();
         return view('admin.profile.update', compact('editdata'));
 	}
 
@@ -25,7 +25,7 @@ class ProfileController extends Controller
         'title'=>'required',
         'fname'=> 'required',
         'lname'=> 'required',
-        'mobile'=> 'required',
+        'mobile'=> 'required | max:10',
         'company_name'=> 'required',
         'company_display_name'=>'required:8',
         'vat_number'=> 'required',

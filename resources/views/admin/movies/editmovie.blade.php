@@ -306,6 +306,43 @@
                     </div>
                 </div>
 
+
+         <div class="form-group row">
+                    <label for="filmformat" class="col-lg-3 col-form-label form-control-label"> Rating<span class="req">*</span></label>
+                    <div class="col-sm-3">
+                        <select class="custom-select" name="rating">
+                            <option value="">Select Rating</option>
+                            <option value="PG" @if ($editdata->rating == "PG") {{ 'selected' }} @endif>PG</option>
+                            <option value="UA" @if ($editdata->rating == "UA") {{ 'selected' }} @endif>UA</option>
+                            <option value="U" @if ($editdata->rating == "U") {{ 'selected' }} @endif>U</option>
+                            <option value="A" @if ($editdata->rating == "A") {{ 'selected' }} @endif>A</option>
+                        </select>
+                        @if($errors->has('rating'))
+                            <span class="help-block">
+                                <strong>{{$errors->first('rating')}}</strong>
+                            </span>
+                        @endif
+                        <span class="rating-error error help-block"></span>
+                    </div>
+                </div>
+
+                 <div class="form-group row">
+                    <label for="filmformat" class="col-lg-3 col-form-label form-control-label"> Language<span class="req">*</span></label>
+                    <div class="col-sm-3">
+                        <select class="custom-select" name="language">
+                            <option value="">Select Language</option>
+                            <option value="nepali" @if ($editdata->language == "nepali") {{ 'selected' }} @endif>Nepali</option>
+                            <option value="english" @if ($editdata->language == "english") {{ 'selected' }} @endif>English</option>
+                            <option value="hindi" @if ($editdata->language == "hindi") {{ 'selected' }} @endif>Hindi</option>
+                        </select>
+                        @if($errors->has('language'))
+                            <span class="help-block">
+                                <strong>{{$errors->first('language')}}</strong>
+                            </span>
+                        @endif
+                        <span class="language-error error help-block"></span>
+                    </div>
+                </div>
                    <div class="form-group row">
                                                             <label class="col-lg-3 col-form-label form-control-label">Poster Image<br><span class="note">(Dimension 420x200 | Max Size 2mb | Format jpeg, jpg, png, bmp, svg)</span></label>
                                                             <div class="col-lg-9">

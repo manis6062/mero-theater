@@ -24,7 +24,7 @@ class CrmController extends Controller
      if($date!='' || $type!=''){
        $data = CrmModel::whereDate('created_at', '=', date('Y-m-d', strtotime($date)))
        ->orwhere('registered_type',$type)
-       ->get();
+       ->paginate(10)->appends(['date','registered_type']);
        return view('admin.crm.list',compact('data'));
    }
    else{
@@ -42,7 +42,7 @@ public function store(Request $request)
     $this->validate($request,[
         'name'=> 'required',
         'email'=>'required | unique:user_tbl',
-        'mobile'=>'required |unique:user_tbl'
+        'mobile'=>'required |unique:user_tbl | max:10'
     ]);
 
     $data = array(
@@ -53,7 +53,7 @@ public function store(Request $request)
     );        
     CrmModel::create($data);
 
-    return redirect('admin/crm');
+    return redirect('admin/crm')->with('message','User has successfully added.');
 }
 
 public function importExcel(Request $request)
@@ -150,10 +150,8 @@ public function importExcel(Request $request)
 
        if(count($mobielValidationData) == 0 && count($emailValidationData) == 0)
        {
-        return redirect('admin/crm/user/create');
+        return redirect('admin/crm')->with('message','Users have been successfully imported.');
        }
-
-
        //return redirect::back()->withErrors(['msg', $rem]);
         //return back()->with($rem);
         
@@ -209,7 +207,7 @@ public function update(Request $request, $id)
         $this->validate($request,[
             'name'=> 'required',
             'email'=>'required',
-            'mobile'=>'required|unique:user_tbl'
+            'mobile'=>'required|unique:user_tbl|max:10'
         ]);
     }
 
@@ -223,7 +221,7 @@ public function update(Request $request, $id)
 
     CrmModel::find($id)->update($data);
 
-    return redirect('admin/crm');
+    return redirect('admin/crm')->with('message','Update successfull.');
 }
 
 public function destroy(Request $request)
