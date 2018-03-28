@@ -14,4 +14,9 @@ class CounterModel extends Authenticatable
     {
         return $this->belongsTo('App\Admin','admin_id');
     }
+
+    public function getFullNameAttribute()
+    {
+        return ucwords($this->first_name).' '.ucwords($this->last_name);
+    }
 }

@@ -695,10 +695,9 @@
                                         <div class="form-group row">
                                             <label for="" class="col-lg-3"></label>
                                             <div class="col-lg-9">
-                                                <button type="submit" class="btn btn-primary">Save <span
-                                                            class="submit-processing" style="display: none;"><i
-                                                                class="fa fa-spin fa-spinner"></i> Please Wait ...</span>
+                                                <button type="submit" class="btn btn-primary">Save
                                                 </button>
+                                                <span class="submit-processing" style="display: none;"><i class="fa fa-spin fa-spinner"></i> Please Wait ...</span>
                                             </div>
                                         </div>
                                     </form>
@@ -1528,6 +1527,7 @@
 
                                 $('form').find('.select-days[value=every-day]').prop('disabled', true);
                                 $('form').find('button[type=submit]').text('Update');
+
                                     var choosedPriceCard = $('select[name=price_card]').val();
                                     $.ajax({
                                         url: baseurl + '/admin/programming/get-pricecard-time?pc=' + choosedPriceCard,

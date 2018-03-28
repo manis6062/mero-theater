@@ -326,6 +326,8 @@ Route::group(['prefix' => 'counter-management', 'namespace' => 'CounterManagemen
     Route::post('login-validation', 'IndexController@validation');
     Route::group(['middleware' => 'counter'], function (){
         Route::get('dashboard', 'DashboardController@index');
+        Route::get('booking', 'BookingController@index');
+        Route::get('logout', 'IndexController@logout');
     });
 
 });

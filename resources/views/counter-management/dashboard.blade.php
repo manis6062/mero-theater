@@ -9,13 +9,13 @@
                         <i class="icon-account_circle"></i>
                     </div>
                     <div class="page-title">
-                        <h5>Mr rajiv shrestha</h5>
-                        <h6 class="sub-heading">Last Login: 2:13 pm</h6>
+                        <h5>{{\Illuminate\Support\Facades\Auth::guard('counter')->user()->full_name}}</h5>
+                        <h6 class="sub-heading">@include('counter-management.last-login-time')</h6>
                     </div>
                 </div>
                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4">
                     <div class="right-actions">
-                        <a href="signup.html" class="btn btn-primary"> Logout</a>
+                        <a href="{{url('counter-management/logout')}}" class="btn btn-primary"> Logout</a>
                     </div>
                 </div>
             </div>
@@ -39,14 +39,13 @@
                                     <div class="login-dash-label">
                                         <label>Movie</label>
                                         <div class="select-movie">
-                                            <select name="" class="custom-select">
+                                            <select name="" class="custom-select" id="movie-filter">
                                                 <option value="" class="selected">Select Movie</option>
-                                                <option value="">Dabang</option>
-                                                <option value="">Raid</option>
-                                                <option value="">Sultan</option>
-                                                <option value="">Satru Gate</option>
-                                                <option value="">Raid</option>
-                                                <option value="">Sultan</option>
+                                                @if(isset($movies) && $movies->count() > 0)
+                                                    @foreach($movies as $movie)
+                                                        <option value="{{$movie->id}}" {{isset($_GET['movie']) && $_GET['movie'] == $movie->id ? 'selected' : ''}}>{{$movie->movie_title}}</option>
+                                                    @endforeach
+                                                @endif
                                             </select>
                                         </div>
                                     </div>
@@ -55,7 +54,9 @@
                                     <div class="login-dash-label">
                                         <label>Date</label>
                                         <div class="input-group date">
-                                            <input class="form-control" placeholder="03/19/2018" type="text">
+                                            <input class="form-control datepicker"
+                                                   value="{{isset($_GET['date']) ? $_GET['date'] : date('Y-m-d')}}"
+                                                   type="text">
                                             <span class="input-group-addon"><i class="icon-calendar"></i></span>
                                         </div>
                                     </div>
@@ -124,7 +125,8 @@
                                                     @if($ts->screen_id == $screen->id)
                                                         <div class="col-xl-3 col-lg-3 col-md-3 fifth-item">
                                                             <div class="movie-item">
-                                                                <a href="movie-details.html">
+                                                                <a href="#" class="go-to-booking"
+                                                                   data-screenid="{{$screen->id}}" data-showtime="{{$ts->show_time_start}}"  data-movie="{{$ts->movie_id}}" data-schedule="{{$ts->id}}">
                                                                     <div class="movie-item-content">
                                                                         <div class="movie-time-info">
                                                                             <div class="movie-time">
@@ -137,7 +139,7 @@
                                                                                 <h3>{{\App\MovieModel::find($ts->movie_id)->movie_title}}</h3>
                                                                             </div>
                                                                             <div class="movie-lang">
-                                                                                <span>Adult</span><span>Hindi</span>
+                                                                                <span>{{\App\MovieModel::find($ts->movie_id)->rating}}</span><span>{{ucwords(\App\MovieModel::find($ts->movie_id)->language)}}</span>
                                                                             </div>
                                                                             <div class="movie-duration">
                                                                             <span><em>Duration :</em> {{\App\MovieModel::find($ts->movie_id)->duration}}
@@ -173,7 +175,8 @@
                                                         @if($ts->screen_id == $screen->id)
                                                             <div class="col-xl-3 col-lg-3 col-md-3 fifth-item">
                                                                 <div class="movie-item">
-                                                                    <a href="movie-details.html">
+                                                                    <a href="#" class="go-to-booking"
+                                                                       data-screenid="{{$screen->id}}"  data-showtime="{{$ts->show_time_start}}" data-movie="{{$ts->movie_id}}">
                                                                         <div class="movie-item-content">
                                                                             <div class="movie-time-info">
                                                                                 <div class="movie-time">
@@ -186,7 +189,7 @@
                                                                                     <h3>{{\App\MovieModel::find($ts->movie_id)->movie_title}}</h3>
                                                                                 </div>
                                                                                 <div class="movie-lang">
-                                                                                    <span>Adult</span><span>Hindi</span>
+                                                                                    <span>{{\App\MovieModel::find($ts->movie_id)->rating}}</span><span>{{ucwords(\App\MovieModel::find($ts->movie_id)->language)}}</span>
                                                                                 </div>
                                                                                 <div class="movie-duration">
                                                                             <span><em>Duration :</em> {{\App\MovieModel::find($ts->movie_id)->duration}}
@@ -229,7 +232,11 @@
             e.preventDefault();
             if (!$(this).hasClass('active')) {
                 var screenId = $(this).data('screenid');
-                var date = $(document).find('a.days-bar.active').attr('data-date');
+                if ($(document).find('a.days-bar.active').length > 0)
+                    var date = $(document).find('a.days-bar.active').attr('data-date');
+                else
+                    var date = $(document).find('input.datepicker').val();
+
                 window.location = baseurl + '/counter-management/dashboard?screen=' + screenId + '&date=' + date;
             }
         });
@@ -241,6 +248,43 @@
                 var date = $(this).data('date');
                 window.location = baseurl + '/counter-management/dashboard?screen=' + screenId + '&date=' + date;
             }
+        });
+
+        $('select#movie-filter').on('change', function () {
+
+            var movieId = $(this).val();
+            if ($(document).find('a.days-bar.active').length > 0)
+                var date = $(document).find('a.days-bar.active').attr('data-date');
+            else
+                var date = $(document).find('input.datepicker').val();
+
+            var screenId = $(document).find('a.screen-name.active').attr('data-screenid');
+            window.location = baseurl + '/counter-management/dashboard?screen=' + screenId + '&date=' + date + '&movie=' + movieId;
+        });
+
+        $('input.datepicker').datepicker({
+            format: 'yyyy-mm-dd'
+        });
+
+        $('input.datepicker').on('changeDate', function () {
+            $('.datepicker-dropdown').hide();
+            var date = $(this).val();
+            var screenId = $(document).find('a.screen-name.active').attr('data-screenid');
+            window.location = baseurl + '/counter-management/dashboard?screen=' + screenId + '&date=' + date;
+        });
+
+        $(document).on('click', 'a.go-to-booking', function (e) {
+            e.preventDefault();
+            var screen = $(this).data('screenid');
+            if ($(document).find('a.days-bar.active').length > 0)
+                var date = $(document).find('a.days-bar.active').attr('data-date');
+            else
+                var date = $(document).find('input.datepicker').val();
+            var time = $(this).data('showtime');
+            var movie = $(this).data('movie');
+            var schedule = $(this).data('schedule');
+            "{{\Illuminate\Support\Facades\Session::put('redirect-url', \Illuminate\Support\Facades\Request::fullUrl())}}";
+            window.location = baseurl+'/counter-management/booking?screen='+screen+'&date='+date+'&time='+time+'&movie='+movie+'&schedule='+schedule;
         });
     </script>
 @stop

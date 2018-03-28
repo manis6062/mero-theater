@@ -4,6 +4,7 @@ namespace App\Http\Controllers\CounterManagement;
 
 use App\CounterModel;
 use App\Screen\Screen;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -41,6 +42,7 @@ class IndexController extends Controller
 
     public function logout()
     {
+        CounterModel::find(Auth::guard('counter')->user()->id)->update(['last_login_time' => Carbon::now()]);
         Auth::guard('counter')->logout();
         return redirect('counter-management');
     }

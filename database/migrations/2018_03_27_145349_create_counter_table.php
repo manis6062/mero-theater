@@ -26,6 +26,8 @@ class CreateCounterTable extends Migration
             $table->string('email',100);
             $table->string('mobile',100);
             $table->enum('suspend',['Yes','No']);
+            $table->timestamp('last_login_time')->nullable();
+            $table->string('remember_token',60)->nullable();
             $table->timestamps();
         });
     }
