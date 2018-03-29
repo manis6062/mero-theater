@@ -35,4 +35,12 @@ return [
         'secret' => env('STRIPE_SECRET'),
     ],
 
+    'firebase' => [
+        'api_key' => 'AIzaSyByppXXAwdtW7ISfSz2dbPx2Uq0QGUckyc',
+        'auth_domain' => 'mero-theater.firebaseapp.com',
+        'database_url' => 'https://mero-theater.firebaseio.com',
+        'secret' => 'XYYhVlihPrceJ5jndiTQsHKkLCORnLXU9gKABSqI',
+        'storage_bucket' => 'storage bucket taken from firebase',
+    ]
+
 ];
