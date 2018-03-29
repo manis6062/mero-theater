@@ -167,7 +167,7 @@ public function importExcel(Request $request)
     // }
 
 public function getDownload(){
-    $file= public_path(). "\download\demo.xlsx";   
+    $file= public_path('download\demo.xlsx');
     return response()->download($file);
 }
 public function edit($id)
