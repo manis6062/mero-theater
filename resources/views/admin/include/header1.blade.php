@@ -95,7 +95,7 @@
                         <div class="dropdown-menu lg dropdown-menu-right" aria-labelledby="userSettings">
                             <ul class="user-settings-list">
                                 <li>
-                                    <a href="profile.html">
+                                    <a href="{{url('admin/profile')}}">
                                         <div class="icon">
                                             <i class="icon-account_circle"></i>
                                         </div>
@@ -103,7 +103,7 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="profile.html">
+                                    <a href="{{url('admin/settings')}}">
                                         <div class="icon red">
                                             <i class="icon-cog3"></i>
                                         </div>
@@ -120,7 +120,7 @@
                                 </li>
                             </ul>
                             <div class="logout-btn">
-                                <a href="login.html" class="btn btn-primary">Logout</a>
+                                <a href="{{url('admin/payments/transactionlog')}}" class="btn btn-primary">Logout</a>
                             </div>
                         </div>
                     </li>

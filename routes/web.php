@@ -256,7 +256,14 @@ Route::group(['prefix'=>'admin','middleware'=> 'admin'], function(){
         
         //Route::get('get-seat-categories', 'PriceCardController@getSeatCategories');
     });
-    //    Route for box office CRM
+    //    Route for  Chane Password
+
+      Route::group(['prefix'=>'change_password', 'namespace' => 'Admin'], function() {
+        Route::get('/', 'ChangePasswordController@index');
+         Route::get('changepassword/oldpassword', 'ChangePasswordController@VerifyPassword');
+          Route::post('changepassword/confirmed_password', 'ChangePasswordController@changePassword');
+        //Route::get('get-seat-categories', 'PriceCardController@getSeatCategories');
+    });
 
     //    Route for counter-management
     Route::group(['prefix'=>'counter', 'namespace' => 'Admin'], function() {

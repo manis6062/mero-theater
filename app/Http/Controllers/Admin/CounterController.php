@@ -19,7 +19,8 @@ class CounterController extends Controller
 
     public function create()
     {
-        return view('admin.counter.create');
+        $counterNumbers = CounterModel::pluck('counter_number')->toArray();
+        return view('admin.counter.create',compact('counterNumbers'));
     }
 
     public function store(Request $request)
@@ -36,7 +37,7 @@ class CounterController extends Controller
             'username' => 'required',
             'password' => 'required | min:8',
             'email' => 'required | unique:counter_tbl',
-            'mobile' => 'unique:counter_tbl'
+            'mobile' => 'unique:counter_tbl|digits:10'
         ]);
 
         $data = array(

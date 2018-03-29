@@ -100,11 +100,11 @@ span.note{
                                     <form action="{{url('admin/crm/user/submit')}}" class="form-horizontal" id="create-form" method="post"
                                     enctype="multipart/form-data">
                                     {{csrf_field()}}
-                                    @if(\Session::has('invalidMoblieErrorData'))
+                                    @if(\Session::has('invalidMobileErrorData'))
                                     @php $invalidEmail= \Session::get('invalidMobileData')
                                     @endphp
                                     <span style="color: red">
-                                        <strong>Error!</strong> The excel file contain invalid moblie number 
+                                        <strong>Error!</strong> The excel file contain invalid mobile number 
                                     </span>
                                     @endif
                                     @if(\Session::has('invalidEmailErrorData'))
@@ -153,7 +153,7 @@ span.note{
                                                     </strong>
                                                 </span>
                                                 @endif
-                                                <span class="screen-name-error error help-block"></span>
+                                                <span class="name-error error help-block"></span>
                                             </div>
                                         </div>
 
@@ -170,7 +170,7 @@ span.note{
                                                         </strong>
                                                     </span>
                                                     @endif
-                                                    <span class="screen-number-error error help-block"></span>
+                                                    <span class="email-error error help-block"></span>
                                                 </div>
                                             </div>
 
@@ -186,7 +186,7 @@ span.note{
                                                         </strong>
                                                     </span>
                                                     @endif
-                                                    <span class="house-seats-error error help-block">   </span>
+                                                    <span class="mobile-number-error error help-block">   </span>
                                                 </div>
                                             </div>
                                             <div class="form-group row">
@@ -242,22 +242,30 @@ span.note{
 
 @section('scripts')
 <script>
+    $('#mobile-number').on('focusout',function(e){
+        if ($('#mobile-number').val() != '') {
+            if($('#mobile-number').val().length!=10){
+                 e.preventDefault();
+                  $('#mobile-number').focus();
+             $('.mobile-number-error').html('<strong>Mobile Number should be of exactly of 10 digit.</strong>');
+            }
+        }
+    });
     $('#create-form').on('submit', function (e) {
         $('.error').html('');
         if ($('#name').val() == '') {
             e.preventDefault();
-            $('.screen-name-error').html('<strong>Please enter the  name.</strong>');
+            $('.name-error').html('<strong>Please enter the  name.</strong>');
         }
 
         if ($('#email').val() == '') {
             e.preventDefault();
-            $('.screen-number-error').html('<strong>Please enter your email.</strong>');
+            $('.email-error').html('<strong>Please enter your email.</strong>');
         }
 
-        if ($('#mobile').val() == '') {
+        if ($('#mobile-number').val() == '') {
             e.preventDefault();
-            $('.house-seats-error').html('<strong>Please enter your mobile number.</strong>');
-
+            $('.mobile-number-error').html('<strong>Please enter your mobile number.</strong>');
         }
     });
 

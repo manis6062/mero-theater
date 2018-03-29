@@ -42,7 +42,7 @@ public function store(Request $request)
     $this->validate($request,[
         'name'=> 'required',
         'email'=>'required | unique:user_tbl',
-        'mobile'=>'required |unique:user_tbl | max:10'
+        'mobile'=>'required |unique:user_tbl|digits:10'
     ]);
 
     $data = array(

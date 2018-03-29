@@ -123,7 +123,7 @@
                                                 <ul>
                                                     <li>
                                                         <i class="icon-chevron-right"></i>
-                                                        <a href="screen.html">Sites and screens</a>
+                                                        <a href="{{url('admin/seat-management/screens')}}">Sites and screens</a>
                                                     </li>
                                                     <li>
                                                         <i class="icon-chevron-right"></i>
@@ -154,15 +154,11 @@
                                                     </li>
                                                     <li>
                                                         <i class="icon-chevron-right"></i>
-                                                        <a href="manage-group.html">Users</a>
+                                                        <a href="{{url('admin/crm')}}">Users</a>
                                                     </li>
                                                     <li>
                                                         <i class="icon-chevron-right"></i>
-                                                        <a href="change-password.html">change Password</a>
-                                                    </li>
-                                                    <li>
-                                                        <i class="icon-chevron-right"></i>
-                                                        <a href="profile.html">your profile</a>
+                                                        <a href="{{url('admin/change_password')}}">change Password</a>
                                                     </li>
                                                     <li>
                                                         <i class="icon-chevron-right"></i>
@@ -170,7 +166,7 @@
                                                     </li>
                                                     <li>
                                                         <i class="icon-chevron-right"></i>
-                                                        <a href="#">Customer display profile</a>
+                                                        <a href="{{url('admin/profile')}}">Customer display profile</a>
                                                     </li>
                                                 </ul>
                                             </div>
