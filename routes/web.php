@@ -19,7 +19,24 @@ Route::get('/admin', function () {
     return view('admin.login');
 });
 
+Route::get('/forgotpassword', function () {
+    return view('admin.forgotpassword');
+});
+
 Route::post('admin/login/validate', 'Admin\LoginController@index');
+
+//Route::post('admin/forgotpassword/checkemail', 'Admin\ForgotPasswordController@verifyEmail');
+
+
+Route::get('sendmail', 'Admin\EmailMarketingController@sendMail');
+Route::get('admin/email-marketing','Admin\EmailMarketingController@index');
+Route::get('admin/email-marketing/campaign','Admin\EmailMarketingController@campaignCreate');
+
+Route::group(['prefix'=>'forgotpassword'],function(){
+    Route::post('/checkemail', 'Admin\ForgotPasswordController@verifyEmail');
+    Route::post('/getLink','Admin\ForgotPasswordController@resetPassword');
+});
+
 
 
 Route::group(['prefix'=>'admin','middleware'=> 'admin'], function(){

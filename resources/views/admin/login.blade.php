@@ -123,6 +123,7 @@
                     @endif
                     <button type="submit">login</button>
                 </form>
+                <span><a href="{{url('forgotpassword')}}" >forgot your password </a> </span>
             </div>
         </div>
     </div>
