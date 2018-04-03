@@ -15,6 +15,7 @@ class ProfileController extends Controller
 	public function index()
 	{
 		 $editdata=\App\CompanyModel::with('admin')->get();
+		
         return view('admin.profile.update', compact('editdata'));
 	}
 

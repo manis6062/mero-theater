@@ -19,5 +19,9 @@ class Admin extends Authenticatable
     public function counter(){
     	return $this->hasMany('App\CounterModel','admin_id');
     }
+
+    public function forgotPassword(){
+    	return $this->hasMany('App\forgotPassword','admin_id','id');
+    }
 }
  

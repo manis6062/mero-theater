@@ -32,7 +32,7 @@
                       <h2 class="text-center">Forgot Password?</h2>
                       <p>You can reset your password here.</p>
                       <div class="panel-body">
-                        <form id="reset-form" action="{{url('forgotpassword/getLink')}}" method="post">
+                        <form id="reset-form" action="{{url('forgot-password/getLink')}}" method="post">
                             {{ csrf_field() }}
                             <div class="form-group">
                                 <div class="input-group">
@@ -72,7 +72,7 @@
         });
         if ($('#admin-email').val() != '') {
          $.ajax({
-            url: baseurl + '/forgotpassword/checkemail?adminEmail=' + adminEmail,
+            url: baseurl + '/forgot-password/checkemail?adminEmail=' + adminEmail,
             type: 'post',
             success: function (data) {
                 if (data == 'true') {

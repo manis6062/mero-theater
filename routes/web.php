@@ -1,5 +1,6 @@
 <?php
 
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -32,12 +33,12 @@ Route::get('sendmail', 'Admin\EmailMarketingController@sendMail');
 Route::get('admin/email-marketing','Admin\EmailMarketingController@index');
 Route::get('admin/email-marketing/campaign','Admin\EmailMarketingController@campaignCreate');
 
-Route::group(['prefix'=>'forgotpassword'],function(){
+Route::group(['prefix'=>'forgot-password'],function(){
     Route::post('/checkemail', 'Admin\ForgotPasswordController@verifyEmail');
     Route::post('/getLink','Admin\ForgotPasswordController@resetPassword');
+    Route::get('/password-reset','Admin\ForgotPasswordController@verifyURL');
+    Route::post('/new-password','Admin\ForgotPasswordController@getNewPassword');
 });
-
-
 
 Route::group(['prefix'=>'admin','middleware'=> 'admin'], function(){
 

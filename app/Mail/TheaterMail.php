@@ -25,14 +25,16 @@ class TheaterMail extends Mailable
         $reply_to = $this->data['reply_to'];
         $reply_to_name = $this->data['reply_to_name'];
         $subject = $this->data['subject'];
-
-        $headerData = [
+        $header=$this->asString(['category' => 'category',
+            'unique_args' =>['id'=>123]]
+        );
+        if(isset($this->data['category'])&&isset($this->data['custom_args'])){
+          $headerData = [
             'category' => $this->data['category'],
             'unique_args' => $this->data['custom_args']
-        ];
-
+        ];  
         $header = $this->asString($headerData);
-
+        }
         $this->withSwiftMessage(function ($message) use ($header) {
             $message->getHeaders()
                     ->addTextHeader('X-SMTPAPI', $header);

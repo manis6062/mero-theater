@@ -104,6 +104,12 @@
         <div class="login-page">
             <h3 class="text-center">Login to access Admin Panel</h3>
             <div class="form">
+                @if(\Session::has('message'))
+                                <div class="alert alert-success">
+                                    <i class="fa fa-times pull-right closeMessage"></i>
+                                    <p class="text-center">{{\Session::get('message')}}</p>
+                                </div>
+                            @endif
                 @if(Session::has('error'))
                     <h4 class="text-center" style="color: darkred;"><i class="fa fa-warning"></i> {{ Session::get('error') }}</h4>
                 @endif
