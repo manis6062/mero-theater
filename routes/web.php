@@ -355,6 +355,7 @@ Route::group(['prefix' => 'counter-management', 'namespace' => 'CounterManagemen
         Route::post('booking/check-booking', 'BookingController@checkBooking');
         Route::post('booking/remove-booking', 'BookingController@removeBooking');
         Route::post('booking/remove-hold-data', 'BookingController@removeHoldData');
+        Route::post('booking/confirm', 'BookingController@confirmBooking');
         Route::get('logout', 'IndexController@logout');
     });
 

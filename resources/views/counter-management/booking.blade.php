@@ -24,6 +24,11 @@
             cursor: not-allowed;
         }
 
+        #place .sold-seat {
+            background: url("{{asset('screen/sold-seat-image/'.$screen->sold_seat)}}") no-repeat scroll 0 0 transparent;
+            cursor: not-allowed;
+        }
+
         .available-seat-legend {
             background: url("{{asset('screen/available-seat-image/'.$screen->available_seat)}}") no-repeat scroll 0 0 transparent;
         }
@@ -203,7 +208,9 @@
                                                                     @for ($j = 1; $j <= $noOfColumns; $j++)
                                                                         @php $titleCount += 1; @endphp
                                                                         @php $seatName = $alphaDirection == 'top to bottom' ? $alphas[$i-1].$titleCount : $alphas[$alpCount].$titleCount; @endphp
-                                                                        @if(in_array($seatName, $temporaryReservedSeats))
+                                                                        @if(in_array($seatName, $soldSeats))
+                                                                            @php $class = 'sold-seat'; @endphp
+                                                                        @elseif(in_array($seatName, $temporaryReservedSeats))
                                                                             @php $class = 'reserved-seat'; @endphp
                                                                         @else
                                                                             @php $class = 'available-seat'; @endphp
@@ -261,7 +268,9 @@
 
                                                                     @for ($j = $noOfColumns; $j >= 1; $j--)
                                                                         @php $seatName = $alphaDirection == 'top to bottom' ? $alphas[$i-1].$titleCount : $alphas[$alpCount].$titleCount; @endphp
-                                                                        @if(in_array($seatName, $temporaryReservedSeats))
+                                                                        @if(in_array($seatName, $soldSeats))
+                                                                            @php $class = 'sold-seat'; @endphp
+                                                                        @elseif(in_array($seatName, $temporaryReservedSeats))
                                                                             @php $class = 'reserved-seat'; @endphp
                                                                         @else
                                                                             @php $class = 'available-seat'; @endphp
@@ -327,7 +336,9 @@
                                                                             @php $titleCount += 1; @endphp
                                                                         @endif
                                                                         @php $seatName = $alphaDirection == 'top to bottom' ? $alphas[$i-1].$titleCount : $alphas[$alpCount].$titleCount; @endphp
-                                                                        @if(in_array($seatName, $temporaryReservedSeats))
+                                                                        @if(in_array($seatName, $soldSeats))
+                                                                            @php $class = 'sold-seat'; @endphp
+                                                                        @elseif(in_array($seatName, $temporaryReservedSeats))
                                                                             @php $class = 'reserved-seat'; @endphp
                                                                         @else
                                                                             @php $class = 'available-seat'; @endphp
@@ -390,7 +401,9 @@
                                                                     @endforeach
                                                                     @for ($j = $noOfColumns; $j >= 1; $j--)
                                                                         @php $seatName = $alphaDirection == 'top to bottom' ? $alphas[$i-1].$titleCount : $alphas[$alpCount].$titleCount; @endphp
-                                                                        @if(in_array($seatName, $temporaryReservedSeats))
+                                                                        @if(in_array($seatName, $soldSeats))
+                                                                            @php $class = 'sold-seat'; @endphp
+                                                                        @elseif(in_array($seatName, $temporaryReservedSeats))
                                                                             @php $class = 'reserved-seat'; @endphp
                                                                         @else
                                                                             @php $class = 'available-seat'; @endphp
@@ -449,7 +462,10 @@
                                                 <span class=""></span> Reserved
                                             </div>
 
-                                            <form id="booking-form" method="post" style="display: none;">
+                                            <form target="_blank" id="booking-form"
+                                                  action="{{url('counter-management/booking/confirm')}}" method="post"
+                                                  style="display: none;">
+                                                {{csrf_field()}}
                                                 <div class="slected-seat">
                                                     <h5>Selected Seat</h5>
                                                     <div class="selected-seat-list"></div>
@@ -457,9 +473,38 @@
                                                 <div class="ticket-amount">
                                                     <span>amount :</span><span class="total-amount"></span>
                                                 </div>
+
+                                                <div class="form-group">
+                                                    <label for="payment-mode">Payment Mode</label>
+                                                        <select name="payment_method" id="payment-method" class="form-control">
+                                                            <option value="Cash">Cash</option>
+                                                            <option value="Credit Card">Credit Card</option>
+                                                            <option value="Debit Card">Debit Card</option>
+                                                        </select>
+                                                    <span class="payment-mode-error"></span>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label for="customer-name">Customer Name</label>
+                                                    <input type="text" class="form-control" id="customer-name" name="customer_name">
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label for="customer-pan-num">Customer Name</label>
+                                                    <input type="text" class="form-control" id="customer-pan-num" name="customer_pan_num">
+                                                </div>
+
                                                 <div class="tkt-book-btn">
                                                     <input type="submit" class="btn btn-primary" value="Book Now">
                                                 </div>
+                                                <input type="hidden" name="screen_id" value="{{$screen->id}}">
+                                                <input type="hidden" name="movie_id" value="{{$movie->id}}">
+                                                <input type="hidden" name="show_date" value="{{$date}}">
+                                                <input type="hidden" name="show_time" value="{{$time}}">
+                                                <input type="hidden" name="schedule_id" value="{{$schedule->id}}">
+                                                <input type="hidden" name="company_name" value="{{$companyName}}">
+                                                <input type="hidden" name="company_display_name" value="{{$companyDisplayName}}">
+                                                <input type="hidden" name="company_address" value="{{$companyAddress}}">
                                             </form>
                                         </div>
                                     </div>
@@ -478,6 +523,19 @@
 @section('scripts')
     {{--loading modal script--}}
     <script>
+        var formSubmitted = false;
+        window.onbeforeunload = function () {
+            if (!formSubmitted)
+                return 'Are you sure you want to navigate away from this page?';
+        };
+
+
+        $('form#booking-form').submit(function () {
+            formSubmitted = true;
+            window.location.reload();
+        });
+
+
         function openModal() {
             document.getElementById('load-modal').style.display = 'block';
             document.getElementById('load-fade').style.display = 'block';
@@ -509,7 +567,11 @@
         var counter_id = "{{\Illuminate\Support\Facades\Auth::guard('counter')->user()->id}}";
 
         var gotSeatsNotMine = [];
+        var uniqueGotSeatsNotMine = [];
         var gotSeatsMine = [];
+        var uniqueGotSeatsMine = [];
+        var soldSeats = [];
+        var uniqueSoldSeats = [];
 
         firebase.database().ref('temporary_reserved_seats/').on('value', function (snapshot) {
             $(document).find('.uniqueHoldId').remove();
@@ -529,25 +591,46 @@
                 }
             }
 
-            gotSeatsMine = $.unique(gotSeatsMine);
-            gotSeatsNotMine = $.unique(gotSeatsNotMine);
-            $(document).find('td.seat').each(function(){
-                if(!$(this).hasClass('inactiveSeat'))
-                {
-                    if($.inArray($(this).attr('title'), gotSeatsMine) != -1)
-                    {
-                        $(this).removeClass('reserved-seat').removeClass('sold-seat').removeClass('available-seat').addClass('selected-seat');
-                    }else if($.inArray($(this).attr('title'), gotSeatsNotMine) != -1)
-                    {
-                        $(this).removeClass('selected-seat').removeClass('sold-seat').removeClass('available-seat').addClass('reserved-seat');
-                    }else{
-                        $(this).removeClass('selected-seat').removeClass('sold-seat').removeClass('reserved-seat').addClass('available-seat');
+            uniqueGotSeatsMine = $.unique(gotSeatsMine);
+            uniqueGotSeatsNotMine = $.unique(gotSeatsNotMine);
+            $(document).find('td.seat').each(function () {
+                if (!$(this).hasClass('inactiveSeat')) {
+                    if (!$(this).hasClass('sold-seat')) {
+                        if ($.inArray($(this).attr('title'), uniqueGotSeatsMine) != -1) {
+                            $(this).removeClass('reserved-seat').removeClass('sold-seat').removeClass('available-seat').addClass('selected-seat');
+                        } else if ($.inArray($(this).attr('title'), uniqueGotSeatsNotMine) != -1) {
+                            $(this).removeClass('selected-seat').removeClass('sold-seat').removeClass('available-seat').addClass('reserved-seat');
+                        } else {
+                            $(this).removeClass('selected-seat').removeClass('sold-seat').removeClass('reserved-seat').addClass('available-seat');
+                        }
                     }
                 }
 
             });
+        });
+
+        firebase.database().ref('counter_sells/').on('value', function (snapshot) {
+            sold = snapshot.val();
+            console.log(sold);
+            for (var prop in sold) {
+                if (sold[prop]['screen_id'] == screen_id && sold[prop]['movie_id'] == movie_id && sold[prop]['show_date'] == show_date && sold[prop]['show_time'] == show_time) {
+                    soldSeats.push(sold[prop]['seat_name']);
+                }
+            }
+
+
+            uniqueSoldSeats = $.unique(soldSeats);
+            console.log(uniqueSoldSeats);
+            $(document).find('td.seat').each(function () {
+                if (!$(this).hasClass('inactiveSeat')) {
+                    if ($.inArray($(this).attr('title'), uniqueSoldSeats) != -1) {
+                        $(this).removeClass('reserved-seat').removeClass('selected-seat').removeClass('available-seat').addClass('sold-seat');
+                    }
+                }
+            });
             closeModal();
         });
+
     </script>
     {{--firebase script--}}
     <script>
@@ -559,11 +642,16 @@
                 if ($(this).hasClass('reserved-seat')) {
                     return false;
                 }
+
+                if ($(this).hasClass('sold-seat')) {
+                    return false;
+                }
                 openModal();
 
                 if ($(this).hasClass('available-seat')) {
                     var price = $(this).data('categoryprice');
                     var seat = $(this).attr('title');
+                    var seatCategory = $(this).data('categoryname');
                     var process = 'yes';
                     var dataToSend = {
                         screen_id: "{{$_GET['screen']}}",
@@ -594,6 +682,16 @@
                                 });
                                 process = 'no';
                                 closeModal();
+                            } else if (data.status == 'sold') {
+                                alertify.alert('This seat has been sold.');
+                                $('.available-seat').each(function () {
+                                    if ($.inArray($(this).attr('title'), data.soldSeats) != -1) {
+                                        $(this).removeClass('available-seat');
+                                        $(this).addClass('sold-seat');
+                                    }
+                                });
+                                process = 'no';
+                                closeModal();
                             } else {
                                 countSelectedSeat++;
                                 $('form').append('<input type="hidden" class="uniqueHoldId" name="uniqueHoldId[]" value="' + data.unique_hold_id + '">');
@@ -605,7 +703,7 @@
                                 closeModal();
                             }
                         }, error: function () {
-                            alerify.alert('Oops ! something went wrong. Please Try Again.');
+                            alertify.alert('Oops ! something went wrong. Please Try Again.');
                             closeModal();
                         }
                     });
@@ -617,10 +715,12 @@
                         if ($('div.selected-seat-list').html() == '') {
                             $('div.selected-seat-list').html('<span>' + seat + '</span>');
                             $('span.total-amount').html(price);
-                            $('form').find('input.seatChoosed').remove();
+//                            $('form').find('input.seatChoosed').remove();
                             $('form').find('input.noOfSeatsChoosed').remove();
                             $('form').find('input.totalPriceOfTic').remove();
-                            $('form').append('<input type="hidden" class="seatChoosed" name="seatChoosed" value="' + seat + '">');
+                            $('form').append('<input type="hidden" id="choosed-seat-name-' + seat + '" class="seatChoosedName" name="seatChoosedName[]" value="' + seat + '">');
+                            $('form').append('<input type="hidden" id="choosed-seat-price-' + seat + '" class="seatChoosedPrice" name="seatChoosedPrice[]" value="' + price + '">');
+                            $('form').append('<input type="hidden" id="choosed-seat-category-' + seat + '" class="seatChoosedCategory" name="seatChoosedCategory[]" value="' + seatCategory + '">');
                             $('form').append('<input type="hidden" class="noOfSeatsChoosed" name="noOfSeatsChoosed" value="' + $('td.selected-seat').length + '">');
                             $('form').append('<input type="hidden" class="totalPriceOfTic" name="totalPriceOfTic" value="' + price + '">');
                         } else {
@@ -628,6 +728,7 @@
                             $('div.selected-seat-list').children('span').each(function () {
                                 setArr.push($(this).text());
                             });
+
 
                             var calculatedPrice = $('span.total-amount').text();
                             var totAmt = parseFloat(calculatedPrice) + parseFloat(price);
@@ -640,10 +741,11 @@
                             $('div.selected-seat-list').html(html);
                             $('span.total-amount').html(totAmt);
 
-                            $('form').find('input.seatChoosed').remove();
                             $('form').find('input.noOfSeatsChoosed').remove();
                             $('form').find('input.totalPriceOfTic').remove();
-                            $('form').append('<input type="hidden" class="seatChoosed" name="seatChoosed" value="' + setArr.join(',') + '">');
+                            $('form').append('<input type="hidden" id="choosed-seat-name-' + seat + '" class="seatChoosedName" name="seatChoosedName[]" value="' + seat + '">');
+                            $('form').append('<input type="hidden" id="choosed-seat-price-' + seat + '" class="seatChoosedPrice" name="seatChoosedPrice[]" value="' + price + '">');
+                            $('form').append('<input type="hidden" id="choosed-seat-category-' + seat + '" class="seatChoosedCategory" name="seatChoosedCategory[]" value="' + seatCategory + '">');
                             $('form').append('<input type="hidden" class="noOfSeatsChoosed" name="noOfSeatsChoosed" value="' + $('td.selected-seat').length + '">');
                             $('form').append('<input type="hidden" class="totalPriceOfTic" name="totalPriceOfTic" value="' + totAmt + '">');
                         }
@@ -653,6 +755,7 @@
                 } else if ($(this).hasClass('selected-seat')) {
                     openModal();
                     var price = $(this).data('categoryprice');
+                    var seatCategory = $(this).data('categoryname');
                     var seat = $(this).attr('title');
 
                     var dataToSend = {
@@ -695,14 +798,17 @@
                         }
                         $('div.selected-seat-list').html(html);
                         $('span.total-amount').html(totAmt);
-                        $('form').find('input.seatChoosed').remove();
+                        $('form').find('input#choosed-seat-name-' + seat).remove();
+                        $('form').find('input#choosed-seat-price-' + seat).remove();
+                        $('form').find('input#choosed-seat-category-' + seat).remove();
                         $('form').find('input.noOfSeatsChoosed').remove();
                         $('form').find('input.totalPriceOfTic').remove();
-                        $('form').append('<input type="hidden" class="seatChoosed" name="seatChoosed" value="' + setArr.join(', ') + '">');
                         $('form').append('<input type="hidden" class="noOfSeatsChoosed" name="noOfSeatsChoosed" value="' + $('.selected-seat').length + '">');
                         $('form').append('<input type="hidden" class="totalPriceOfTic" name="totalPriceOfTic" value="' + totAmt + '">');
                     } else {
-                        $('form').find('input.seatChoosed').remove();
+                        $('form').find('input.seatChoosedName').remove();
+                        $('form').find('input.seatChoosedPrice').remove();
+                        $('form').find('input.seatChoosedCategory').remove();
                         $('form').find('input.noOfSeatsChoosed').remove();
                         $('form').find('input.totalPriceOfTic').remove();
                         $('div.selected-seat-list').html('');
@@ -757,9 +863,8 @@
                         });
                     }
                 }
-                {{--$.session.set("{{$screenDetail->id.$movieDetail->id.$choosedDate.$choosedTime}}" + "minutesRemaining", minutes);--}}
-                {{--$.session.set("{{$screenDetail->id.$movieDetail->id.$choosedDate.$choosedTime}}" + "secondsRemaining", seconds);--}}
             }
         }
+
     </script>
 @stop
