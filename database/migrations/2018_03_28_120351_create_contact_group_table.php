@@ -13,7 +13,7 @@ class CreateContactGroupTable extends Migration
      */
     public function up()
     {
-        Schema::create('contact_group', function (Blueprint $table) {
+        Schema::create('contact_group_tbl', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('contact_id');
             $table->integer('group_id');
@@ -29,6 +29,6 @@ class CreateContactGroupTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('contact_group');
+        Schema::dropIfExists('contact_group_tbl');
     }
 }

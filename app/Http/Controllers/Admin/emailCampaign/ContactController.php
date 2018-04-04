@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin\smsCampaign;
+namespace App\Http\Controllers\Admin\emailCampaign;
 
 use Illuminate\Contracts\Logging\Log;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -13,9 +13,9 @@ use Carbon\Carbon;
 
 use App\Library\AjaxResponse;
 
-use App\Models\Contact;
-use App\Models\Group;
-use App\Models\ContactGroup;
+use App\EmailContact;
+use App\EmailGroup;
+use App\EmailContactGroup;
 use App\Http\Requests\ContactRequest;
 use App\Http\Requests\ContactImport;
 
@@ -44,14 +44,14 @@ class ContactController extends Controller
         if (Session::has('insertedIds')) {
 
             $contactIds = json_decode(Session::get('insertedIds'));
-            $contacts = Contact::whereIn('id', $contactIds)->get();
+            $contacts = EmailContact::whereIn('id', $contactIds)->get();
             Session::forget('insertedIds');
         }
         //
-           $groups = Group::where('admin_id', Auth::guard('admin')->user()->id)->get();
-          $contact = Contact::where('admin_id', Auth::guard('admin')->user()->id)->paginate(20);
+           $groups = EmailGroup::where('admin_id', Auth::guard('admin')->user()->id)->get();
+          $contact = EmailContact::where('admin_id', Auth::guard('admin')->user()->id)->paginate(20);
 
-        return view('admin.smsCampaign.contacts.index')->with(['items' => $contact,'contacts' => $contacts, 'groups' => $groups]);
+        return view('admin.email-marketing.contacts.index')->with(['items' => $contact,'contacts' => $contacts, 'groups' => $groups]);
     }
 
     /**
@@ -63,8 +63,8 @@ class ContactController extends Controller
     {
 
         // Get the groups
-          $groups = Group::where('admin_id', Auth::guard('admin')->user()->id)->select('name', 'id')->get();
-        return view('admin.smsCampaign.contacts.create', ['groups' => $groups]);
+          $groups = EmailGroup::where('admin_id', Auth::guard('admin')->user()->id)->select('name', 'id')->get();
+        return view('admin.email-marketing.contacts.create', ['groups' => $groups]);
     }
 
     /**
@@ -73,28 +73,32 @@ class ContactController extends Controller
      * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function store(ContactRequest $request)
+    public function store(Request $request)
     {
-        // Get all inputs
-             $input = $request->all();
-
-            $contactId = Contact::insertGetId([
-            'admin_id' => Auth::guard('admin')->user()->id,
-            'first_name' => $input['first_name'],
-            'last_name' => $input['last_name'],
-            'phone' => $input['phone'],
-            'created_at' => Carbon::now(),
-            'updated_at' => Carbon::now(),
+            $this->validate($request, [
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'email' => 'required | unique:emailcontacts_tbl',
+            'group' => 'required'
         ]);
+            $id=\Auth::guard('admin')->id();
+            $data = array(
+            'first_name'=>$request->first_name,
+            'last_name'=>$request->last_name,
+            'email'=>$request->email,
+            'admin_id'=>$id
+        ); 
+        $contactId=$request->email;     
+        EmailContact::create($data);
+        $emailcontact_id =EmailContact::where('email',$contactId)->first()->id;
+        $emailgroup_id=$request->group;
         // Insert group
-        if ($request->has('group_id')) {
-            ContactGroup::create([
-                'group_id' => $input['group_id'],
-                'contact_id' => $contactId
-            ]);
+        if ($request->has('group')) {
+            $emailcontact =EmailContact::find($emailcontact_id);
+            $emailcontact->groups()->attach($emailgroup_id);
         }
         Session::flash('success',"Contact successfully added");
-        return redirect('admin/box-office/smsCampaigns/contact');
+        return redirect('admin/box-office/email-marketing/emailcontact');
     }
 
     /**
@@ -105,9 +109,8 @@ class ContactController extends Controller
      */
     public function show($id)
     {
-        //
-        $contact = Contact::find($id);
-        return view('users.contacts.view')->with(['item' => $contact]);
+        $contact = EmailContact::find($id);
+        return view('admin.email-marketing.Group.edit')->with(['item' => $contact]);
     }
 
     /**
@@ -118,28 +121,24 @@ class ContactController extends Controller
      */
     public function edit($id)
     {
-            $admin_id=Auth::guard('admin')->user()->id;
-        $groups = Group::where('admin_id', Auth::guard('admin')->user()->id)->get();
+       
+        // $admin_id=Auth::guard('admin')->user()->id;
+        //$groups = EmailGroup::where('admin_id', Auth::guard('admin')->user()->id)->get();
 
         $sqlForSelected = "
-            select groups.name, contact_group.id as contact_group_id
-            from groups
-            inner join contact_group on groups.id = contact_group.group_id
-            where groups.admin_id = $admin_id
-            and contact_group.contact_id = $id
+           SELECT `emailcontacts_tbl`.*, `emailgroup_tbl`.* FROM `emailgroup_tbl` LEFT JOIN `emailcontact_emailgroup_tbl` ON `emailcontact_emailgroup_tbl`.`emailgroup_id` = `emailgroup_tbl`.`id` LEFT JOIN `emailcontacts_tbl` ON `emailcontact_emailgroup_tbl`.`emailcontact_id` = `emailcontacts_tbl`.`id` WHERE (`emailcontacts_tbl`.id=$id)
         ";
-        $selectedGroups = \DB::select(\DB::raw($sqlForSelected));
-
+       
+        $emailcontact = \DB::select(\DB::raw($sqlForSelected));
         $sqlForNotSelected = "
-            select groups.name, groups.id
-            from groups
-            where groups.id not in (select group_id from contact_group where contact_group.contact_id = $id)
-            and groups.admin_id = $admin_id
+            SELECT `emailgroup_tbl`.`id`, `emailgroup_tbl`.`name`
+            FROM `emailgroup_tbl`
         ";
-        $notSelectedGroups = \DB::select(\DB::raw($sqlForNotSelected));
+        $groups = \DB::select(\DB::raw($sqlForNotSelected));
+        dd($emailcontact);
 
-         $contact = Contact::find($id);
-        return view('admin.smsCampaign.contacts.edit')->with(['item' => $contact, 'groups' => $groups, 'selectedGroups' => $selectedGroups, 'notSelectedGroups' => $notSelectedGroups, 'contactId' => $id]);
+        //  $contact = EmailContact::find($id);
+        return view('admin.email-marketing.contacts.edit')->with(['item'=> $emailcontact,'groups'=>$groups]);
     }
 
     /**
@@ -153,7 +152,7 @@ class ContactController extends Controller
     {
          $input = $request->all();
         try {
-            Contact::where('id', $id)
+            EmailContact::where('id', $id)
                 ->where('admin_id', Auth::guard('admin')->user()->id)
                 ->update([
                     'first_name' => $input['first_name'],
@@ -161,7 +160,7 @@ class ContactController extends Controller
                     'phone' => $input['phone'],
                 ]);
             Session::flash('success', "Contact Successfully Updated");
-            return redirect('admin/box-office/smsCampaigns/contact');
+            return redirect('admin/box-office/email-marketing/contact');
         } catch (ModelNotFoundException $ex) {
             Session::flash('warning', "oops ! Something went wrong");
             return redirect()->back();
@@ -294,7 +293,7 @@ class ContactController extends Controller
         if (\File::exists(public_path($excelFile))) {
             \File::delete(public_path($excelFile));
         }
-        return redirect('admin/box-office/smsCampaigns/contact');
+        return redirect('admin/box-office/email-marketing/contact');
     }
 
     /**

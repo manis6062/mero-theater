@@ -120,10 +120,10 @@ class CounterController extends Controller
     {
         $currentStatus = CounterModel::find($request->uid)->suspend;
 
-        if ($currentStatus == 'no') {
-            $result = CounterModel::find($request->uid)->update(['suspend' => 'yes']);
+        if ($currentStatus == 'No') {
+            $result = CounterModel::find($request->uid)->update(['suspend' => 'Yes']);
         } else {
-            $result = CounterModel::find($request->uid)->update(['suspend' => 'no']);
+            $result = CounterModel::find($request->uid)->update(['suspend' => 'No']);
         }
 
         if ($result) {

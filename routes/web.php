@@ -29,11 +29,27 @@ Route::post('admin/login/validate', 'Admin\LoginController@index');
 //Route::post('admin/forgotpassword/checkemail', 'Admin\ForgotPasswordController@verifyEmail');
 
 
-Route::get('sendmail', 'Admin\EmailMarketingController@sendMail');
-Route::get('admin/email-marketing','Admin\EmailMarketingController@index');
-Route::get('admin/email-marketing/campaign','Admin\EmailMarketingController@campaignCreate');
+
+// Route for email marketing
+//Route::get('admin/box-office/email-marketing/overView','Admin\EmailMarketingController@index');
+Route::group(['prefix'=>'admin/box-office/email-marketing'],function(){
+    Route::get('/overView','Admin\EmailMarketingController@index');
+    
+    Route::get('/sendmail', 'Admin\EmailMarketingController@sendMail');
+    Route::get('/campaign','Admin\EmailMarketingController@campaignCreate');
+
+    // Route for Email-marketing Contact
+    Route::resource('emailcontact','Admin\emailCampaign\ContactController');
+
+    // Route for Email-marketing Contact group
+    Route::resource('emailgroup', 'Admin\emailCampaign\GroupController');
+    Route::post('emailgroup/mass-delete', 'Admin\emailCampaign\GroupController@postMassDelete'); 
+});
+// Route for email marketing
+
 
 Route::group(['prefix'=>'forgot-password'],function(){
+
     Route::post('/checkemail', 'Admin\ForgotPasswordController@verifyEmail');
     Route::post('/getLink','Admin\ForgotPasswordController@resetPassword');
     Route::get('/password-reset','Admin\ForgotPasswordController@verifyURL');

@@ -70,9 +70,7 @@ public function verifyURL(Request $request){
     $urlTime = ForgotPassword::where('token',$passwordToken)->first()->created_at;
     $current =Carbon::now();
     $urlDateTime=Carbon::parse($urlTime);
-    //dd($current->diffIndays($urlDateTime));
     if($current->diffInminutes($urlDateTime)<30 && $current->diffIndays($urlDateTime)==0 ){
-        // $this->getNewPassword($passwordToken);
         return view('admin.newpassword',compact('passwordToken'));
     }else{
        return redirect('admin')->with('message','your link has been expired. Please request for new url');

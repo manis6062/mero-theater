@@ -31,6 +31,6 @@ class EmailMarketingController extends Controller
             'category'      => 'category',
         ];
 
-        Mail::to('es.rajendra.prajapati@gmail.com')->send(new TheaterMail($data));
+        Mail::to('es.binod.paneru@gmail.com')->send(new TheaterMail($data));
     }
 }
