@@ -358,6 +358,13 @@ Route::group(['prefix'=>'admin','middleware'=> 'admin'], function(){
      Route::group(['prefix'=>'settings'], function(){
        Route::get('/', 'Admin\SettingsController@index');
     });
+
+
+    //    Route for Sales Management
+    Route::group(['prefix'=>'sales-management/sold-reports', 'namespace'=>'Admin\SalesManagement'], function(){
+        Route::get('/', 'SoldController@index');
+        Route::get('view-seat', 'SoldController@viewSeat');
+    });
 });
 
 

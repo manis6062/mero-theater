@@ -5,6 +5,12 @@ $(function(){
 	});
 });
 
+$(function(){
+    $('#sold-report-table').DataTable({
+        'iDisplayLength': 10,
+    });
+});
+
 
 // Vertical Scroll
 $(function(){

@@ -34,6 +34,11 @@ class IndexController extends Controller
 
         if($check)
         {
+            if(Auth::guard('counter')->user()->suspend == 'Yes')
+            {
+                Auth::guard('counter')->logout();
+                return redirect('counter-management')->with('error','You have been suspended  !')->withInput();
+            }
             return redirect('counter-management/dashboard');
         }
         return redirect('counter-management')->with('error','Invalid Credential  !')->withInput();

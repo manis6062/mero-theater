@@ -338,11 +338,11 @@
                                             <div class="form-group row">
                                                 <label for="content" class="col-lg-3 col-form-label form-control-label">Content</label>
                                                 <div class="col-sm-9">
-                                                    <input type="text" id="content" name="content" class="form-control"
+                                                    <input type="text" id="content" name="movie_content" class="form-control"
                                                            value="{{old('content')}}">
-                                                    @if($errors->has('content'))
+                                                    @if($errors->has('movie_content'))
                                                         <span class="help-block">
-                                                            <strong>{{$errors->first('content')}}</strong>
+                                                            <strong>{{$errors->first('movie_content')}}</strong>
                                                         </span>
                                                     @endif
                                                     <span class="content-error error help-block"></span>
@@ -492,6 +492,29 @@
                                                     <span class="language-error error help-block"></span>
                                                 </div>
                                             </div>
+
+
+                                            <div class="form-group row">
+                                                <label for="film-nationale" class="col-lg-3 col-form-label form-control-label"> Nationality<span
+                                                            class="req">*</span></label>
+                                                <div class="col-sm-3">
+                                                    <select class="custom-select" name="nationality" onfocus="removeError('nationality');">
+                                                        <option value="nepali" @if (old('nationality') == "nepali") {{ 'selected' }} @endif>
+                                                            Nepali
+                                                        </option>
+                                                        <option value="foreign" @if (old('nationality') == "foreign") {{ 'selected' }} @endif>
+                                                            Foreign
+                                                        </option>
+                                                    </select>
+                                                    @if($errors->has('nationality'))
+                                                        <span class="help-block">
+                                                            <strong>{{$errors->first('nationality')}}</strong>
+                                                        </span>
+                                                    @endif
+                                                    <span class="nationality-error error help-block"></span>
+                                                </div>
+                                            </div>
+
 
                                             <div class="form-group row">
                                                 <label for="trailerurl"
@@ -715,6 +738,11 @@
             if ($('select[name=language]').val() == '') {
                 e.preventDefault();
                 $('.language-error').html('<strong>Please enter the Movie Language.</strong>');
+            }
+
+            if ($('select[name=nationality]').val() == '') {
+                e.preventDefault();
+                $('.nationality-error').html('<strong>Please enter the Movie Nationality.</strong>');
             }
             if ($('#trailerurl').val() == '') {
                 e.preventDefault();

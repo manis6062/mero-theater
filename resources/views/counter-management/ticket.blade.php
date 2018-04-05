@@ -4,7 +4,7 @@
         <h2>Entrance Pass</h2>
 
 
-        <p>{{$dataToTicket['company_display_name']}}</p>
+        <p>{{$dataToTicket['company_name']}}</p>
 
 
         <p>{{$dataToTicket['company_address']}}</p>

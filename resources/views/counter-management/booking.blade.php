@@ -212,6 +212,8 @@
                                                                             @php $class = 'sold-seat'; @endphp
                                                                         @elseif(in_array($seatName, $temporaryReservedSeats))
                                                                             @php $class = 'reserved-seat'; @endphp
+                                                                        @elseif(in_array($seatName, $reservedSeats))
+                                                                            @php $class = 'reserved-seat'; @endphp
                                                                         @else
                                                                             @php $class = 'available-seat'; @endphp
                                                                         @endif
@@ -271,6 +273,8 @@
                                                                         @if(in_array($seatName, $soldSeats))
                                                                             @php $class = 'sold-seat'; @endphp
                                                                         @elseif(in_array($seatName, $temporaryReservedSeats))
+                                                                            @php $class = 'reserved-seat'; @endphp
+                                                                        @elseif(in_array($seatName, $reservedSeats))
                                                                             @php $class = 'reserved-seat'; @endphp
                                                                         @else
                                                                             @php $class = 'available-seat'; @endphp
@@ -340,6 +344,8 @@
                                                                             @php $class = 'sold-seat'; @endphp
                                                                         @elseif(in_array($seatName, $temporaryReservedSeats))
                                                                             @php $class = 'reserved-seat'; @endphp
+                                                                        @elseif(in_array($seatName, $reservedSeats))
+                                                                            @php $class = 'reserved-seat'; @endphp
                                                                         @else
                                                                             @php $class = 'available-seat'; @endphp
                                                                         @endif
@@ -404,6 +410,8 @@
                                                                         @if(in_array($seatName, $soldSeats))
                                                                             @php $class = 'sold-seat'; @endphp
                                                                         @elseif(in_array($seatName, $temporaryReservedSeats))
+                                                                            @php $class = 'reserved-seat'; @endphp
+                                                                        @elseif(in_array($seatName, $reservedSeats))
                                                                             @php $class = 'reserved-seat'; @endphp
                                                                         @else
                                                                             @php $class = 'available-seat'; @endphp
@@ -475,23 +483,35 @@
                                                 </div>
 
                                                 <div class="form-group">
+                                                    <label for="payment-mode">Action</label>
+                                                    <select name="action" id="action" class="form-control">
+                                                        <option value="Sell">Sell</option>
+                                                        <option value="Reserve">Reserve</option>
+                                                    </select>
+                                                    <span class="action-error"></span>
+                                                </div>
+
+                                                <div class="form-group paymentModeDiv">
                                                     <label for="payment-mode">Payment Mode</label>
-                                                        <select name="payment_method" id="payment-method" class="form-control">
-                                                            <option value="Cash">Cash</option>
-                                                            <option value="Credit Card">Credit Card</option>
-                                                            <option value="Debit Card">Debit Card</option>
-                                                        </select>
+                                                    <select name="payment_method" id="payment-method"
+                                                            class="form-control">
+                                                        <option value="Cash">Cash</option>
+                                                        <option value="Credit Card">Credit Card</option>
+                                                        <option value="Debit Card">Debit Card</option>
+                                                    </select>
                                                     <span class="payment-mode-error"></span>
                                                 </div>
 
                                                 <div class="form-group">
                                                     <label for="customer-name">Customer Name</label>
-                                                    <input type="text" class="form-control" id="customer-name" name="customer_name">
+                                                    <input type="text" class="form-control" id="customer-name"
+                                                           name="customer_name">
                                                 </div>
 
                                                 <div class="form-group">
-                                                    <label for="customer-pan-num">Customer Name</label>
-                                                    <input type="text" class="form-control" id="customer-pan-num" name="customer_pan_num">
+                                                    <label for="customer-pan-num">Customer Pan No.</label>
+                                                    <input type="text" class="form-control" id="customer-pan-num"
+                                                           name="customer_pan_num">
                                                 </div>
 
                                                 <div class="tkt-book-btn">
@@ -503,7 +523,8 @@
                                                 <input type="hidden" name="show_time" value="{{$time}}">
                                                 <input type="hidden" name="schedule_id" value="{{$schedule->id}}">
                                                 <input type="hidden" name="company_name" value="{{$companyName}}">
-                                                <input type="hidden" name="company_display_name" value="{{$companyDisplayName}}">
+                                                <input type="hidden" name="company_display_name"
+                                                       value="{{$companyDisplayName}}">
                                                 <input type="hidden" name="company_address" value="{{$companyAddress}}">
                                             </form>
                                         </div>
@@ -532,7 +553,10 @@
 
         $('form#booking-form').submit(function () {
             formSubmitted = true;
-            window.location.reload();
+            if ($('select#action').val() == 'Sell')
+                window.location.reload();
+            else
+                $('form').removeAttr('target');
         });
 
 
@@ -572,6 +596,8 @@
         var uniqueGotSeatsMine = [];
         var soldSeats = [];
         var uniqueSoldSeats = [];
+        var reservedSeats = [];
+        var uniqueReservedSeats = [];
 
         firebase.database().ref('temporary_reserved_seats/').on('value', function (snapshot) {
             $(document).find('.uniqueHoldId').remove();
@@ -595,7 +621,7 @@
             uniqueGotSeatsNotMine = $.unique(gotSeatsNotMine);
             $(document).find('td.seat').each(function () {
                 if (!$(this).hasClass('inactiveSeat')) {
-                    if (!$(this).hasClass('sold-seat')) {
+                    if (!$(this).hasClass('sold-seat') && !$(this).hasClass('reserved-seat')) {
                         if ($.inArray($(this).attr('title'), uniqueGotSeatsMine) != -1) {
                             $(this).removeClass('reserved-seat').removeClass('sold-seat').removeClass('available-seat').addClass('selected-seat');
                         } else if ($.inArray($(this).attr('title'), uniqueGotSeatsNotMine) != -1) {
@@ -628,6 +654,27 @@
                     }
                 }
             });
+        });
+
+        firebase.database().ref('counter_reservations/').on('value', function (snapshot) {
+            sold = snapshot.val();
+            console.log(sold);
+            for (var prop in sold) {
+                if (sold[prop]['screen_id'] == screen_id && sold[prop]['movie_id'] == movie_id && sold[prop]['show_date'] == show_date && sold[prop]['show_time'] == show_time) {
+                    reservedSeats.push(sold[prop]['seat_name']);
+                }
+            }
+
+
+            uniqueReservedSeats = $.unique(reservedSeats);
+            console.log(uniqueReservedSeats);
+            $(document).find('td.seat').each(function () {
+                if (!$(this).hasClass('inactiveSeat')) {
+                    if ($.inArray($(this).attr('title'), uniqueReservedSeats) != -1) {
+                        $(this).removeClass('selected-seat').removeClass('available-seat').addClass('reserved-seat');
+                    }
+                }
+            });
             closeModal();
         });
 
@@ -637,6 +684,11 @@
         if ("{{Carbon\Carbon::now()->gt(\Carbon\Carbon::parse($_GET['date'].' '.$_GET['time']))}}") {
             alertify.alert('This is a past show. You can only view the reports of seats.');
         } else {
+                    @if($movie->nationality == 'nepali')
+            var addTax = 0.13;
+                    @else
+            var addTax = 0.28;
+                    @endif
             var countSelectedSeat = 0;
             $(document).find('td.seat').on('click', function () {
                 if ($(this).hasClass('reserved-seat')) {
@@ -650,6 +702,7 @@
 
                 if ($(this).hasClass('available-seat')) {
                     var price = $(this).data('categoryprice');
+                    price = parseFloat(price) + parseFloat(addTax * price);
                     var seat = $(this).attr('title');
                     var seatCategory = $(this).data('categoryname');
                     var process = 'yes';
@@ -673,6 +726,17 @@
 
                             if (data.status == 'blocked') {
                                 alertify.alert('This seat is under process.');
+                                $('.available-seat').each(function () {
+
+                                    if ($.inArray($(this).attr('title'), data.seats) != -1) {
+                                        $(this).removeClass('available-seat');
+                                        $(this).addClass('reserved-seat');
+                                    }
+                                });
+                                process = 'no';
+                                closeModal();
+                            } else if (data.status == 'reserved') {
+                                alertify.alert('This seat has been reserved.');
                                 $('.available-seat').each(function () {
 
                                     if ($.inArray($(this).attr('title'), data.seats) != -1) {
@@ -755,6 +819,7 @@
                 } else if ($(this).hasClass('selected-seat')) {
                     openModal();
                     var price = $(this).data('categoryprice');
+                    price = parseFloat(price) + parseFloat(addTax * price);
                     var seatCategory = $(this).data('categoryname');
                     var seat = $(this).attr('title');
 
@@ -865,6 +930,14 @@
                 }
             }
         }
+
+        $(document).on('change', 'select#action', function () {
+            if ($(this).val() == 'Reserve') {
+                $('.paymentModeDiv').hide();
+            } else {
+                $('.paymentModeDiv').show();
+            }
+        });
 
     </script>
 @stop

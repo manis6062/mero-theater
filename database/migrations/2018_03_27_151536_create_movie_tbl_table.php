@@ -34,6 +34,7 @@ class CreateMovieTblTable extends Migration
             $table->string('artists_from_db', 1000)->nullable();
             $table->string('rating', 100);
             $table->string('language', 100);
+            $table->string('nationality', 100);
             $table->timestamps();
         });
     }

@@ -58,6 +58,7 @@ class MovieController extends Controller
             'trailerurl' => 'nullable|url',
             'rating' => 'required',
             'language' => 'required',
+            'nationality' => 'required',
         ]);
 
 		$data = array(
@@ -67,7 +68,7 @@ class MovieController extends Controller
             'genre'=>$request->genre,
             'distributor'=>$request->distributor,
             'openingdate'=>$request->openingdate,
-            'content'=>$request->content,
+            'content'=>$request->movie_content,
             'duration'=>$request->duration,
             'isrestricted'=>$request->isrestricted,
             'displaysequence'=>$request->displaysequence,
@@ -76,7 +77,8 @@ class MovieController extends Controller
             'status'=>$request->status,
             'direct_artist'=>$request->directartist,
             'rating'=>$request->rating,
-            'language'=>$request->language
+            'language'=>$request->language,
+            'nationality'=>$request->nationality,
             );
 
         if ($request->hasFile('image')) {
@@ -160,6 +162,7 @@ class MovieController extends Controller
             'trailerurl' => 'nullable|url',
              'rating' => 'required',
             'language' => 'required',
+            'nationality' => 'required',
         ]);
 
         $data = array(
@@ -169,7 +172,7 @@ class MovieController extends Controller
             'genre'=>$request->genre,
             'distributor'=>$request->distributor,
             'openingdate'=>$request->openingdate,
-            'content'=>$request->content,
+            'content'=>$request->movie_content,
             'duration'=>$request->duration,
             'isrestricted'=>$request->isrestricted,
             'displaysequence'=>$request->displaysequence,
@@ -178,7 +181,8 @@ class MovieController extends Controller
             'status'=>$request->status,
             'direct_artist'=>$request->directartist,
             'rating'=>$request->rating,
-            'language'=>$request->language
+            'language'=>$request->language,
+            'nationality'=>$request->nationality,
             );
 
         if($request->has('artist'))
