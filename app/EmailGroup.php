@@ -13,6 +13,7 @@ class EmailGroup extends Model
         return $this->belongsToMany('App\EmailContact','EmailContact_EmailGroup_tbl')->withTimestamps();
     }
 
+
     public function countContact(){
         return $this->hasMany('App\EmailContactGroup', 'emailgroup_id')->count();
     }

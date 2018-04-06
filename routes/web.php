@@ -32,7 +32,7 @@ Route::post('admin/login/validate', 'Admin\LoginController@index');
 
 // Route for email marketing
 //Route::get('admin/box-office/email-marketing/overView','Admin\EmailMarketingController@index');
-Route::group(['prefix'=>'admin/box-office/email-marketing'],function(){
+Route::group(['prefix'=>'admin/email-marketing', 'middleware'=> 'admin'],function(){
     Route::get('/overView','Admin\EmailMarketingController@index');
     
     Route::get('/sendmail', 'Admin\EmailMarketingController@sendMail');
@@ -40,10 +40,14 @@ Route::group(['prefix'=>'admin/box-office/email-marketing'],function(){
 
     // Route for Email-marketing Contact
     Route::resource('emailcontact','Admin\emailCampaign\ContactController');
+    Route::post('emailcontact/mass-delete','Admin\emailCampaign\ContactController@postMassDelete');
+    Route::post('emilcontact/importExcel','Admin\emailCampaign\ContactController@importExcel');
+
 
     // Route for Email-marketing Contact group
     Route::resource('emailgroup', 'Admin\emailCampaign\GroupController');
-    Route::post('emailgroup/mass-delete', 'Admin\emailCampaign\GroupController@postMassDelete'); 
+    Route::post('emailgroup/mass-delete', 'Admin\emailCampaign\GrouCpontroller@postMassDelete');
+      Route::post('emailcontact/add-contacts','Admin\emailCampaign\GroupController@postAddContactsToGroup'); 
 });
 // Route for email marketing
 

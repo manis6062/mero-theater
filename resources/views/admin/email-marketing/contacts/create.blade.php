@@ -89,6 +89,38 @@ span.note{
                                 <div class="artist-form">
                                     <form class="form-horizontal" role="form" method="POST" id="create-form" action="{{ route('emailcontact.store') }}">
                                     {{csrf_field()}}
+                                  
+
+                                     @if(\Session::has('emailErrorData'))
+                                    @php $validationData = \Session::get('emailErrorData');
+                                    @endphp
+                                    @if(count($validationData) > 0)
+                                    @foreach($validationData as $vd)
+                                    <span style="color: red">
+                                        <strong>Error!</strong> Email {{$vd}} is already taken.
+                                    </span>
+                                    @endforeach
+                                    @endif
+                                    @endif
+
+                                     @if(\Session::has('empty'))
+                                    @php $invalidEmail= \Session::get('empty')
+                                    @endphp
+                                    <span style="color: red">
+                                        <strong>error!</strong> Some of the fields in your excel file are empty.
+                                    </span>
+                                    @endif
+
+                                    
+
+                                    @if(\Session::has('invalidEmailData'))
+                                    @php $invalidEmail= \Session::get('invalidEmailData')
+                                    @endphp
+                                    <span style="color: red">
+                                        <strong>Message!</strong> The excel file contain invalid emails
+                                    </span>
+                                    @endif
+
                                     <div class="form-group row">
                                         <label class="col-lg-3 col-form-label form-control-label">First Name<span class="req">*</span></label>
                                         <div class="col-lg-9">
@@ -163,7 +195,7 @@ span.note{
                                     </div>
                                 </div>
                             </form>
-                            <form action="{{url('admin/box-office/email-marketing/emailcontact/import/xlsx')}}" class="form-horizontal" id="import-form" method="post"  >
+                            <form action="{{url('admin/email-marketing/emilcontact/importExcel')}}" class="form-horizontal" id="import-form" method="post"  enctype="multipart/form-data">
                                 {{csrf_field()}}
                                 <div class="form-group row">
                                     <label class="col-lg-3 col-form-label form-control-label">Contact File List<span class="req">*</span></label>

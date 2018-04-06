@@ -42,7 +42,8 @@
                         <h4><strong>List of contacts</strong></h4>
                         <a href="{{ url('admin/box-office/smsCampaigns/contact/create') }}" class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span> Add Contact</a>
 
-                        <a href="#" class="btn btn-danger" id="deleteCheckedContactsButton" style="display: none;"><span class="glyphicon glyphicon-remove"></span> Delete Contact</a>
+                         <a href="#" class="btn btn-danger" id="deleteCheckedContactsButton" style="display: none;"><span
+                        class="glyphicon glyphicon-remove"></span> Delete Groups</a>
                     </div>
                     <!-- /.box-header -->
                     <div class="box-body table-responsive" style="padding: 10px;">

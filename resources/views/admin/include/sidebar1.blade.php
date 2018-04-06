@@ -136,7 +136,7 @@
                     </a>
                     <ul aria-expanded="false" class="collapse">
                         <li>
-                            <a href="{{url('admin/box-office/email-marketing/overView')}}">
+                            <a href="{{url('admin/email-marketing/overView')}}">
 										<span class="has-icon">
 											<i class="icon-eye-plus"></i>
 										</span>
@@ -144,7 +144,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="{{url('admin/box-office/email-marketing/emailcontact')}}">
+                            <a href="{{url('admin/email-marketing/emailcontact')}}">
 										<span class="has-icon">
 											<i class="icon-address-book"></i>
 										</span>
@@ -152,7 +152,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="{{url('admin/box-office/email-marketing/emailgroup')}}">
+                            <a href="{{url('admin/email-marketing/emailgroup')}}">
 										<span class="has-icon">
 											<i class="icon-users"></i>
 										</span>
@@ -160,7 +160,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="{{url('admin/box-office/email-marketing/campaign')}}">
+                            <a href="{{url('admin/email-marketing/campaign')}}">
 
 										<span class="has-icon">
 											<i class="icon-announcement"></i>

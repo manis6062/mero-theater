@@ -64,7 +64,7 @@ span.note{
                         <i class="icon-border_outer"></i>
                     </div>
                     <div class="page-title">
-                        <h5>Create New Group</h5>
+                        <h5>Update Group</h5>
                         <h6 class="sub-heading">Welcome to Merotheatre Admin</h6>
                     </div>
                 </div>

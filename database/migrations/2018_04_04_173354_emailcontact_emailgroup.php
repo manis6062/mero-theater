@@ -16,9 +16,11 @@ class EmailcontactEmailgroup extends Migration
         Schema::create('emailcontact_emailgroup_tbl', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('emailcontact_id');
-            $table->foreign('emailcontact_id')->references('id')->on('emailcontacts_tbl');
+            $table->foreign('emailcontact_id')->references('id')->on('emailcontacts_tbl')->onDelete('cascade')
+                ->onUpdate('cascade');;
             $table->unsignedInteger('emailgroup_id');
-            $table->foreign('emailgroup_id')->references('id')->on('emailgroup_tbl');
+            $table->foreign('emailgroup_id')->references('id')->on('emailgroup_tbl')->onDelete('cascade')
+                ->onUpdate('cascade');;
             $table->timestamps();
 
         });

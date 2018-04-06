@@ -70,7 +70,7 @@ class GroupController extends Controller
 
         $a=EmailGroup::create($input);
         Session::flash('success', config('constant.SUCCESS_CREATE'));
-        return redirect('admin/box-office/email-marketing/emailgroup');
+        return redirect('admin/email-marketing/emailgroup');
     }
 
     /**
@@ -81,17 +81,14 @@ class GroupController extends Controller
      */
     public function show($id)
     {
-        $allContacts = $this->contactRepo->getAll( Auth::guard('admin')->user()->id);
-
-        $group = EmailGroup::with('emailcontacts')->where('id', $id)->where('admin_id',Auth::guard('admin')->user()->id)->first();
-        if($group){
-            $contactsNotAssignedInGroup = $allContacts->diff($group->emailcontacts);
-
-            $contactsNotAssignedInGroup->all();
-
-            return view('admin.email-marketing.Group.view')->with(['item' => $group, 'groupId' => $id, 'allContacts' => $contactsNotAssignedInGroup]);
+        $group = EmailGroup::find($id)->id;
+        $contactIds = EmailContactGroup::where('emailgroup_id', $id)->pluck('emailcontact_id');
+        $filteredcontact=EmailContact::whereNotIn('id',$contactIds)->get();
+        $contactEmail = collect();
+        foreach ($contactIds as $contactId) {
+            $contactEmail->push(EmailContact::find($contactId));
         }
-        return redirect()->back();
+         return view('admin.email-marketing.Group.view')->with(['items'=>$contactEmail,'otherContacts'=>$filteredcontact,'groupId'=>$group]);
 
 
 
@@ -136,7 +133,7 @@ class GroupController extends Controller
                     'name' => $input['name'],
                 ]);
             Session::flash('success', "Group Successfully Updated");
-            return redirect('admin/box-office/email-marketing/emailgroup');
+            return redirect('admin/email-marketing/emailgroup');
         } catch (ModelNotFoundException $ex) {
             Session::flash('warning', "Oops Something Went wrong");
             return redirect()->back();
@@ -171,9 +168,12 @@ class GroupController extends Controller
 
     public function postAddContactsToGroup(Request $request)
     {
-        if ($request->has('contacts')) {
-            $this->contactRepo->insertContactToGroup();
-
+        $emailgroup_id=$request->group_id;
+        $emailcontact_ids=$request->otherContact;
+        if ($request->has('otherContact')) {
+             foreach ($emailcontact_ids as $emailcontact_id) {
+                 $EmailContact = EmailContact::find($emailcontact_id)->groups()->attach($emailgroup_id);
+             }
             Session::flash('success', "Contacts added to group");
         } else {
             Session::flash('error', "Sorry! Error occured");

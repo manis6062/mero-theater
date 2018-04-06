@@ -87,99 +87,99 @@ span.note{
                         <div class="card">
                             <div class="card-body">
                                 <div class="artist-form">
+                                     {{ Form::model($item[0],array('route' => array('emailcontact.update', $item[0]->id), 'method' => 'PATCH')) }}
+                                        <div class="form-group row">
+                                            <label class="col-lg-3 col-form-label form-control-label">First Name<span class="req">*</span></label>
+                                            <div class="col-lg-9">
+                                                <input type="text" name="first_name" value="{{$item[0]->first_name}}" class="form-control" id="first-name"
+                                                onfocus="removeError();" placeholder="Enter first name">
+                                                @if($errors->has('first_name'))
+                                                <span class="help-block">
+                                                    <strong>
+                                                        {{$errors->first('first_name')}}
+                                                    </strong>
+                                                </span>
+                                                @endif
 
-                                    <form class="form-horizontal" role="form" method="POST" id="create-form" action="{{ route('emailcontact.store') }}">
-                                    {{csrf_field()}}
-                                    <div class="form-group row">
-                                        <label class="col-lg-3 col-form-label form-control-label">First Name<span class="req">*</span></label>
-                                        <div class="col-lg-9">
-                                            <input type="text" name="first_name" value="{{old('first_name')}}" class="form-control" id="first-name"
-                                            onfocus="removeError();" placeholder="Enter first name">
-                                            @if($errors->has('first_name'))
-                                            <span class="help-block">
-                                                <strong>
-                                                    {{$errors->first('first_name')}}
-                                                </strong>
-                                            </span>
-                                            @endif
+                                                <span class="first-name-error error help-block">   </span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-lg-3 col-form-label form-control-label">Last Name<span class="req">*</span></label>
+                                            <div class="col-lg-9">
+                                                <input type="text" name="last_name" value="{{$item[0]->last_name}}" class="form-control" id="last-name"
+                                                onfocus="removeError();" placeholder="Enter last name">
+                                                @if($errors->has('last_name'))
+                                                <span class="help-block">
+                                                    <strong>
+                                                        {{$errors->first('last_name')}}
+                                                    </strong>
+                                                </span>
+                                                @endif
+                                                <span class="last-name-error error help-block">   </span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-lg-3 col-form-label form-control-label">Email<span class="req">*</span></label>
+                                            <div class="col-lg-9">
+                                                <input type="email" name="email" value="{{$item[0]->email}}" class="form-control" id="contact-email"
+                                                onfocus="removeError();" placeholder="Enter email">
+                                                @if($errors->has('email'))
+                                                <span class="help-block">
+                                                    <strong>
+                                                        {{$errors->first('email')}}
+                                                    </strong>
+                                                </span>
+                                                @endif
+                                                <span class="contact-email-error error help-block">   </span>
+                                            </div>
+                                        </div>
 
-                                            <span class="first-name-error error help-block">   </span>
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label class="col-lg-3 col-form-label form-control-label">Last Name<span class="req">*</span></label>
-                                        <div class="col-lg-9">
-                                            <input type="text" name="last_name" value="{{old('last_name')}}" class="form-control" id="last-name"
-                                            onfocus="removeError();" placeholder="Enter last name">
-                                            @if($errors->has('last_name'))
+                                        <div class="form-group row">
+                                            <label class="col-lg-3 col-form-label form-control-label">Group<span class="req">*</span></label>
+                                            <div class="col-lg-9">
+                                               <select name="group" id="contact-group" class="form-control" onfocus="removeError();">
+                                                <option value="">Choose Group</option>
+                                                @if ($groups)
+                                                @foreach($groups as $group)
+
+                                                <option {{$group->name == $item[0]->name ? 'selected' : ''}} value="{{$group->id}}">{{$group->name}}</option>
+                                                @endforeach
+                                                @endif
+                                            </select>
+                                            @if($errors->has('group'))
                                             <span class="help-block">
                                                 <strong>
-                                                    {{$errors->first('last_name')}}
+                                                    {{$errors->first('group')}}
                                                 </strong>
                                             </span>
                                             @endif
-                                            <span class="last-name-error error help-block">   </span>
+                                            <span class="contact-group-error error help-block">   </span>
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label class="col-lg-3 col-form-label form-control-label">Email<span class="req">*</span></label>
+                                        <label class="col-lg-3 col-form-label form-control-label"></label>
                                         <div class="col-lg-9">
-                                            <input type="email" name="email" value="{{old('email')}}" class="form-control" id="contact-email"
-                                            onfocus="removeError();" placeholder="Enter email">
-                                            @if($errors->has('email'))
-                                            <span class="help-block">
-                                                <strong>
-                                                    {{$errors->first('email')}}
-                                                </strong>
-                                            </span>
-                                            @endif
-                                            <span class="contact-email-error error help-block">   </span>
+                                            <button type="submit" class="btn btn-primary">Update</button> 
                                         </div>
                                     </div>
-                                    
-                                    <div class="form-group row">
-                                        <label class="col-lg-3 col-form-label form-control-label">Group<span class="req">*</span></label>
-                                        <div class="col-lg-9">
-                                         <select name="group" id="contact-group" class="form-control" onfocus="removeError();">
-                                            <option value="">Choose Group</option>
-                                            @if ($groups)
-                                            @foreach($groups as $group)
-                                            <option value="{{$group->id}}" >{{$group->name}}</option>
-                                            @endforeach
-                                            @endif
-                                        </select>
-                                        @if($errors->has('group'))
-                                        <span class="help-block">
-                                            <strong>
-                                                {{$errors->first('group')}}
-                                            </strong>
-                                        </span>
-                                        @endif
-                                        <span class="contact-group-error error help-block">   </span>
-                                    </div>
-                                <div class="form-group row">
-                                    <label class="col-lg-3 col-form-label form-control-label"></label>
-                                    <div class="col-lg-9">
-                                        <button type="submit" class="btn btn-primary">Update</button> 
-                                    </div>
-                                </div>
-                            </form>
+                               {{ Form::close() }}
+                            </div>
+                        </div>
+                        <!-- Row end -->
+
+                    </div>
+                    <!-- END: .main-content -->
                 </div>
             </div>
-            <!-- Row end -->
-
         </div>
-        <!-- END: .main-content -->
     </div>
-</div>
-</div>
-</div>
 </div>
 <!-- END: .app-main -->
 @stop
 @section('scripts')
 <script>
-   $('#create-form').on('submit', function (e) {
+ $('#create-form').on('submit', function (e) {
     $('.error').html('');
 
     if ($('#first-name').val() == '') {
@@ -199,7 +199,7 @@ span.note{
         $('.contact-group-error').html('<strong>Please select the group.</strong>');
     }
 });
-   $('#import-form').on('submit', function (e) {
+ $('#import-form').on('submit', function (e) {
     $('.error').html('');
     if ($('#contacts-file').val() == '') {
         e.preventDefault();
@@ -210,7 +210,7 @@ span.note{
         $('.group-contact-list-error').html('<strong>Please select the group.</strong>');
     }
 });
-   function removeError() {
+ function removeError() {
     $('.error').html('');
 }
 </script>

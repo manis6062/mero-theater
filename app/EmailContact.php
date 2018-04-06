@@ -14,7 +14,6 @@ class EmailContact extends Model
      */
     protected $guarded = ['id'];
     protected $table = 'emailcontacts_tbl';
-
     /**
      * Getting groups
      */

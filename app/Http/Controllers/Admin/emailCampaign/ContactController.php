@@ -9,15 +9,14 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Session;
 use Auth;
+use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
-
 use App\Library\AjaxResponse;
-
 use App\EmailContact;
 use App\EmailGroup;
 use App\EmailContactGroup;
-use App\Http\Requests\ContactRequest;
 use App\Http\Requests\ContactImport;
+use Illuminate\Support\Facades\Input;
 
 
 class ContactController extends Controller
@@ -48,8 +47,8 @@ class ContactController extends Controller
             Session::forget('insertedIds');
         }
         //
-           $groups = EmailGroup::where('admin_id', Auth::guard('admin')->user()->id)->get();
-          $contact = EmailContact::where('admin_id', Auth::guard('admin')->user()->id)->paginate(20);
+        $groups = EmailGroup::where('admin_id', Auth::guard('admin')->user()->id)->get();
+        $contact = EmailContact::where('admin_id', Auth::guard('admin')->user()->id)->paginate(20);
 
         return view('admin.email-marketing.contacts.index')->with(['items' => $contact,'contacts' => $contacts, 'groups' => $groups]);
     }
@@ -63,9 +62,9 @@ class ContactController extends Controller
     {
 
         // Get the groups
-          $groups = EmailGroup::where('admin_id', Auth::guard('admin')->user()->id)->select('name', 'id')->get();
-        return view('admin.email-marketing.contacts.create', ['groups' => $groups]);
-    }
+      $groups = EmailGroup::where('admin_id', Auth::guard('admin')->user()->id)->select('name', 'id')->get();
+      return view('admin.email-marketing.contacts.create', ['groups' => $groups]);
+  }
 
     /**
      * Store a newly created resource in storage.
@@ -75,14 +74,14 @@ class ContactController extends Controller
      */
     public function store(Request $request)
     {
-            $this->validate($request, [
+        $this->validate($request, [
             'first_name' => 'required',
             'last_name' => 'required',
             'email' => 'required | unique:emailcontacts_tbl',
             'group' => 'required'
         ]);
-            $id=\Auth::guard('admin')->id();
-            $data = array(
+        $id=\Auth::guard('admin')->id();
+        $data = array(
             'first_name'=>$request->first_name,
             'last_name'=>$request->last_name,
             'email'=>$request->email,
@@ -98,7 +97,7 @@ class ContactController extends Controller
             $emailcontact->groups()->attach($emailgroup_id);
         }
         Session::flash('success',"Contact successfully added");
-        return redirect('admin/box-office/email-marketing/emailcontact');
+        return redirect('admin/email-marketing/emailcontact')->with('message','Update successfull.');
     }
 
     /**
@@ -121,22 +120,18 @@ class ContactController extends Controller
      */
     public function edit($id)
     {
-       
-        // $admin_id=Auth::guard('admin')->user()->id;
-        //$groups = EmailGroup::where('admin_id', Auth::guard('admin')->user()->id)->get();
 
         $sqlForSelected = "
-           SELECT `emailcontacts_tbl`.*, `emailgroup_tbl`.* FROM `emailgroup_tbl` LEFT JOIN `emailcontact_emailgroup_tbl` ON `emailcontact_emailgroup_tbl`.`emailgroup_id` = `emailgroup_tbl`.`id` LEFT JOIN `emailcontacts_tbl` ON `emailcontact_emailgroup_tbl`.`emailcontact_id` = `emailcontacts_tbl`.`id` WHERE (`emailcontacts_tbl`.id=$id)
+        SELECT `emailcontacts_tbl`.*, `emailgroup_tbl`.name FROM `emailgroup_tbl` LEFT JOIN `emailcontact_emailgroup_tbl` ON `emailcontact_emailgroup_tbl`.`emailgroup_id` = `emailgroup_tbl`.`id` LEFT JOIN `emailcontacts_tbl` ON `emailcontact_emailgroup_tbl`.`emailcontact_id` = `emailcontacts_tbl`.`id` WHERE (`emailcontacts_tbl`.id=$id)
         ";
-       
+
         $emailcontact = \DB::select(\DB::raw($sqlForSelected));
+
         $sqlForNotSelected = "
-            SELECT `emailgroup_tbl`.`id`, `emailgroup_tbl`.`name`
-            FROM `emailgroup_tbl`
+        SELECT `emailgroup_tbl`.`id`, `emailgroup_tbl`.`name`
+        FROM `emailgroup_tbl`
         ";
         $groups = \DB::select(\DB::raw($sqlForNotSelected));
-        dd($emailcontact);
-
         //  $contact = EmailContact::find($id);
         return view('admin.email-marketing.contacts.edit')->with(['item'=> $emailcontact,'groups'=>$groups]);
     }
@@ -148,24 +143,43 @@ class ContactController extends Controller
      * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function update(ContactRequest $request, $id)
+    public function update(Request $request, $id)
     {
-         $input = $request->all();
-        try {
-            EmailContact::where('id', $id)
-                ->where('admin_id', Auth::guard('admin')->user()->id)
-                ->update([
-                    'first_name' => $input['first_name'],
-                    'last_name' => $input['last_name'],
-                    'phone' => $input['phone'],
-                ]);
-            Session::flash('success', "Contact Successfully Updated");
-            return redirect('admin/box-office/email-marketing/contact');
-        } catch (ModelNotFoundException $ex) {
-            Session::flash('warning', "oops ! Something went wrong");
-            return redirect()->back();
+
+        $existingemail = EmailContact::find($id)->email;
+
+        $newemail=$request->email;
+        if($existingemail == $newemail){
+            $this->validate($request, [
+                'first_name' => 'required',
+                'last_name' => 'required',
+                'email' => 'required',
+                'group' => 'required'
+            ]);
+        }elseif ($existingemail !=$newemail){
+            $this->validate($request, [
+                'first_name' => 'required',
+                'last_name' => 'required',
+                'email' => 'required | unique:emailcontacts_tbl',
+                'group' => 'required'
+            ]);
         }
+        $data=array(
+           'first_name'=>$request->first_name,
+           'last_name'=>$request->last_name,
+           'email'=>$request->email,
+       );
+
+        try {
+         $gid=$request->group;
+         $new=EmailContact::find($id)->update($data);
+         EmailContact::find($id)->groups()->sync($gid);
+         return redirect('admin/email-marketing/emailcontact');
+     } catch (ModelNotFoundException $ex) {
+        Session::flash('warning', "oops ! Something went wrong");
+        return redirect()->back();
     }
+}
 
     /**
      * Remove the specified resource from storage.
@@ -176,61 +190,156 @@ class ContactController extends Controller
     public function destroy($id)
     {
 
-        try {
-            $contact = Contact::where('admin_id', Auth::guard('admin')->user()->id)->findOrFail($id);
-            $contact->delete();
-            $contact_grp=ContactGroup::where('contact_id',$id)->first();
-            $contact_grp->delete();
-            Session::flash('success', 'Successfully deleted contact');
-        } catch (ModelNotFoundException $e) {
-
+        $emailcontact = EmailContact::find($id);
+        $emailcontact->groups()->detach($id);
+        $contact = EmailContact::find($id)->delete();
+        if(isset($contact)){
+            return 'true';
         }
+
+        return 'false';
         return redirect()->back();
     }
 
     // Mass contact delete
     public function postMassDelete(Request $request )
     {
-        $inputs = $request->all();
+        $ids = $request->all();
+        foreach ($ids['contacts'] as $id) {
+            if($id != 'on'){
+                $emailcontact = EmailContact::find($id);
+                $emailcontact->groups()->detach($id);
+                EmailContact::find($id)->delete();
+            }
 
-        $deletedData = \DB::table('contacts')->whereIn('id', $inputs['contacts'])->where('admin_id',Auth::guard('admin')->user()->id)->delete();
-
-        return response()->json($deletedData, 200);
+        }
+        return 'true';
     }
 
     /**
      * Import contact details
      */
-    public static function ComposeContactImport($excelFile = '')
+
+    
+
+    public function importExcel(Request $request)
     {
+      $this->validate($request,[
+          'contacts_file'=> 'required',
+          'group'=>'required',
+      ]);
 
-        $insertedIds = [];
-        \Excel::load(public_path($excelFile), function ($reader) use ($excelFile, &$insertedIds) {
+      if(Input::hasFile('contacts_file')){
+          $path = Input::file('contacts_file')->getRealPath();
+          $data = Excel::load($path, function($reader){ })->get();
+          $dataToImport = [];
+          $count = 0;
+          foreach ($data as $value) {
+              if($value->getTitle() == 'Sheet1')
+              {
+                foreach ($value as $val) {
+                    $dataToImport[] = $val->toArray();
+                }
+            }
 
-            $contacts = $reader->all();
-            $contacts->toArray();
+            if($value->getTitle() == null)
+            {
+                foreach ($data as $value) {
+                    $count++;
+                    if($count <= $data->count())
+                    {
+                        $dataToImport[] = $value->toArray();
+                    }else{
+                        break;
+                    }
+
+                }
+            }
+        }
+        $emailValidationData = [];
+        if($dataToImport != null){
+            foreach ($dataToImport as $values) {
+                if(isset($values['first_name']) && isset($values['email']) && isset($values['last_name']))
+                {
+
+                    if(EmailContact::where('email', $values['email'])->first() == null )
+                        {
+                            $insert['first_name'] = $values['first_name'];
+                            $insert['email'] = $values['email'];
+                            $insert['last_name'] = $values['last_name'];
+                            $insert['admin_id']= \Auth::guard('admin')->id();
+                            if(filter_var($insert['email'],FILTER_VALIDATE_EMAIL)){
+                               $emailgroup_id=$request->group;
+                               if ($request->has('group')) {
+                                $result = EmailContact::create($insert);
+                                $emailcontact_id =EmailContact::where('email',$insert['email'])->first()->id;
+                                $emailcontact =EmailContact::find($emailcontact_id);
+                                $emailcontact->groups()->attach($emailgroup_id);
+                            }
+
+
+                        } else{
+                            return redirect('admin/email-marketing/emailcontact/create')->with('invalidEmailData', 'The excel file contain invalid email');
+                        }
+                    }else{
+                        $emailValidationData[] = $values['email'];
+                    }  
+                }else{
+                    return redirect('admin/email-marketing/emailcontact/create')->with('empty', 'Some of the fields are empty');
+                }
+// if(isset($result)){
+//     dd('Insert Record successfully.');
+// }
+            }
+        }
+
+        if(count($emailValidationData) > 0)
+        {
+            return redirect('admin/email-marketing/emailcontact/create')->with('emailErrorData', $emailValidationData)->with('emailErrorData', $emailValidationData);
+        }
+        if(count($emailValidationData) == 0)
+        {
+            return redirect('admin/email-marketing/emailcontact')->with('message','Contact have been successfully imported.');
+        }
+//return redirect::back()->withErrors(['msg', $rem]);
+//return back()->with($rem);
+
+    }else{
+
+    }
+
+}
+
+public static function ComposeContactImport($excelFile = '')
+{
+
+    $insertedIds = [];
+    \Excel::load(public_path($excelFile), function ($reader) use ($excelFile, &$insertedIds) {
+
+        $contacts = $reader->all();
+        $contacts->toArray();
 
 
             // Formating the contacts
-            foreach ($contacts as $contact) {
-                $insertedIds[] = $contact['phone'];
+        foreach ($contacts as $contact) {
+            $insertedIds[] = $contact['phone'];
 
-            }
+        }
 
             //Delete the file
-            if (\File::exists(public_path($excelFile))) {
-                \File::delete(public_path($excelFile));
-            }
+        if (\File::exists(public_path($excelFile))) {
+            \File::delete(public_path($excelFile));
+        }
 
 
-        });
-        return $insertedIds;
-    }
+    });
+    return $insertedIds;
+}
 
-    public static function csvToArray($filename, $delimiter = ",")
-    {
+public static function csvToArray($filename, $delimiter = ",")
+{
         /*if (!file_exists(public_path($filename)) || !is_readable($filename))
-            return false;*/
+        return false;*/
 
         $header = null;
         $data = array();
@@ -260,41 +369,41 @@ class ContactController extends Controller
         //$excelFile = '/uploads/import/contacts_1466741430-18.xlsx';
        $excelFile = $request->getFile(Auth::guard('admin')->user()->id);
 
-        \Excel::load(public_path($excelFile), function ($reader) use ($request) {
-             $contacts = $reader->all();
-            $contacts->toArray();
+       \Excel::load(public_path($excelFile), function ($reader) use ($request) {
+         $contacts = $reader->all();
+         $contacts->toArray();
 
             // Formating the contacts
-            foreach ($contacts as $contact) {
-                $formatedContacts = [
-                    'admin_id' => Auth::guard('admin')->user()->id,
-                    'first_name' => isset($contact['first_name']) ? $contact['first_name'] : "",
-                    'last_name' => isset($contact['last_name']) ? $contact['last_name'] : "",
-                    'country_code' => '+977',
-                    'phone' => $contact['phone'],
-                    'created_at' => Carbon::now(),
-                ];
+         foreach ($contacts as $contact) {
+            $formatedContacts = [
+                'admin_id' => Auth::guard('admin')->user()->id,
+                'first_name' => isset($contact['first_name']) ? $contact['first_name'] : "",
+                'last_name' => isset($contact['last_name']) ? $contact['last_name'] : "",
+                'country_code' => '+977',
+                'phone' => $contact['phone'],
+                'created_at' => Carbon::now(),
+            ];
                 // Inserting contact in database
-                $insertedId = Contact::insertGetId($formatedContacts);
+            $insertedId = Contact::insertGetId($formatedContacts);
 
 
                 // Insert group
-                if ($request->group_id !=null) {
-                    ContactGroup::create([
-                        'group_id' => $request->input('group_id'),
-                        'contact_id' => $insertedId
-                    ]);
-                }
+            if ($request->group_id !=null) {
+                ContactGroup::create([
+                    'group_id' => $request->input('group_id'),
+                    'contact_id' => $insertedId
+                ]);
             }
-            Session::flash('success', "Successfully added contacts");
-        });
+        }
+        Session::flash('success', "Successfully added contacts");
+    });
 
         //Delete the file
-        if (\File::exists(public_path($excelFile))) {
-            \File::delete(public_path($excelFile));
-        }
-        return redirect('admin/box-office/email-marketing/contact');
+       if (\File::exists(public_path($excelFile))) {
+        \File::delete(public_path($excelFile));
     }
+    return redirect('admin/email-marketing/contact');
+}
 
     /**
      * Add contacts to group
