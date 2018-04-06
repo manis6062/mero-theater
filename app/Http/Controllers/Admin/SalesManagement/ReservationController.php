@@ -5,14 +5,14 @@ namespace App\Http\Controllers\Admin\SalesManagement;
 use App\BookingModel\CounetrReservation;
 use App\BookingModel\CounterSell;
 use App\BookingModel\TemporaryReservedSeats;
-use App\Http\Controllers\Controller;
 use App\MovieModel;
 use App\ProgrammingModel\ScheduledMovie;
 use App\Screen\Screen;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
-class SoldController extends Controller
+class ReservationController extends Controller
 {
     public function index(Request $request)
     {
@@ -24,8 +24,8 @@ class SoldController extends Controller
                 $schedules = ScheduledMovie::where('screen_id', $activeScreen->id)->where('show_date', date('Y-m-d'))->get();
                 $schedules = $schedules->sortBy('converted_time');
 
-                $soldReports = ScheduledMovie::where('screen_id', $activeScreen->id)->where('show_date', date('Y-m-d'))->pluck('movie_id');
-                $soldReports = $soldReports->unique();
+                $scheduledMovies = ScheduledMovie::where('screen_id', $activeScreen->id)->where('show_date', date('Y-m-d'))->pluck('movie_id');
+                $scheduledMovies = $scheduledMovies->unique();
                 $seatCategoryData = [];
                 $alphabets = range('A', 'Z');
                 $screenSeatCategories = $activeScreen->screenSeatCategories;
@@ -57,8 +57,8 @@ class SoldController extends Controller
                     $seatCategoryData[] = $putData;
                 }
 
-                $totalCounterSell = CounterSell::where('screen_id', $activeScreen->id)->where('show_date', date('Y-m-d'))->count();
-                $totalOverallSell = CounterSell::where('screen_id', $activeScreen->id)->where('show_date', date('Y-m-d'))->count();
+                $totalCounterReservation = CounetrReservation::where('screen_id', $activeScreen->id)->where('show_date', date('Y-m-d'))->count();
+                $totalOverallReservation = CounetrReservation::where('screen_id', $activeScreen->id)->where('show_date', date('Y-m-d'))->count();
 
             } else {
                 if (isset($request->range)) {
@@ -68,8 +68,8 @@ class SoldController extends Controller
                         $activeScreen = Screen::find($request->screen);
                         $schedules = ScheduledMovie::where('screen_id', $activeScreen->id)->where('show_date', date('Y-m-d'))->get();
                         $schedules = $schedules->sortBy('converted_time');
-                        $soldReports = ScheduledMovie::where('screen_id', $activeScreen->id)->where('show_date', date('Y-m-d'))->pluck('movie_id');
-                        $soldReports = $soldReports->unique();
+                        $scheduledMovies = ScheduledMovie::where('screen_id', $activeScreen->id)->where('show_date', date('Y-m-d'))->pluck('movie_id');
+                        $scheduledMovies = $scheduledMovies->unique();
                         $seatCategoryData = [];
                         $alphabets = range('A', 'Z');
                         $screenSeatCategories = $activeScreen->screenSeatCategories;
@@ -100,8 +100,8 @@ class SoldController extends Controller
                             $putData['category_total_seats'] = $count;
                             $seatCategoryData[] = $putData;
                         }
-                        $totalCounterSell = CounterSell::where('screen_id', $activeScreen->id)->where('show_date', date('Y-m-d'))->count();
-                        $totalOverallSell = CounterSell::where('screen_id', $activeScreen->id)->where('show_date', date('Y-m-d'))->count();
+                        $totalCounterReservation = CounetrReservation::where('screen_id', $activeScreen->id)->where('show_date', date('Y-m-d'))->count();
+                        $totalOverallReservation = CounetrReservation::where('screen_id', $activeScreen->id)->where('show_date', date('Y-m-d'))->count();
 
                     } elseif ($range == 'custom-date') {
                         $reqData = $request->all();
@@ -111,8 +111,8 @@ class SoldController extends Controller
                         $activeScreen = Screen::find($request->screen);
                         $schedules = ScheduledMovie::where('screen_id', $activeScreen->id)->whereBetween('show_date', [$startDate, $endDate])->get();
                         $schedules = $schedules->sortBy('converted_time');
-                        $soldReports = ScheduledMovie::where('screen_id', $activeScreen->id)->whereBetween('show_date', [$startDate, $endDate])->pluck('movie_id');
-                        $soldReports = $soldReports->unique();
+                        $scheduledMovies = ScheduledMovie::where('screen_id', $activeScreen->id)->whereBetween('show_date', [$startDate, $endDate])->pluck('movie_id');
+                        $scheduledMovies = $scheduledMovies->unique();
                         $seatCategoryData = [];
                         $alphabets = range('A', 'Z');
                         $screenSeatCategories = $activeScreen->screenSeatCategories;
@@ -143,8 +143,8 @@ class SoldController extends Controller
                             $putData['category_total_seats'] = $count;
                             $seatCategoryData[] = $putData;
                         }
-                        $totalCounterSell = CounterSell::where('screen_id', $activeScreen->id)->whereBetween('show_date', [$startDate, $endDate])->count();
-                        $totalOverallSell = CounterSell::where('screen_id', $activeScreen->id)->whereBetween('show_date', [$startDate, $endDate])->count();
+                        $totalCounterReservation = CounetrReservation::where('screen_id', $activeScreen->id)->whereBetween('show_date', [$startDate, $endDate])->count();
+                        $totalOverallReservation = CounetrReservation::where('screen_id', $activeScreen->id)->whereBetween('show_date', [$startDate, $endDate])->count();
 
 
                     } else {
@@ -155,8 +155,8 @@ class SoldController extends Controller
                         $activeScreen = Screen::find($request->screen);
                         $schedules = ScheduledMovie::where('screen_id', $activeScreen->id)->whereBetween('show_date', [$startDate, $endDate])->get();
                         $schedules = $schedules->sortBy('converted_time');
-                        $soldReports = ScheduledMovie::where('screen_id', $activeScreen->id)->whereBetween('show_date', [$startDate, $endDate])->pluck('movie_id');
-                        $soldReports = $soldReports->unique();
+                        $scheduledMovies = ScheduledMovie::where('screen_id', $activeScreen->id)->whereBetween('show_date', [$startDate, $endDate])->pluck('movie_id');
+                        $scheduledMovies = $scheduledMovies->unique();
                         $seatCategoryData = [];
                         $alphabets = range('A', 'Z');
                         $screenSeatCategories = $activeScreen->screenSeatCategories;
@@ -187,8 +187,8 @@ class SoldController extends Controller
                             $putData['category_total_seats'] = $count;
                             $seatCategoryData[] = $putData;
                         }
-                        $totalCounterSell = CounterSell::where('screen_id', $activeScreen->id)->whereBetween('show_date', [$startDate, $endDate])->count();
-                        $totalOverallSell = CounterSell::where('screen_id', $activeScreen->id)->whereBetween('show_date', [$startDate, $endDate])->count();
+                        $totalCounterReservation = CounetrReservation::where('screen_id', $activeScreen->id)->whereBetween('show_date', [$startDate, $endDate])->count();
+                        $totalOverallReservation = CounetrReservation::where('screen_id', $activeScreen->id)->whereBetween('show_date', [$startDate, $endDate])->count();
 
                     }
                 } else {
@@ -197,8 +197,8 @@ class SoldController extends Controller
                     $schedules = ScheduledMovie::where('screen_id', $activeScreen->id)->where('show_date', date('Y-m-d'))->get();
                     $schedules = $schedules->sortBy('converted_time');
 
-                    $soldReports = ScheduledMovie::where('screen_id', $activeScreen->id)->where('show_date', date('Y-m-d'))->pluck('movie_id');
-                    $soldReports = $soldReports->unique();
+                    $scheduledMovies = ScheduledMovie::where('screen_id', $activeScreen->id)->where('show_date', date('Y-m-d'))->pluck('movie_id');
+                    $scheduledMovies = $scheduledMovies->unique();
                     $seatCategoryData = [];
                     $alphabets = range('A', 'Z');
                     $screenSeatCategories = $activeScreen->screenSeatCategories;
@@ -230,18 +230,18 @@ class SoldController extends Controller
                         $seatCategoryData[] = $putData;
                     }
 
-                    $totalCounterSell = CounterSell::where('screen_id', $activeScreen->id)->where('show_date', date('Y-m-d'))->count();
-                    $totalOverallSell = CounterSell::where('screen_id', $activeScreen->id)->where('show_date', date('Y-m-d'))->count();
+                    $totalCounterReservation = CounetrReservation::where('screen_id', $activeScreen->id)->where('show_date', date('Y-m-d'))->count();
+                    $totalOverallReservation = CounetrReservation::where('screen_id', $activeScreen->id)->where('show_date', date('Y-m-d'))->count();
                 }
             }
 
 
-            $chartData['q1'] = CounterSell::where('screen_id', $activeScreen->id)->whereBetween('show_date', [new Carbon('first day of this month'), new Carbon('last day of this month')])->count();
-            $chartData['q2'] = CounterSell::where('screen_id', $activeScreen->id)->whereBetween('show_date', [new Carbon('first day of -1 month'), new Carbon('last day of -1 month')])->count();
-            $chartData['q3'] = CounterSell::where('screen_id', $activeScreen->id)->whereBetween('show_date', [new Carbon('first day of -2 month'), new Carbon('last day of -2 month')])->count();
-            $chartData['q4'] = CounterSell::where('screen_id', $activeScreen->id)->whereBetween('show_date', [new Carbon('first day of -3 month'), new Carbon('last day of -3 month')])->count();
+            $chartData['q1'] = CounetrReservation::where('screen_id', $activeScreen->id)->whereBetween('show_date', [new Carbon('first day of this month'), new Carbon('last day of this month')])->count();
+            $chartData['q2'] = CounetrReservation::where('screen_id', $activeScreen->id)->whereBetween('show_date', [new Carbon('first day of -1 month'), new Carbon('last day of -1 month')])->count();
+            $chartData['q3'] = CounetrReservation::where('screen_id', $activeScreen->id)->whereBetween('show_date', [new Carbon('first day of -2 month'), new Carbon('last day of -2 month')])->count();
+            $chartData['q4'] = CounetrReservation::where('screen_id', $activeScreen->id)->whereBetween('show_date', [new Carbon('first day of -3 month'), new Carbon('last day of -3 month')])->count();
 
-            return view('admin.sales-management.sold-report', compact('screens', 'soldReports', 'activeScreen', 'schedules', 'seatCategoryData', 'totalOverallSell', 'totalCounterSell', 'chartData'));
+            return view('admin.sales-management.reservation-report', compact('screens', 'scheduledMovies', 'activeScreen', 'schedules', 'seatCategoryData', 'totalOverallReservation', 'totalCounterReservation', 'chartData'));
 
         } else {
             $reportingArray = [];
@@ -250,8 +250,8 @@ class SoldController extends Controller
                 $activeScreen = Screen::orderBy('screen_number', 'ASC')->first();
                 $schedules = ScheduledMovie::where('screen_id', $activeScreen->id)->where('show_date', date('Y-m-d'))->get();
                 $schedules = $schedules->sortBy('converted_time');
-                $soldReports = ScheduledMovie::where('screen_id', $activeScreen->id)->where('show_date', date('Y-m-d'))->pluck('movie_id');
-                $soldReports = $soldReports->unique();
+                $scheduledMovies = ScheduledMovie::where('screen_id', $activeScreen->id)->where('show_date', date('Y-m-d'))->pluck('movie_id');
+                $scheduledMovies = $scheduledMovies->unique();
             } else {
                 $activeScreen = Screen::find($request->screen);
                 if (isset($request->range)) {
@@ -259,16 +259,16 @@ class SoldController extends Controller
                     if ($range == 'daily') {
                         $schedules = ScheduledMovie::where('screen_id', $activeScreen->id)->where('show_date', date('Y-m-d'))->get();
                         $schedules = $schedules->sortBy('converted_time');
-                        $soldReports = ScheduledMovie::where('screen_id', $activeScreen->id)->where('show_date', date('Y-m-d'))->pluck('movie_id');
-                        $soldReports = $soldReports->unique();
+                        $scheduledMovies = ScheduledMovie::where('screen_id', $activeScreen->id)->where('show_date', date('Y-m-d'))->pluck('movie_id');
+                        $scheduledMovies = $scheduledMovies->unique();
                     } elseif ($range == 'custom-date') {
                         $reqData = $request->all();
                         $startDate = $reqData['start-date'];
                         $endDate = $reqData['end-date'];
                         $schedules = ScheduledMovie::where('screen_id', $activeScreen->id)->whereBetween('show_date', [$startDate, $endDate])->get();
                         $schedules = $schedules->sortBy('converted_time');
-                        $soldReports = ScheduledMovie::where('screen_id', $activeScreen->id)->whereBetween('show_date', [$startDate, $endDate])->pluck('movie_id');
-                        $soldReports = $soldReports->unique();
+                        $scheduledMovies = ScheduledMovie::where('screen_id', $activeScreen->id)->whereBetween('show_date', [$startDate, $endDate])->pluck('movie_id');
+                        $scheduledMovies = $scheduledMovies->unique();
                     } else {
                         $reqData = $request->all();
                         $startDate = $reqData['start-date'];
@@ -277,16 +277,16 @@ class SoldController extends Controller
                         $activeScreen = Screen::find($request->screen);
                         $schedules = ScheduledMovie::where('screen_id', $activeScreen->id)->whereBetween('show_date', [$startDate, $endDate])->get();
                         $schedules = $schedules->sortBy('converted_time');
-                        $soldReports = ScheduledMovie::where('screen_id', $activeScreen->id)->whereBetween('show_date', [$startDate, $endDate])->pluck('movie_id');
-                        $soldReports = $soldReports->unique();
+                        $scheduledMovies = ScheduledMovie::where('screen_id', $activeScreen->id)->whereBetween('show_date', [$startDate, $endDate])->pluck('movie_id');
+                        $scheduledMovies = $scheduledMovies->unique();
                     }
                 } else {
                     $activeScreen = Screen::orderBy('screen_number', 'ASC')->first();
                     $schedules = ScheduledMovie::where('screen_id', $activeScreen->id)->where('show_date', date('Y-m-d'))->get();
                     $schedules = $schedules->sortBy('converted_time');
 
-                    $soldReports = ScheduledMovie::where('screen_id', $activeScreen->id)->where('show_date', date('Y-m-d'))->pluck('movie_id');
-                    $soldReports = $soldReports->unique();
+                    $scheduledMovies = ScheduledMovie::where('screen_id', $activeScreen->id)->where('show_date', date('Y-m-d'))->pluck('movie_id');
+                    $scheduledMovies = $scheduledMovies->unique();
                 }
             }
 
@@ -323,22 +323,22 @@ class SoldController extends Controller
 
 
             $sn = 0;
-            if (isset($soldReports) && $soldReports->count() > 0) {
-                foreach ($soldReports as $soldReport) {
+            if (isset($scheduledMovies) && $scheduledMovies->count() > 0) {
+                foreach ($scheduledMovies as $scheduledMovie) {
                     foreach ($schedules as $schedule) {
-                        if ($soldReport == $schedule->movie_id) {
+                        if ($scheduledMovie == $schedule->movie_id) {
                             $sn += 1;
                             $array['S.N.'] = $sn;
-                            $array['Show'] = \App\MovieModel::find($soldReport)->movie_title;
+                            $array['Show'] = \App\MovieModel::find($scheduledMovie)->movie_title;
                             $array['Screen'] = $activeScreen->name . ' (' . $schedule->show_time_start . ')';
                             $array['Show Date'] = $schedule->show_date;
                             if (count($seatCategoryData) != 0) {
                                 foreach ($seatCategoryData as $seatCategoryDatum) {
                                     if (!isset($request->range) || (isset($request->range) && $request->range == 'daily')) {
-                                        $array[$seatCategoryDatum['category_name']] = \App\BookingModel\CounterSell::where('screen_id', $activeScreen->id)->where('schedule_id', $schedule->id)->where('seat_category', $seatCategoryDatum['category_name'])->whereDate('show_date', date('Y-m-d'))->count() . ' ( ' . $seatCategoryDatum['category_total_seats'] . ' )';
+                                        $array[$seatCategoryDatum['category_name']] = \App\BookingModel\CounetrReservation::where('screen_id', $activeScreen->id)->where('schedule_id', $schedule->id)->where('seat_category', $seatCategoryDatum['category_name'])->whereDate('show_date', date('Y-m-d'))->count() . ' ( ' . $seatCategoryDatum['category_total_seats'] . ' )';
                                     } else {
                                         $dates = $request->all();
-                                        $array[$seatCategoryDatum['category_name']] = \App\BookingModel\CounterSell::where('screen_id', $activeScreen->id)->where('schedule_id', $schedule->id)->where('seat_category', $seatCategoryDatum['category_name'])->whereBetween('show_date', [$dates['start-date'], $dates['end-date']])->count() . ' ( ' . $seatCategoryDatum['category_total_seats'] . ' )';
+                                        $array[$seatCategoryDatum['category_name']] = \App\BookingModel\CounetrReservation::where('screen_id', $activeScreen->id)->where('schedule_id', $schedule->id)->where('seat_category', $seatCategoryDatum['category_name'])->whereBetween('show_date', [$dates['start-date'], $dates['end-date']])->count() . ' ( ' . $seatCategoryDatum['category_total_seats'] . ' )';
                                     }
                                 }
                             }
@@ -348,10 +348,10 @@ class SoldController extends Controller
                 }
             }
 
-            \Excel::create($activeScreen->name . ' - Sold Report', function ($excel) use ($reportingArray, $activeScreen, $seatCategoryData) {
+            \Excel::create($activeScreen->name . ' - Reservation Report', function ($excel) use ($reportingArray, $activeScreen, $seatCategoryData) {
 
-                $excel->setTitle($activeScreen->name . ' - Sold Report');
-                $excel->setDescription($activeScreen->name . ' - Sold Report');
+                $excel->setTitle($activeScreen->name . ' - Reservation Report');
+                $excel->setDescription($activeScreen->name . ' - Reservation Report');
 
                 $excel->sheet('Excel Sheet', function ($sheet) use ($reportingArray, $seatCategoryData) {
                     foreach ($reportingArray as $array) {

@@ -4,15 +4,15 @@
     <link rel="stylesheet" href="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.css">
     <style>
         /*ul.pagination li {*/
-            /*padding: .5rem .75rem;*/
-            /*background: #fff;*/
-            /*border: 1px solid #ddd;*/
+        /*padding: .5rem .75rem;*/
+        /*background: #fff;*/
+        /*border: 1px solid #ddd;*/
         /*}*/
 
         /*ul.pagination li.active {*/
-            /*background-color: #da1113;*/
-            /*border-color: #da1113;*/
-            /*color: #fff !important;*/
+        /*background-color: #da1113;*/
+        /*border-color: #da1113;*/
+        /*color: #fff !important;*/
         /*}*/
     </style>
 @stop
@@ -28,7 +28,7 @@
                             <i class="icon-tabs-outline"></i>
                         </div>
                         <div class="page-title">
-                            <h5>Sold Report</h5>
+                            <h5>Reservation Report</h5>
                             <h6 class="sub-heading">Welcome to Merotheatre Admin</h6>
                         </div>
                     </div>
@@ -95,7 +95,7 @@
                 </div>
                 <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
                     <div class="card">
-                        <div class="card-header">Sold Report Quaterly</div>
+                        <div class="card-header">Reservation Report Quaterly</div>
                         <div class="card-body">
                             <div class="chartist custom-two">
                                 <div class="sold-chart">
@@ -118,8 +118,8 @@
                             </div>
                             <div class="info-stats">
                                 <span class="info-label red"></span>
-                                <p class="info-title">Overall Sold</p>
-                                <h4 class="info-total">{{$totalOverallSell}}</h4>
+                                <p class="info-title">Overall Reservation</p>
+                                <h4 class="info-total">{{$totalOverallReservation}}</h4>
                             </div>
                         </div>
                     </div>
@@ -130,14 +130,14 @@
                             <i class="icon-touch_app"></i>
                         </div>
                         <h5>2540</h5>
-                        <p>Online Booking</p>
+                        <p>Online Reservation</p>
                     </a>
                     <a href="#" class="block-140 block-160">
                         <div class="icon primary">
                             <i class="icon-phone_android"></i>
                         </div>
                         <h5>763</h5>
-                        <p>Phone Booking</p>
+                        <p>Phone Reservation</p>
                     </a>
                 </div>
                 <div class="col-xl-2 col-lg-2 col-md-3 col-sm-12 col">
@@ -146,14 +146,14 @@
                             <i class="icon-apps"></i>
                         </div>
                         <h5>218</h5>
-                        <p>Android Apps Booking</p>
+                        <p>Android Apps Reservation</p>
                     </a>
                     <a href="#" class="block-140 block-160">
                         <div class="icon primary">
                             <i class="icon-location4"></i>
                         </div>
                         <h5>549</h5>
-                        <p>Iphon Apps Booking</p>
+                        <p>Iphon Apps Reservation</p>
                     </a>
                 </div>
                 <div class="col-xl-2 col-lg-2 col-md-6 col-sm-6">
@@ -168,8 +168,8 @@
                         <div class="icon secondary">
                             <i class="icon-download5"></i>
                         </div>
-                        <h5>{{$totalCounterSell}}</h5>
-                        <p>Counter Sell</p>
+                        <h5>{{$totalCounterReservation}}</h5>
+                        <p>Counter Reservation</p>
                     </a>
                 </div>
                 <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
@@ -200,7 +200,7 @@
             <div class="row gutters transaction-profile" id="tabular-data-section">
                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                     <div class="card">
-                        <div class="card-header">Sold Report Screen Wise <a href="#" class="btn btn-primary export-to-excel">Export</a></div>
+                        <div class="card-header">Reservation Report Screen Wise <a href="#" class="btn btn-primary export-to-excel">Export</a></div>
                         <div class="card-body table-responsive">
                             <table class="table table-hover m-0" id="sold-report-table" style="width:100%">
                                 <thead>
@@ -217,25 +217,25 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                @if(isset($soldReports) && $soldReports->count() > 0)
-                                    @foreach($soldReports as $soldReport)
+                                @if(isset($scheduledMovies) && $scheduledMovies->count() > 0)
+                                    @foreach($scheduledMovies as $scheduledMovie)
                                         @foreach($schedules as $schedule)
-                                            @if($soldReport == $schedule->movie_id)
+                                            @if($scheduledMovie == $schedule->movie_id)
                                                 <tr>
-                                                    <th scope="row">{{\App\MovieModel::find($soldReport)->movie_title}}</th>
+                                                    <th scope="row">{{\App\MovieModel::find($scheduledMovie)->movie_title}}</th>
                                                     <td>
-                                                        <a href="{{url('admin/sales-management/sold-reports/view-seat?screen='.$activeScreen->id.'&date='.$schedule->show_date.'&time='.$schedule->show_time_start.'&movie='.$soldReport.'&schedule='.$schedule->id)}}">View
+                                                        <a href="{{url('admin/sales-management/reservation-reports/view-seat?screen='.$activeScreen->id.'&date='.$schedule->show_date.'&time='.$schedule->show_time_start.'&movie='.$scheduledMovie.'&schedule='.$schedule->id)}}">View
                                                             Seat</a></td>
                                                     <td>{{$activeScreen->name}} ({{$schedule->show_time_start}})</td>
                                                     <td>{{$schedule->show_date}}</td>
                                                     @if(count($seatCategoryData) != 0)
                                                         @foreach($seatCategoryData as $seatCategoryDatum)
                                                             @if(!isset($_GET['range']) || (isset($_GET['range']) && $_GET['range'] == 'daily'))
-                                                                <td>{{\App\BookingModel\CounterSell::where('screen_id', $activeScreen->id)->where('schedule_id', $schedule->id)->where('seat_category', $seatCategoryDatum['category_name'])->whereDate('show_date', date('Y-m-d'))->count()}}
+                                                                <td>{{\App\BookingModel\CounetrReservation::where('screen_id', $activeScreen->id)->where('schedule_id', $schedule->id)->where('seat_category', $seatCategoryDatum['category_name'])->whereDate('show_date', date('Y-m-d'))->count()}}
                                                                     ( {{$seatCategoryDatum['category_total_seats']}} )
                                                                 </td>
                                                             @else
-                                                                <td>{{\App\BookingModel\CounterSell::where('screen_id', $activeScreen->id)->where('schedule_id', $schedule->id)->where('seat_category', $seatCategoryDatum['category_name'])->whereBetween('show_date', [$_GET['start-date'], $_GET['end-date']])->count()}}
+                                                                <td>{{\App\BookingModel\CounetrReservation::where('screen_id', $activeScreen->id)->where('schedule_id', $schedule->id)->where('seat_category', $seatCategoryDatum['category_name'])->whereBetween('show_date', [$_GET['start-date'], $_GET['end-date']])->count()}}
                                                                     ( {{$seatCategoryDatum['category_total_seats']}} )
                                                                 </td>
                                                             @endif
@@ -281,10 +281,10 @@
             labels: ['Q1', 'Q2', 'Q3', 'Q4'],
             series: [
                 [
-                    {meta: 'Sold', value: "{{$chartData['q1']}}"},
-                    {meta: 'Sold', value: "{{$chartData['q2']}}"},
-                    {meta: 'Sold', value: "{{$chartData['q3']}}"},
-                    {meta: 'Sold', value: "{{$chartData['q4']}}"}
+                    {meta: 'Reserved', value: "{{$chartData['q1']}}"},
+                    {meta: 'Reserved', value: "{{$chartData['q2']}}"},
+                    {meta: 'Reserved', value: "{{$chartData['q3']}}"},
+                    {meta: 'Reserved', value: "{{$chartData['q4']}}"}
                 ],
             ],
         }, {
@@ -310,7 +310,7 @@
 
 
     <script>
-//        $('#reporitng-table').dataTable();
+        //        $('#reporitng-table').dataTable();
     </script>
     <script>
         $(document).on('click', '.screen-tabs', function (e) {
@@ -320,11 +320,11 @@
                 var screenId = $(this).data('screenid');
                 if (range == 'Daily') {
                     var date = $('.range-tab.active').data('date');
-                    window.location = baseurl + '/admin/sales-management/sold-reports?screen=' + screenId + '&range=daily&date=' + date;
+                    window.location = baseurl + '/admin/sales-management/reservation-reports?screen=' + screenId + '&range=daily&date=' + date;
                 } else {
                     var startdate = $('.range-tab.active').data('startdate');
                     var enddate = $('.range-tab.active').data('enddate');
-                    window.location = baseurl + '/admin/sales-management/sold-reports?screen=' + screenId + '&range=' + range.toLowerCase() + '&start-date=' + startdate + '&end-date=' + enddate;
+                    window.location = baseurl + '/admin/sales-management/reservation-reports?screen=' + screenId + '&range=' + range.toLowerCase() + '&start-date=' + startdate + '&end-date=' + enddate;
                 }
             }
         });
@@ -336,12 +336,12 @@
                 if (range == 'Daily') {
                     var date = $(this).data('date');
                     var screenId = $('.screen-tabs.active').data('screenid');
-                    window.location = baseurl + '/admin/sales-management/sold-reports?screen=' + screenId + '&range=daily&date=' + date;
+                    window.location = baseurl + '/admin/sales-management/reservation-reports?screen=' + screenId + '&range=daily&date=' + date;
                 } else {
                     var startdate = $(this).data('startdate');
                     var enddate = $(this).data('enddate');
                     var screenId = $('.screen-tabs.active').data('screenid');
-                    window.location = baseurl + '/admin/sales-management/sold-reports?screen=' + screenId + '&range=' + range.toLowerCase() + '&start-date=' + startdate + '&end-date=' + enddate;
+                    window.location = baseurl + '/admin/sales-management/reservation-reports?screen=' + screenId + '&range=' + range.toLowerCase() + '&start-date=' + startdate + '&end-date=' + enddate;
                 }
             }
         });
@@ -355,10 +355,10 @@
                     alertify.alert('End Date Cannot Be Greater Than Start Date');
                 } else if (endDate == startDate) {
                     var screenId = $('.screen-tabs.active').data('screenid');
-                    window.location = baseurl + '/admin/sales-management/sold-reports?screen=' + screenId + '&range=custom-date&start-date=' + startDate + '&end-date=' + endDate;
+                    window.location = baseurl + '/admin/sales-management/reservation-reports?screen=' + screenId + '&range=custom-date&start-date=' + startDate + '&end-date=' + endDate;
                 } else {
                     var screenId = $('.screen-tabs.active').data('screenid');
-                    window.location = baseurl + '/admin/sales-management/sold-reports?screen=' + screenId + '&range=custom-date&start-date=' + startDate + '&end-date=' + endDate;
+                    window.location = baseurl + '/admin/sales-management/reservation-reports?screen=' + screenId + '&range=custom-date&start-date=' + startDate + '&end-date=' + endDate;
                 }
             }
         });
@@ -372,16 +372,16 @@
         });
 
         $(document).on('click', '.export-to-excel', function(e){
-           e.preventDefault();
-           var url = window.location.href;
-           if(url.indexOf('?') > -1)
-           {
-               url = url+'&action=export';
-           }else{
-               url = url+'?action=export';
-           }
+            e.preventDefault();
+            var url = window.location.href;
+            if(url.indexOf('?') > -1)
+            {
+                url = url+'&action=export';
+            }else{
+                url = url+'?action=export';
+            }
 
-           window.location = url;
+            window.location = url;
         });
     </script>
 @stop

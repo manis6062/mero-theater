@@ -245,7 +245,7 @@
                     </a>
                     <ul aria-expanded="false">
                         <li>
-                            <a href="#">
+                            <a href="{{url('admin/sales-management/reservation-reports')}}">
 										<span class="has-icon">
 											<i class="icon-presentation"></i>
 										</span>
@@ -261,7 +261,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="transaction-log.html">
+                            <a href="{{url('admin/sales-management/transaction-log')}}">
 										<span class="has-icon">
 											<i class="icon-spreadsheet"></i>
 										</span>

@@ -361,9 +361,19 @@ Route::group(['prefix'=>'admin','middleware'=> 'admin'], function(){
 
 
     //    Route for Sales Management
-    Route::group(['prefix'=>'sales-management/sold-reports', 'namespace'=>'Admin\SalesManagement'], function(){
-        Route::get('/', 'SoldController@index');
-        Route::get('view-seat', 'SoldController@viewSeat');
+    Route::group(['prefix'=>'sales-management', 'namespace'=>'Admin\SalesManagement'], function(){
+        Route::group(['prefix' => 'sold-reports'], function (){
+            Route::get('/', 'SoldController@index');
+            Route::get('view-seat', 'SoldController@viewSeat');
+        });
+        Route::group(['prefix' => 'reservation-reports'], function (){
+            Route::get('/', 'ReservationController@index');
+            Route::get('view-seat', 'ReservationController@viewSeat');
+        });
+
+        Route::group(['prefix' => 'transaction-log'], function (){
+           Route::get('/', 'TransactionLogController@index');
+        });
     });
 });
 
