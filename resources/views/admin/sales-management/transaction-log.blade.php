@@ -7,6 +7,7 @@
             padding: .5rem .75rem;
             background: #fff;
             border: 1px solid #ddd;
+            cursor: pointer;
         }
 
         ul.pagination li.active {

@@ -175,7 +175,7 @@
                 <div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
                     <div class="screen-profile block-336">
                         <div class="screen-img">
-                            <img src="img/screen.png" class="profile-thumb" alt="User Thumb">
+                            <img src="{{asset('admins/theme/img/screen.png')}}" class="profile-thumb" alt="User Thumb">
                         </div>
                         <h5 class="profile-name">MeroTheatre</h5>
                         <div class="screen-btn">

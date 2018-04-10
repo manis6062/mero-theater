@@ -1,5 +1,62 @@
 @extends('admin.layout.master1')
 
+@section('styles')
+    <style>
+        .small-text {
+            font-size: 15px;
+        }
+
+        ul.pagination li {
+            padding: .5rem .75rem;
+            background: #fff;
+            border: 1px solid #ddd;
+            cursor: pointer;
+        }
+
+        ul.pagination li.active {
+            background-color: #da1113;
+            border-color: #da1113;
+            color: #fff !important;
+            cursor: not-allowed;
+        }
+
+        ul.pagination li.disabled {
+            cursor: not-allowed;
+        }
+
+        #load-modal {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 64px;
+            height: 64px;
+            padding: 15px;
+            border: 3px solid #ababab;
+            box-shadow: 1px 1px 10px #ababab;
+            border-radius: 20px;
+            background-color: white;
+            z-index: 1002;
+            text-align: center;
+            overflow: auto;
+        }
+
+        #load-fade {
+            display: none;
+            position: absolute;
+            top: 0%;
+            left: 0%;
+            width: 100%;
+            height: 100%;
+            background-color: #fff;
+            z-index: 1001;
+            -moz-opacity: 0.8;
+            opacity: .70;
+            filter: alpha(opacity=80);
+        }
+    </style>
+@stop
+
 @section('main-body')
     <div class="app-main">
         <!-- BEGIN .main-heading -->
@@ -17,7 +74,7 @@
                     </div>
                     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4">
                         <div class="right-actions">
-                           @include('admin.last-login-time')
+                            @include('admin.last-login-time')
                         </div>
                     </div>
                 </div>
@@ -34,19 +91,24 @@
                         <div class="card-header">
                             <ul class="nav nav-tabs card-header-tabs">
                                 <li class="nav-item">
-                                    <a class="nav-link active" id="reports-tab" data-toggle="tab" href="#reports" role="tab" aria-controls="reports" aria-selected="true" aria-expanded="true">Statistics</a>
+                                    <a class="nav-link active" id="reports-tab" data-toggle="tab" href="#reports"
+                                       role="tab" aria-controls="reports" aria-selected="true" aria-expanded="true">Statistics</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" id="sales-tab" data-toggle="tab" href="#sales" role="tab" aria-controls="sales" aria-selected="false" aria-expanded="false">Sales</a>
+                                    <a class="nav-link" id="sales-tab" data-toggle="tab" href="#sales" role="tab"
+                                       aria-controls="sales" aria-selected="false" aria-expanded="false">Sales</a>
                                 </li>
                             </ul>
                         </div>
                         <div id="select-screen">
                             <div class="form-group">
-                                <select id="" class=" custom-select">
-                                    <option>Screen 1</option>
-                                    <option>Screen 2</option>
-                                    <option>Screen 3</option>
+                                <select id="screen-select" class=" custom-select">
+                                    @if(isset($screens) && $screens->count() > 0)
+                                        @foreach($screens as $screen)
+                                            <option value="{{$screen->id}}"
+                                                    {{isset($_GET['screen']) && $_GET['screen'] == $screen->id ? 'selected' : ''}} data-screenid="{{$screen->id}}">{{$screen->name}}</option>
+                                        @endforeach
+                                    @endif
                                 </select>
                             </div>
                         </div>
@@ -57,29 +119,42 @@
                         </div>
                         <div class="card-body">
                             <div class="tab-content plain" id="myTabContent">
-                                <div class="tab-pane fade active show" id="reports" role="tabpanel" aria-labelledby="reports-tab" aria-expanded="true">
+                                <div class="tab-pane fade active show" id="reports" role="tabpanel"
+                                     aria-labelledby="reports-tab" aria-expanded="true">
                                     <!-- Row start -->
                                     <div class="row gutters">
                                         <div class="col-xl-5 col-lg-5 col-md-5 col-sm-12">
                                             <h6 class="card-title mt-0">Visitors</h6>
                                             <div class="chartist custom-one">
-                                                <div class="line-chart"><div class="chartist-tooltip"></div><svg xmlns:ct="http://gionkunz.github.com/chartist-js/ct" width="100%" height="190px" class="ct-chart-line" style="width: 100%; height: 190px;"><g class="ct-grids"><line y1="190" y2="190" x1="10" x2="402.75" class="ct-grid ct-vertical"></line><line y1="164.28571428571428" y2="164.28571428571428" x1="10" x2="402.75" class="ct-grid ct-vertical"></line><line y1="138.57142857142856" y2="138.57142857142856" x1="10" x2="402.75" class="ct-grid ct-vertical"></line><line y1="112.85714285714286" y2="112.85714285714286" x1="10" x2="402.75" class="ct-grid ct-vertical"></line><line y1="87.14285714285714" y2="87.14285714285714" x1="10" x2="402.75" class="ct-grid ct-vertical"></line><line y1="61.428571428571416" y2="61.428571428571416" x1="10" x2="402.75" class="ct-grid ct-vertical"></line><line y1="35.71428571428572" y2="35.71428571428572" x1="10" x2="402.75" class="ct-grid ct-vertical"></line><line y1="10" y2="10" x1="10" x2="402.75" class="ct-grid ct-vertical"></line></g><g><g class="ct-series ct-series-a"><path d="M10,164.286C59.094,164.286,59.094,87.143,108.188,87.143C157.281,87.143,157.281,92.286,206.375,92.286C255.469,92.286,255.469,35.714,304.563,35.714C353.656,35.714,353.656,10,402.75,10" class="ct-line"></path><line x1="10" y1="164.28571428571428" x2="10.01" y2="164.28571428571428" class="ct-point" ct:value="500" ct:meta="Visitors"></line><line x1="108.1875" y1="87.14285714285714" x2="108.1975" y2="87.14285714285714" class="ct-point" ct:value="2000" ct:meta="Visitors"></line><line x1="206.375" y1="92.28571428571429" x2="206.385" y2="92.28571428571429" class="ct-point" ct:value="1900" ct:meta="Visitors"></line><line x1="304.5625" y1="35.71428571428572" x2="304.5725" y2="35.71428571428572" class="ct-point" ct:value="3000" ct:meta="Visitors"></line><line x1="402.75" y1="10" x2="402.76" y2="10" class="ct-point" ct:value="3500" ct:meta="Visitors"></line></g></g><g class="ct-labels"></g></svg></div>
+                                                <div class="line-chart"></div>
                                             </div>
                                             <div class="download-details">
-                                                <p>21<sup>%</sup> more visitors than last month</p>
+                                                @if($visitorStatus == 'increased')
+                                                    <p>{{$increasedRateOfVisitors}} more visitors than last month</p>
+                                                @elseif($visitorStatus == 'decreased')
+                                                    <p>{{$increasedRateOfVisitors}} less visitors than last month</p>
+                                                @else
+                                                    <p>No increase in visitors than last month</p>
+                                                @endif
                                             </div>
                                         </div>
                                         <div class="col-xl-2 col-lg-2 col-md-2 col-sm-12">
                                             <div class="monthly-avg">
                                                 <h6>Monthly Average</h6>
                                                 <div class="avg-block">
-                                                    <h4 class="avg-total text-secondary">9500</h4>
+                                                    <h4 class="avg-total text-secondary">{{$totalVisitors}}
+                                                        <small class="small-text">(NPR. {{$totalSoldAndReservedPrice}}
+                                                            )
+                                                        </small>
+                                                    </h4>
                                                     <h6 class="avg-label">
                                                         Visitors
                                                     </h6>
                                                 </div>
                                                 <div class="avg-block">
-                                                    <h4 class="avg-total text-primary">$510<sup>k</sup></h4>
+                                                    <h4 class="avg-total text-primary">{{$totalVisitorsSell}}
+                                                        <small class="small-text">(NPR. {{$totalSoldPrice}})</small>
+                                                    </h4>
                                                     <h6 class="avg-label">
                                                         Sales
                                                     </h6>
@@ -89,23 +164,30 @@
                                         <div class="col-xl-5 col-lg-5 col-md-5 col-sm-12">
                                             <h6 class="card-title mt-0">Orders</h6>
                                             <div class="chartist custom-two">
-                                                <div class="line-chart2"><div class="chartist-tooltip"></div><svg xmlns:ct="http://gionkunz.github.com/chartist-js/ct" width="100%" height="190px" class="ct-chart-line" style="width: 100%; height: 190px;"><g class="ct-grids"><line y1="190" y2="190" x1="10" x2="402.75" class="ct-grid ct-vertical"></line><line y1="167.5" y2="167.5" x1="10" x2="402.75" class="ct-grid ct-vertical"></line><line y1="145" y2="145" x1="10" x2="402.75" class="ct-grid ct-vertical"></line><line y1="122.5" y2="122.5" x1="10" x2="402.75" class="ct-grid ct-vertical"></line><line y1="100" y2="100" x1="10" x2="402.75" class="ct-grid ct-vertical"></line><line y1="77.5" y2="77.5" x1="10" x2="402.75" class="ct-grid ct-vertical"></line><line y1="55" y2="55" x1="10" x2="402.75" class="ct-grid ct-vertical"></line><line y1="32.5" y2="32.5" x1="10" x2="402.75" class="ct-grid ct-vertical"></line><line y1="10" y2="10" x1="10" x2="402.75" class="ct-grid ct-vertical"></line></g><g><g class="ct-series ct-series-a"><path d="M10,154C59.094,154,59.094,133.75,108.188,133.75C157.281,133.75,157.281,95.5,206.375,95.5C255.469,95.5,255.469,154,304.563,154C353.656,154,353.656,23.5,402.75,23.5" class="ct-line"></path><line x1="10" y1="154" x2="10.01" y2="154" class="ct-point" ct:value="800" ct:meta="Sales"></line><line x1="108.1875" y1="133.75" x2="108.1975" y2="133.75" class="ct-point" ct:value="1250" ct:meta="Sales"></line><line x1="206.375" y1="95.5" x2="206.385" y2="95.5" class="ct-point" ct:value="2100" ct:meta="Sales"></line><line x1="304.5625" y1="154" x2="304.5725" y2="154" class="ct-point" ct:value="800" ct:meta="Sales"></line><line x1="402.75" y1="23.5" x2="402.76" y2="23.5" class="ct-point" ct:value="3700" ct:meta="Sales"></line></g></g><g class="ct-labels"></g></svg></div>
+                                                <div class="line-chart2"></div>
                                             </div>
                                             <div class="download-details">
-                                                <p>15<sup>%</sup> more sales than last month</p>
+                                                @if($orderStatus == 'increased')
+                                                    <p>{{$increasedRateOfOrders}} more sales than last month</p>
+                                                @elseif($orderStatus == 'decreased')
+                                                    <p>{{$increasedRateOfOrders}} less sales than last month</p>
+                                                @else
+                                                    <p>No increase in sales than last month</p>
+                                                @endif
                                             </div>
                                         </div>
                                     </div>
                                     <!-- Row end -->
                                 </div>
-                                <div class="tab-pane fade" id="sales" role="tabpanel" aria-labelledby="sales-tab" aria-expanded="false">
+                                <div class="tab-pane fade" id="sales" role="tabpanel" aria-labelledby="sales-tab"
+                                     aria-expanded="false">
                                     <!-- Row starts -->
                                     <div class="row align-items-center gutters">
                                         <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12">
                                             <div class="monthly-avg plain">
                                                 <h6>Daily</h6>
                                                 <div class="avg-block">
-                                                    <h4 class="avg-total text-secondary">29,300</h4>
+                                                    <h4 class="avg-total text-secondary">NPR. {{$dailySale}}</h4>
                                                     <h6 class="avg-label">
                                                         Direct
                                                     </h6>
@@ -122,7 +204,7 @@
                                             <div class="monthly-avg plain">
                                                 <h6>Weekly</h6>
                                                 <div class="avg-block">
-                                                    <h4 class="avg-total text-secondary">3,200</h4>
+                                                    <h4 class="avg-total text-secondary">NPR. {{$weeklySale}}</h4>
                                                     <h6 class="avg-label">
                                                         Direct
                                                     </h6>
@@ -139,7 +221,7 @@
                                             <div class="monthly-avg plain">
                                                 <h6>Monthly</h6>
                                                 <div class="avg-block">
-                                                    <h4 class="avg-total text-secondary">29,300</h4>
+                                                    <h4 class="avg-total text-secondary">NPR. {{$monthlySale}}</h4>
                                                     <h6 class="avg-label">
                                                         Direct
                                                     </h6>
@@ -153,52 +235,104 @@
                                             </div>
                                         </div>
                                         <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12">
-                                            <div class="slimScrollDiv" style="position: relative; overflow: hidden; width: auto; height: 245px;"><div class="customScroll3" style="overflow: hidden; width: auto; height: 245px;">
+                                            <div class="slimScrollDiv"
+                                                 style="position: relative; overflow: hidden; width: auto; height: 245px;">
+                                                <div class="customScroll3"
+                                                     style="overflow: hidden; width: auto; height: 245px;">
                                                     <div class="card m-0">
                                                         <div class="card-body">
                                                             <ul class="stocks">
                                                                 <li>
-                                                                    <p class="clearfix">Apple Inc
-                                                                        <span><i class="icon-arrow-up-right2 text-success"></i>
-																			46,540<small class="text-success">+2.005</small></span></p>
+                                                                    <p class="clearfix">Counter
+                                                                        @if($monthlySaleStatus == 'increased')
+                                                                            <span><i class="icon-arrow-up-right2 text-success"></i>
+																			NPR. {{$monthlySale}}
+                                                                                <small class="text-success">+{{$increasedMonthlySale}}</small></span>
+                                                                        @elseif($monthlySaleStatus == 'decreased')
+                                                                            <span><i class="icon-arrow-down-right2 text-danger"></i>
+																			NPR. {{$monthlySale}}
+                                                                                <small class="text-danger">-{{$increasedMonthlySale}}</small></span>
+                                                                        @else
+                                                                            <span>NPR. {{$monthlySale}}
+                                                                                <small class="text-danger">-</small></span>
+                                                                        @endif
+                                                                    </p>
                                                                 </li>
                                                                 <li>
-                                                                    <p class="clearfix">Google Inc<span><i class="icon-arrow-up-right2 text-success"></i>8219<small class="text-success">-4.031</small></span></p>
+                                                                    <p class="clearfix">Google Inc<span><i
+                                                                                    class="icon-arrow-up-right2 text-success"></i>8219<small
+                                                                                    class="text-success">-4.031</small></span>
+                                                                    </p>
                                                                 </li>
                                                                 <li>
-                                                                    <p class="clearfix">Yahoo Inc<span><i class="icon-arrow-down-right2 text-danger"></i>3188<small class="text-danger">+7.652</small></span></p>
+                                                                    <p class="clearfix">Yahoo Inc<span><i
+                                                                                    class="icon-arrow-down-right2 text-danger"></i>3188<small
+                                                                                    class="text-danger">+7.652</small></span>
+                                                                    </p>
                                                                 </li>
                                                                 <li>
-                                                                    <p class="clearfix">Facebook Inc<span><i class="icon-arrow-up-right2 text-success"></i>46545<small class="text-success">+11.82</small></span></p>
+                                                                    <p class="clearfix">Facebook Inc<span><i
+                                                                                    class="icon-arrow-up-right2 text-success"></i>46545<small
+                                                                                    class="text-success">+11.82</small></span>
+                                                                    </p>
                                                                 </li>
                                                                 <li>
-                                                                    <p class="clearfix">Ebay Inc<span><i class="icon-arrow-down-right2 text-danger"></i>662<small class="text-danger">-5.281</small></span></p>
+                                                                    <p class="clearfix">Ebay Inc<span><i
+                                                                                    class="icon-arrow-down-right2 text-danger"></i>662<small
+                                                                                    class="text-danger">-5.281</small></span>
+                                                                    </p>
                                                                 </li>
                                                                 <li>
-                                                                    <p class="clearfix">Amazon Inc<span><i class="icon-arrow-up-right2 text-success"></i>27873<small class="text-success">+7.318</small></span></p>
+                                                                    <p class="clearfix">Amazon Inc<span><i
+                                                                                    class="icon-arrow-up-right2 text-success"></i>27873<small
+                                                                                    class="text-success">+7.318</small></span>
+                                                                    </p>
                                                                 </li>
                                                                 <li>
-                                                                    <p class="clearfix">Microsoft<span><i class="icon-arrow-up-right2 text-success"></i>3964<small class="text-success">-3.091</small></span></p>
+                                                                    <p class="clearfix">Microsoft<span><i
+                                                                                    class="icon-arrow-up-right2 text-success"></i>3964<small
+                                                                                    class="text-success">-3.091</small></span>
+                                                                    </p>
                                                                 </li>
                                                                 <li>
-                                                                    <p class="clearfix">Federal Bank<span><i class="icon-arrow-up-right2 text-success"></i>10760<small class="text-success">+4.585</small></span></p>
+                                                                    <p class="clearfix">Federal Bank<span><i
+                                                                                    class="icon-arrow-up-right2 text-success"></i>10760<small
+                                                                                    class="text-success">+4.585</small></span>
+                                                                    </p>
                                                                 </li>
                                                                 <li>
-                                                                    <p class="clearfix">Nicco Corp<span><i class="icon-arrow-down-right2 text-danger"></i>260<small class="text-danger">-6.955</small></span></p>
+                                                                    <p class="clearfix">Nicco Corp<span><i
+                                                                                    class="icon-arrow-down-right2 text-danger"></i>260<small
+                                                                                    class="text-danger">-6.955</small></span>
+                                                                    </p>
                                                                 </li>
                                                                 <li>
-                                                                    <p class="clearfix">Uflex<span><i class="icon-arrow-up-right2 text-success"></i>37095<small class="text-success">+5.079</small></span></p>
+                                                                    <p class="clearfix">Uflex<span><i
+                                                                                    class="icon-arrow-up-right2 text-success"></i>37095<small
+                                                                                    class="text-success">+5.079</small></span>
+                                                                    </p>
                                                                 </li>
                                                                 <li>
-                                                                    <p class="clearfix">Trivago NV<span><i class="icon-arrow-up-right2 text-success"></i>1851<small class="text-success">+9.555</small></span></p>
+                                                                    <p class="clearfix">Trivago NV<span><i
+                                                                                    class="icon-arrow-up-right2 text-success"></i>1851<small
+                                                                                    class="text-success">+9.555</small></span>
+                                                                    </p>
                                                                 </li>
                                                                 <li>
-                                                                    <p class="clearfix">Cobham PLC<span><i class="icon-arrow-down-right2 text-danger"></i>364<small class="text-danger">-8.432</small></span></p>
+                                                                    <p class="clearfix">Cobham PLC<span><i
+                                                                                    class="icon-arrow-down-right2 text-danger"></i>364<small
+                                                                                    class="text-danger">-8.432</small></span>
+                                                                    </p>
                                                                 </li>
                                                             </ul>
                                                         </div>
                                                     </div>
-                                                </div><div class="slimScrollBar" style="background: rgb(229, 232, 242) none repeat scroll 0% 0%; width: 7px; position: absolute; top: 0px; opacity: 0.8; display: block; border-radius: 0px; z-index: 99; right: 1px;"></div><div class="slimScrollRail" style="width: 7px; height: 100%; position: absolute; top: 0px; display: none; border-radius: 0px; background: rgb(0, 122, 225) none repeat scroll 0% 0%; opacity: 0.2; z-index: 90; right: 1px;"></div></div>
+                                                </div>
+                                                <div class="slimScrollBar"
+                                                     style="background: rgb(229, 232, 242) none repeat scroll 0% 0%; width: 7px; position: absolute; top: 0px; opacity: 0.8; display: block; border-radius: 0px; z-index: 99; right: 1px;"></div>
+                                                <div class="slimScrollRail"
+                                                     style="width: 7px; height: 100%; position: absolute; top: 0px; display: none; border-radius: 0px; background: rgb(0, 122, 225) none repeat scroll 0% 0%; opacity: 0.2; z-index: 90; right: 1px;"></div>
+                                            </div>
                                         </div>
 
                                     </div>
@@ -213,61 +347,99 @@
 
             <!-- Row start -->
             <div class="row gutters screen-sec">
-                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6">
-                    <div class="info-stats4">
-                        <div class="icon-type pull-left">
-                            <i class="icon-wallet"></i>
+                @if(isset($screens) && $screens->count() > 0)
+                    @foreach($screens as $screen)
+                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6">
+                            <div class="info-stats4">
+                                <div class="icon-type pull-left">
+                                    <i class="icon-wallet"></i>
+                                </div>
+                                <div class="sale-num">
+                                    <h4>{{\App\BookingModel\CounterSell::where('screen_id', $screen->id)->whereDate('show_date', date('Y-m-d'))->count() + \App\BookingModel\CounetrReservation::where('screen_id', $screen->id)->whereDate('show_date', date('Y-m-d'))->count()}} <span>({{$screen->name}})</span></h4>
+                                    <p>Number of Transaction</p>
+                                </div>
+                            </div>
                         </div>
-                        <div class="sale-num">
-                            <h4>450 <span>(screen 1)</span></h4>
-                            <p>Number of Transaction</p>
+
+                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6">
+                            <div class="info-stats4">
+                                <div class="icon-type pull-left">
+                                    <i class="icon-pricetags"></i>
+                                </div>
+                                <div class="sale-num">
+                                    <h4>{{\App\BookingModel\CounterSell::where('screen_id', $screen->id)->whereDate('show_date', date('Y-m-d'))->count()}} <span>({{$screen->name}})</span></h4>
+                                    <p>Total Sold</p>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6">
-                    <div class="info-stats4">
-                        <div class="icon-type pull-left">
-                            <i class="icon-pricetags"></i>
-                        </div>
-                        <div class="sale-num">
-                            <h4>890 <span>(screen 1)</span></h4>
-                            <p>Total Sold</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6">
-                    <div class="info-stats4">
-                        <div class="icon-type pull-left">
-                            <i class="icon-wallet"></i>
-                        </div>
-                        <div class="sale-num">
-                            <h4>185 <span>(screen 2)</span></h4>
-                            <p>Number of Transaction</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6">
-                    <div class="info-stats4">
-                        <div class="icon-type pull-left">
-                            <i class="icon-pricetags"></i>
-                        </div>
-                        <div class="sale-num">
-                            <h4>570 <span>(screen 2)</span></h4>
-                            <p>Total Sold</p>
-                        </div>
-                    </div>
-                </div>
+                    @endforeach
+                @endif
             </div>
             <!-- Row end -->
 
             <!-- Row start -->
             <div class="row gutters pie-sec">
+
                 <div class="col-lg-4 col-md-4 col-sm-6 one-fifth">
                     <div class="card">
-                        <div class="card-header">Online Booking </div>
+                        <div class="card-header">Counter Booking</div>
                         <div class="card-body">
                             <div class="chartist custom-two">
-                                <div class="pie-chart"><div class="chartist-tooltip"></div><svg xmlns:ct="http://gionkunz.github.com/chartist-js/ct" width="100%" height="180px" class="ct-chart-pie" style="width: 100%; height: 180px;"><g class="ct-series ct-series-a"><path d="M229.77,132.5A85,85,0,0,0,156.158,5L156.158,90Z" class="ct-slice-pie" ct:value="328"></path></g><g class="ct-series ct-series-b"><path d="M82.546,132.5A85,85,0,0,0,229.918,132.243L156.158,90Z" class="ct-slice-pie" ct:value="328"></path></g><g class="ct-series ct-series-c"><path d="M156.158,5A85,85,0,0,0,82.695,132.757L156.158,90Z" class="ct-slice-pie" ct:value="328"></path></g></svg></div>
+                                <div class="counter-pie-chart">
+
+                                </div>
+                            </div>
+                            <div class="row gutters pie-info">
+                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col">
+                                    <div class="info-stats">
+                                        <span class="info-label info-ttl"></span>
+                                        <p class="info-title">Total </p>
+                                        <h4 class="info-total">{{$totalValueForCounterPieChart + $sellValueForCounterPieChart + $reservationValueForCounterPieChart}}</h4>
+                                    </div>
+                                </div>
+                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col">
+                                    <div class="info-stats info-sld">
+                                        <span class="info-label"></span>
+                                        <p class="info-title">Sold </p>
+                                        <h4 class="info-total">{{$sellValueForCounterPieChart}}</h4>
+                                    </div>
+                                </div>
+                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col">
+                                    <div class="info-stats">
+                                        <span class="info-label info-rsv"></span>
+                                        <p class="info-title">Reservation </p>
+                                        <h4 class="info-total">{{$reservationValueForCounterPieChart}}</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="col-lg-4 col-md-4 col-sm-6 one-fifth">
+                    <div class="card">
+                        <div class="card-header">Online Booking</div>
+                        <div class="card-body">
+                            <div class="chartist custom-two">
+                                <div class="pie-chart">
+                                    <div class="chartist-tooltip"></div>
+                                    <svg xmlns:ct="http://gionkunz.github.com/chartist-js/ct" width="100%"
+                                         height="180px" class="ct-chart-pie" style="width: 100%; height: 180px;">
+                                        <g class="ct-series ct-series-a">
+                                            <path d="M229.77,132.5A85,85,0,0,0,156.158,5L156.158,90Z"
+                                                  class="ct-slice-pie" ct:value="328"></path>
+                                        </g>
+                                        <g class="ct-series ct-series-b">
+                                            <path d="M82.546,132.5A85,85,0,0,0,229.918,132.243L156.158,90Z"
+                                                  class="ct-slice-pie" ct:value="328"></path>
+                                        </g>
+                                        <g class="ct-series ct-series-c">
+                                            <path d="M156.158,5A85,85,0,0,0,82.695,132.757L156.158,90Z"
+                                                  class="ct-slice-pie" ct:value="328"></path>
+                                        </g>
+                                    </svg>
+                                </div>
                             </div>
                             <div class="row gutters pie-info">
                                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col">
@@ -297,10 +469,27 @@
                 </div>
                 <div class="col-lg-4 col-md-4 col-sm-6 one-fifth">
                     <div class="card">
-                        <div class="card-header">Phone Booking </div>
+                        <div class="card-header">Phone Booking</div>
                         <div class="card-body">
                             <div class="chartist custom-two">
-                                <div class="pie-chart2"><div class="chartist-tooltip"></div><svg xmlns:ct="http://gionkunz.github.com/chartist-js/ct" width="100%" height="180px" class="ct-chart-pie" style="width: 100%; height: 180px;"><g class="ct-series ct-series-a"><path d="M229.77,132.5A85,85,0,0,0,156.158,5L156.158,90Z" class="ct-slice-pie" ct:value="328"></path></g><g class="ct-series ct-series-b"><path d="M82.546,132.5A85,85,0,0,0,229.918,132.243L156.158,90Z" class="ct-slice-pie" ct:value="328"></path></g><g class="ct-series ct-series-c"><path d="M156.158,5A85,85,0,0,0,82.695,132.757L156.158,90Z" class="ct-slice-pie" ct:value="328"></path></g></svg></div>
+                                <div class="pie-chart2">
+                                    <div class="chartist-tooltip"></div>
+                                    <svg xmlns:ct="http://gionkunz.github.com/chartist-js/ct" width="100%"
+                                         height="180px" class="ct-chart-pie" style="width: 100%; height: 180px;">
+                                        <g class="ct-series ct-series-a">
+                                            <path d="M229.77,132.5A85,85,0,0,0,156.158,5L156.158,90Z"
+                                                  class="ct-slice-pie" ct:value="328"></path>
+                                        </g>
+                                        <g class="ct-series ct-series-b">
+                                            <path d="M82.546,132.5A85,85,0,0,0,229.918,132.243L156.158,90Z"
+                                                  class="ct-slice-pie" ct:value="328"></path>
+                                        </g>
+                                        <g class="ct-series ct-series-c">
+                                            <path d="M156.158,5A85,85,0,0,0,82.695,132.757L156.158,90Z"
+                                                  class="ct-slice-pie" ct:value="328"></path>
+                                        </g>
+                                    </svg>
+                                </div>
                             </div>
                             <div class="row gutters pie-info">
                                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col">
@@ -330,10 +519,27 @@
                 </div>
                 <div class="col-lg-4 col-md-4 col-sm-12 one-fifth">
                     <div class="card">
-                        <div class="card-header">Android Apps Booking </div>
+                        <div class="card-header">Android Apps Booking</div>
                         <div class="card-body">
                             <div class="chartist custom-two">
-                                <div class="pie-chart3"><div class="chartist-tooltip"></div><svg xmlns:ct="http://gionkunz.github.com/chartist-js/ct" width="100%" height="180px" class="ct-chart-pie" style="width: 100%; height: 180px;"><g class="ct-series ct-series-a"><path d="M229.77,132.5A85,85,0,0,0,156.158,5L156.158,90Z" class="ct-slice-pie" ct:value="328"></path></g><g class="ct-series ct-series-b"><path d="M82.546,132.5A85,85,0,0,0,229.918,132.243L156.158,90Z" class="ct-slice-pie" ct:value="328"></path></g><g class="ct-series ct-series-c"><path d="M156.158,5A85,85,0,0,0,82.695,132.757L156.158,90Z" class="ct-slice-pie" ct:value="328"></path></g></svg></div>
+                                <div class="pie-chart3">
+                                    <div class="chartist-tooltip"></div>
+                                    <svg xmlns:ct="http://gionkunz.github.com/chartist-js/ct" width="100%"
+                                         height="180px" class="ct-chart-pie" style="width: 100%; height: 180px;">
+                                        <g class="ct-series ct-series-a">
+                                            <path d="M229.77,132.5A85,85,0,0,0,156.158,5L156.158,90Z"
+                                                  class="ct-slice-pie" ct:value="328"></path>
+                                        </g>
+                                        <g class="ct-series ct-series-b">
+                                            <path d="M82.546,132.5A85,85,0,0,0,229.918,132.243L156.158,90Z"
+                                                  class="ct-slice-pie" ct:value="328"></path>
+                                        </g>
+                                        <g class="ct-series ct-series-c">
+                                            <path d="M156.158,5A85,85,0,0,0,82.695,132.757L156.158,90Z"
+                                                  class="ct-slice-pie" ct:value="328"></path>
+                                        </g>
+                                    </svg>
+                                </div>
                             </div>
                             <div class="row gutters pie-info">
                                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col">
@@ -364,10 +570,27 @@
 
                 <div class="col-lg-4 col-md-4 col-sm-12 one-fifth">
                     <div class="card">
-                        <div class="card-header">iPhone Apps Booking </div>
+                        <div class="card-header">iPhone Apps Booking</div>
                         <div class="card-body">
                             <div class="chartist custom-two">
-                                <div class="pie-chart4"><div class="chartist-tooltip"></div><svg xmlns:ct="http://gionkunz.github.com/chartist-js/ct" width="100%" height="180px" class="ct-chart-pie" style="width: 100%; height: 180px;"><g class="ct-series ct-series-a"><path d="M229.77,132.5A85,85,0,0,0,156.158,5L156.158,90Z" class="ct-slice-pie" ct:value="328"></path></g><g class="ct-series ct-series-b"><path d="M82.546,132.5A85,85,0,0,0,229.918,132.243L156.158,90Z" class="ct-slice-pie" ct:value="328"></path></g><g class="ct-series ct-series-c"><path d="M156.158,5A85,85,0,0,0,82.695,132.757L156.158,90Z" class="ct-slice-pie" ct:value="328"></path></g></svg></div>
+                                <div class="pie-chart4">
+                                    <div class="chartist-tooltip"></div>
+                                    <svg xmlns:ct="http://gionkunz.github.com/chartist-js/ct" width="100%"
+                                         height="180px" class="ct-chart-pie" style="width: 100%; height: 180px;">
+                                        <g class="ct-series ct-series-a">
+                                            <path d="M229.77,132.5A85,85,0,0,0,156.158,5L156.158,90Z"
+                                                  class="ct-slice-pie" ct:value="328"></path>
+                                        </g>
+                                        <g class="ct-series ct-series-b">
+                                            <path d="M82.546,132.5A85,85,0,0,0,229.918,132.243L156.158,90Z"
+                                                  class="ct-slice-pie" ct:value="328"></path>
+                                        </g>
+                                        <g class="ct-series ct-series-c">
+                                            <path d="M156.158,5A85,85,0,0,0,82.695,132.757L156.158,90Z"
+                                                  class="ct-slice-pie" ct:value="328"></path>
+                                        </g>
+                                    </svg>
+                                </div>
                             </div>
                             <div class="row gutters pie-info">
                                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col">
@@ -398,10 +621,27 @@
 
                 <div class="col-lg-4 col-md-4 col-sm-12 one-fifth">
                     <div class="card">
-                        <div class="card-header">Third Party API sold </div>
+                        <div class="card-header">Third Party API sold</div>
                         <div class="card-body">
                             <div class="chartist custom-two">
-                                <div class="pie-chart5"><div class="chartist-tooltip"></div><svg xmlns:ct="http://gionkunz.github.com/chartist-js/ct" width="100%" height="180px" class="ct-chart-pie" style="width: 100%; height: 180px;"><g class="ct-series ct-series-a"><path d="M229.77,132.5A85,85,0,0,0,156.158,5L156.158,90Z" class="ct-slice-pie" ct:value="328"></path></g><g class="ct-series ct-series-b"><path d="M82.546,132.5A85,85,0,0,0,229.918,132.243L156.158,90Z" class="ct-slice-pie" ct:value="328"></path></g><g class="ct-series ct-series-c"><path d="M156.158,5A85,85,0,0,0,82.695,132.757L156.158,90Z" class="ct-slice-pie" ct:value="328"></path></g></svg></div>
+                                <div class="pie-chart5">
+                                    <div class="chartist-tooltip"></div>
+                                    <svg xmlns:ct="http://gionkunz.github.com/chartist-js/ct" width="100%"
+                                         height="180px" class="ct-chart-pie" style="width: 100%; height: 180px;">
+                                        <g class="ct-series ct-series-a">
+                                            <path d="M229.77,132.5A85,85,0,0,0,156.158,5L156.158,90Z"
+                                                  class="ct-slice-pie" ct:value="328"></path>
+                                        </g>
+                                        <g class="ct-series ct-series-b">
+                                            <path d="M82.546,132.5A85,85,0,0,0,229.918,132.243L156.158,90Z"
+                                                  class="ct-slice-pie" ct:value="328"></path>
+                                        </g>
+                                        <g class="ct-series ct-series-c">
+                                            <path d="M156.158,5A85,85,0,0,0,82.695,132.757L156.158,90Z"
+                                                  class="ct-slice-pie" ct:value="328"></path>
+                                        </g>
+                                    </svg>
+                                </div>
                             </div>
                             <div class="row gutters pie-info">
                                 <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col">
@@ -438,47 +678,67 @@
             <div class="row gutters">
                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                     <div class="card">
-                        <div class="card-header">Seat Purchase Report by Class Level Wise, Real Time</div>
+                        <div class="card-header">Seat Purchase Report by Screen & Class Level Wise</div>
                         <div class="card-body table-responsive">
-                            <table class="table table-hover m-0">
+                            <table class="table table-hover m-0" id="" style="width:100%">
                                 <thead>
                                 <tr>
                                     <th>Show</th>
                                     <th>Seat Plan</th>
                                     <th>Screen</th>
-                                    <th>Tkt Type 1</th>
-                                    <th>Tkt Type 2</th>
+                                    <th>Show Date</th>
+                                    @if(count($seatCategoryData) != 0)
+                                        @foreach($seatCategoryData as $seatCategoryDatum)
+                                            <th>{{$seatCategoryDatum['category_name']}}</th>
+                                        @endforeach
+                                    @endif
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
-                                    <th scope="row">Mr. Virgin</th>
-                                    <td>View Seat</td>
-                                    <td>Screen 1: 11 am</td>
-                                    <td>30 (200)</td>
-                                    <td>40 (250)</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Padmavati</th>
-                                    <td>View Seat</td>
-                                    <td>Screen 2: 10 am</td>
-                                    <td>12 (250)</td>
-                                    <td>40 (350)</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Blind Rocks</th>
-                                    <td>View Seat</td>
-                                    <td>Screen 2: 1 PM</td>
-                                    <td>25 (250)</td>
-                                    <td>40 (350)</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Naaka</th>
-                                    <td>View Seat</td>
-                                    <td>Screen 1: 2 PM</td>
-                                    <td>40 (200)</td>
-                                    <td>40 (250)</td>
-                                </tr>
+                                @if(isset($todayScheduledMovies) && $todayScheduledMovies->count() > 0)
+                                    @foreach($todayScheduledMovies as $todayScheduledMovie)
+                                        @foreach($schedules as $schedule)
+                                            @if($todayScheduledMovie == $schedule->movie_id)
+                                                <tr>
+                                                    <th scope="row">{{\App\MovieModel::find($todayScheduledMovie)->movie_title}}</th>
+                                                    <td>
+                                                        <a href="{{url('admin/sales-management/sold-reports/view-seat?screen='.$activeScreen->id.'&date='.$schedule->show_date.'&time='.$schedule->show_time_start.'&movie='.$todayScheduledMovie.'&schedule='.$schedule->id)}}">View
+                                                            Seat</a></td>
+                                                    <td>{{$activeScreen->name}} ({{$schedule->show_time_start}})</td>
+                                                    <td>{{$schedule->show_date}}</td>
+                                                    @if(count($seatCategoryData) != 0)
+                                                        @foreach($seatCategoryData as $seatCategoryDatum)
+                                                            @if(!isset($_GET['range']) || (isset($_GET['range']) && $_GET['range'] == 'daily'))
+                                                                <td>{{\App\BookingModel\CounterSell::where('screen_id', $activeScreen->id)->where('schedule_id', $schedule->id)->where('seat_category', $seatCategoryDatum['category_name'])->whereDate('show_date', date('Y-m-d'))->count()}}
+                                                                    ( {{$seatCategoryDatum['category_total_seats']}} )
+                                                                </td>
+                                                            @else
+                                                                <td>{{\App\BookingModel\CounterSell::where('screen_id', $activeScreen->id)->where('schedule_id', $schedule->id)->where('seat_category', $seatCategoryDatum['category_name'])->whereBetween('show_date', [$_GET['start-date'], $_GET['end-date']])->count()}}
+                                                                    ( {{$seatCategoryDatum['category_total_seats']}} )
+                                                                </td>
+                                                            @endif
+                                                        @endforeach
+                                                    @endif
+                                                </tr>
+                                            @endif
+                                        @endforeach
+                                    @endforeach
+                                @else
+                                    @if(!isset($_GET['range']) || (isset($_GET['range']) && $_GET['range'] == 'daily'))
+                                        @php $show = 'today'; @endphp
+                                    @elseif(isset($_GET['range']) && $_GET['range'] == 'weekly')
+                                        @php $show = 'this week'; @endphp
+                                    @elseif(isset($_GET['range']) && $_GET['range'] == 'monthly')
+                                        @php $show = 'this month'; @endphp
+                                    @elseif(isset($_GET['range']) && $_GET['range'] == 'custom-date')
+                                        @php $show = 'from '.$_GET['start-date'].' to '.$_GET['end-date']; @endphp
+                                    @endif
+                                    <tr>
+                                        <td colspan="5">No Reports Found
+                                            For {{$activeScreen->name}} {{$show}} !
+                                        </td>
+                                    </tr>
+                                @endif
                                 </tbody>
                             </table>
                         </div>
@@ -491,476 +751,58 @@
             <div class="row gutters">
                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                     <div class="card m-0">
-                        <div class="card-body">
-                            <div class="table-responsive table-scroll">
-                                <table id="" class="table table-striped table-bordered m-0 table-bottom">
+                        <div class="card-body scroll-to-here">
+                            <div class="table-responsive">
+                                <div id="load-fade"></div>
+                                <div id="load-modal">
+                                    <img id="loader" src="{{asset('admins/loader/loading.gif')}}"/>
+                                </div>
+                                <table class="table table-hover m-0" id="transaction-log-table" style="width:100%">
                                     <thead>
                                     <tr>
-                                        <th>No.</th>
-                                        <th>Image</th>
-                                        <th>Location</th>
-                                        <th>Product code</th>
-                                        <th>Purchased on</th>
-                                        <th>Amount</th>
+                                        <th>Customer Name</th>
+                                        {{--<th>Customer Pan</th>--}}
+                                        <th>Invoice Number</th>
+                                        <th>Payment Mode</th>
+                                        <th>Screen</th>
+                                        <th>Category</th>
+                                        <th>Seat</th>
+                                        <th>Price</th>
+                                        <th>Movie</th>
+                                        <th>Show Date</th>
+                                        <th>Show Time</th>
+                                        <th>Show Day</th>
+                                        <th>Sold At</th>
                                     </tr>
                                     </thead>
-                                    <tbody>
-                                    <tr>
-                                        <td>Tiger Nixon</td>
-                                        <td><img src="img/user.png" class="img-30" alt="product"></td>
-                                        <td>Edinburgh</td>
-                                        <td>#127654</td>
-                                        <td>2017/04/25</td>
-                                        <td>$320,800</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Garrett Winters</td>
-                                        <td><img src="img/user.png" class="img-30" alt="product"></td>
-                                        <td>Tokyo</td>
-                                        <td>63</td>
-                                        <td>2017/07/25</td>
-                                        <td>$170,750</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Ashton Cox</td>
-                                        <td><img src="img/user.png" class="img-30" alt="product"></td>
-                                        <td>San Francisco</td>
-                                        <td>66</td>
-                                        <td>2017/01/12</td>
-                                        <td>$86,000</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Cedric Kelly</td>
-                                        <td><img src="img/user.png" class="img-30" alt="product"></td>
-                                        <td>Edinburgh</td>
-                                        <td>22</td>
-                                        <td>2017/03/29</td>
-                                        <td>$433,060</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Airi Satou</td>
-                                        <td><img src="img/user.png" class="img-30" alt="product"></td>
-                                        <td>Tokyo</td>
-                                        <td>33</td>
-                                        <td>2017/11/28</td>
-                                        <td>$162,700</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Brielle Williamson</td>
-                                        <td><img src="img/user.png" class="img-30" alt="product"></td>
-                                        <td>New York</td>
-                                        <td>61</td>
-                                        <td>2017/12/02</td>
-                                        <td>$372,000</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Herrod Chandler</td>
-                                        <td><img src="img/user.png" class="img-30" alt="product"></td>
-                                        <td>San Francisco</td>
-                                        <td>59</td>
-                                        <td>2017/08/06</td>
-                                        <td>$137,500</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Rhona Davidson</td>
-                                        <td><img src="img/user.png" class="img-30" alt="product"></td>
-                                        <td>Tokyo</td>
-                                        <td>55</td>
-                                        <td>2017/10/14</td>
-                                        <td>$327,900</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Colleen Hurst</td>
-                                        <td><img src="img/user.png" class="img-30" alt="product"></td>
-                                        <td>San Francisco</td>
-                                        <td>39</td>
-                                        <td>2017/09/15</td>
-                                        <td>$205,500</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Sonya Frost</td>
-                                        <td><img src="img/user.png" class="img-30" alt="product"></td>
-                                        <td>Edinburgh</td>
-                                        <td>23</td>
-                                        <td>2017/12/13</td>
-                                        <td>$103,600</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Jena Gaines</td>
-                                        <td><img src="img/user.png" class="img-30" alt="product"></td>
-                                        <td>London</td>
-                                        <td>30</td>
-                                        <td>2017/12/19</td>
-                                        <td>$90,560</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Quinn Flynn</td>
-                                        <td><img src="img/user.png" class="img-30" alt="product"></td>
-                                        <td>Edinburgh</td>
-                                        <td>22</td>
-                                        <td>2017/03/03</td>
-                                        <td>$342,000</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Charde Marshall</td>
-                                        <td><img src="img/user.png" class="img-30" alt="product"></td>
-                                        <td>San Francisco</td>
-                                        <td>36</td>
-                                        <td>2017/10/16</td>
-                                        <td>$470,600</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Haley Kennedy</td>
-                                        <td><img src="img/user.png" class="img-30" alt="product"></td>
-                                        <td>London</td>
-                                        <td>43</td>
-                                        <td>2017/12/18</td>
-                                        <td>$313,500</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Tatyana Fitzpatrick</td>
-                                        <td><img src="img/user.png" class="img-30" alt="product"></td>
-                                        <td>London</td>
-                                        <td>19</td>
-                                        <td>2017/03/17</td>
-                                        <td>$385,750</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Michael Silva</td>
-                                        <td><img src="img/user.png" class="img-30" alt="product"></td>
-                                        <td>London</td>
-                                        <td>66</td>
-                                        <td>2017/11/27</td>
-                                        <td>$198,500</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Paul Byrd</td>
-                                        <td><img src="img/user.png" class="img-30" alt="product"></td>
-                                        <td>New York</td>
-                                        <td>64</td>
-                                        <td>2017/06/09</td>
-                                        <td>$725,000</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Gloria Little</td>
-                                        <td><img src="img/user.png" class="img-30" alt="product"></td>
-                                        <td>New York</td>
-                                        <td>59</td>
-                                        <td>2017/04/10</td>
-                                        <td>$237,500</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Bradley Greer</td>
-                                        <td><img src="img/user.png" class="img-30" alt="product"></td>
-                                        <td>London</td>
-                                        <td>41</td>
-                                        <td>2017/10/13</td>
-                                        <td>$132,000</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Dai Rios</td>
-                                        <td><img src="img/user.png" class="img-30" alt="product"></td>
-                                        <td>Edinburgh</td>
-                                        <td>35</td>
-                                        <td>2017/09/26</td>
-                                        <td>$217,500</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Jenette Caldwell</td>
-                                        <td><img src="img/user.png" class="img-30" alt="product"></td>
-                                        <td>New York</td>
-                                        <td>30</td>
-                                        <td>2017/09/03</td>
-                                        <td>$345,000</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Yuri Berry</td>
-                                        <td><img src="img/user.png" class="img-30" alt="product"></td>
-                                        <td>New York</td>
-                                        <td>40</td>
-                                        <td>2017/06/25</td>
-                                        <td>$675,000</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Caesar Vance</td>
-                                        <td><img src="img/user.png" class="img-30" alt="product"></td>
-                                        <td>New York</td>
-                                        <td>21</td>
-                                        <td>2017/12/12</td>
-                                        <td>$106,450</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Doris Wilder</td>
-                                        <td><img src="img/user.png" class="img-30" alt="product"></td>
-                                        <td>Sidney</td>
-                                        <td>23</td>
-                                        <td>2017/09/20</td>
-                                        <td>$85,600</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Angelica Ramos</td>
-                                        <td><img src="img/user.png" class="img-30" alt="product"></td>
-                                        <td>London</td>
-                                        <td>47</td>
-                                        <td>2017/10/09</td>
-                                        <td>$1,200,000</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Gavin Joyce</td>
-                                        <td><img src="img/user.png" class="img-30" alt="product"></td>
-                                        <td>Edinburgh</td>
-                                        <td>42</td>
-                                        <td>2017/12/22</td>
-                                        <td>$92,575</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Jennifer Chang</td>
-                                        <td><img src="img/user.png" class="img-30" alt="product"></td>
-                                        <td>Singapore</td>
-                                        <td>28</td>
-                                        <td>2017/11/14</td>
-                                        <td>$357,650</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Brenden Wagner</td>
-                                        <td><img src="img/user.png" class="img-30" alt="product"></td>
-                                        <td>San Francisco</td>
-                                        <td>28</td>
-                                        <td>2017/06/07</td>
-                                        <td>$206,850</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Fiona Green</td>
-                                        <td><img src="img/user.png" class="img-30" alt="product"></td>
-                                        <td>San Francisco</td>
-                                        <td>48</td>
-                                        <td>2017/03/11</td>
-                                        <td>$850,000</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Shou Itou</td>
-                                        <td><img src="img/user.png" class="img-30" alt="product"></td>
-                                        <td>Tokyo</td>
-                                        <td>20</td>
-                                        <td>2017/08/14</td>
-                                        <td>$163,000</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Michelle House</td>
-                                        <td><img src="img/user.png" class="img-30" alt="product"></td>
-                                        <td>Sidney</td>
-                                        <td>37</td>
-                                        <td>2017/06/02</td>
-                                        <td>$95,400</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Suki Burks</td>
-                                        <td><img src="img/user.png" class="img-30" alt="product"></td>
-                                        <td>London</td>
-                                        <td>53</td>
-                                        <td>2017/10/22</td>
-                                        <td>$114,500</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Prescott Bartlett</td>
-                                        <td><img src="img/user.png" class="img-30" alt="product"></td>
-                                        <td>London</td>
-                                        <td>27</td>
-                                        <td>2017/05/07</td>
-                                        <td>$145,000</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Gavin Cortez</td>
-                                        <td><img src="img/user.png" class="img-30" alt="product"></td>
-                                        <td>San Francisco</td>
-                                        <td>22</td>
-                                        <td>2017/10/26</td>
-                                        <td>$235,500</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Martena Mccray</td>
-                                        <td><img src="img/user.png" class="img-30" alt="product"></td>
-                                        <td>Edinburgh</td>
-                                        <td>46</td>
-                                        <td>2017/03/09</td>
-                                        <td>$324,050</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Unity Butler</td>
-                                        <td><img src="img/user.png" class="img-30" alt="product"></td>
-                                        <td>San Francisco</td>
-                                        <td>47</td>
-                                        <td>2017/12/09</td>
-                                        <td>$85,675</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Howard Hatfield</td>
-                                        <td><img src="img/user.png" class="img-30" alt="product"></td>
-                                        <td>San Francisco</td>
-                                        <td>51</td>
-                                        <td>2017/12/16</td>
-                                        <td>$164,500</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Hope Fuentes</td>
-                                        <td><img src="img/user.png" class="img-30" alt="product"></td>
-                                        <td>San Francisco</td>
-                                        <td>41</td>
-                                        <td>2017/02/12</td>
-                                        <td>$109,850</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Vivian Harrell</td>
-                                        <td><img src="img/user.png" class="img-30" alt="product"></td>
-                                        <td>San Francisco</td>
-                                        <td>62</td>
-                                        <td>2017/02/14</td>
-                                        <td>$452,500</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Timothy Mooney</td>
-                                        <td><img src="img/user.png" class="img-30" alt="product"></td>
-                                        <td>London</td>
-                                        <td>37</td>
-                                        <td>2017/12/11</td>
-                                        <td>$136,200</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Jackson Bradshaw</td>
-                                        <td><img src="img/user.png" class="img-30" alt="product"></td>
-                                        <td>New York</td>
-                                        <td>65</td>
-                                        <td>2017/09/26</td>
-                                        <td>$645,750</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Olivia Liang</td>
-                                        <td><img src="img/user.png" class="img-30" alt="product"></td>
-                                        <td>Singapore</td>
-                                        <td>64</td>
-                                        <td>2017/02/03</td>
-                                        <td>$234,500</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Bruno Nash</td>
-                                        <td><img src="img/user.png" class="img-30" alt="product"></td>
-                                        <td>London</td>
-                                        <td>38</td>
-                                        <td>2017/05/03</td>
-                                        <td>$163,500</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Sakura Yamamoto</td>
-                                        <td><img src="img/user.png" class="img-30" alt="product"></td>
-                                        <td>Tokyo</td>
-                                        <td>37</td>
-                                        <td>2017/08/19</td>
-                                        <td>$139,575</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Thor Walton</td>
-                                        <td><img src="img/user.png" class="img-30" alt="product"></td>
-                                        <td>New York</td>
-                                        <td>61</td>
-                                        <td>2017/08/11</td>
-                                        <td>$98,540</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Finn Camacho</td>
-                                        <td><img src="img/user.png" class="img-30" alt="product"></td>
-                                        <td>San Francisco</td>
-                                        <td>47</td>
-                                        <td>2017/07/07</td>
-                                        <td>$87,500</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Serge Baldwin</td>
-                                        <td><img src="img/user.png" class="img-30" alt="product"></td>
-                                        <td>Singapore</td>
-                                        <td>64</td>
-                                        <td>2017/04/09</td>
-                                        <td>$138,575</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Zenaida Frank</td>
-                                        <td><img src="img/user.png" class="img-30" alt="product"></td>
-                                        <td>New York</td>
-                                        <td>63</td>
-                                        <td>2017/01/04</td>
-                                        <td>$125,250</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Zorita Serrano</td>
-                                        <td><img src="img/user.png" class="img-30" alt="product"></td>
-                                        <td>San Francisco</td>
-                                        <td>56</td>
-                                        <td>2017/06/01</td>
-                                        <td>$115,000</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Jennifer Acosta</td>
-                                        <td><img src="img/user.png" class="img-30" alt="product"></td>
-                                        <td>Edinburgh</td>
-                                        <td>43</td>
-                                        <td>2017/02/01</td>
-                                        <td>$75,650</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Cara Stevens</td>
-                                        <td><img src="img/user.png" class="img-30" alt="product"></td>
-                                        <td>New York</td>
-                                        <td>46</td>
-                                        <td>2017/12/06</td>
-                                        <td>$145,600</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Hermione Butler</td>
-                                        <td><img src="img/user.png" class="img-30" alt="product"></td>
-                                        <td>London</td>
-                                        <td>47</td>
-                                        <td>2017/03/21</td>
-                                        <td>$356,250</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Lael Greer</td>
-                                        <td><img src="img/user.png" class="img-30" alt="product"></td>
-                                        <td>London</td>
-                                        <td>21</td>
-                                        <td>2017/02/27</td>
-                                        <td>$103,500</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Jonas Alexander</td>
-                                        <td><img src="img/user.png" class="img-30" alt="product"></td>
-                                        <td>San Francisco</td>
-                                        <td>30</td>
-                                        <td>2017/07/14</td>
-                                        <td>$86,500</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Shad Decker</td>
-                                        <td><img src="img/user.png" class="img-30" alt="product"></td>
-                                        <td>Edinburgh</td>
-                                        <td>51</td>
-                                        <td>2017/11/13</td>
-                                        <td>$183,000</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Michael Bruce</td>
-                                        <td><img src="img/user.png" class="img-30" alt="product"></td>
-                                        <td>Singapore</td>
-                                        <td>29</td>
-                                        <td>2017/06/27</td>
-                                        <td>$183,000</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Donna Snider</td>
-                                        <td><img src="img/user.png" class="img-30" alt="product"></td>
-                                        <td>New York</td>
-                                        <td>27</td>
-                                        <td>2017/01/25</td>
-                                        <td>$112,000</td>
-                                    </tr>
+                                    <tbody class="transaction-log-tbody">
+                                    @if(isset($transactionData) && $transactionData->count() > 0)
+                                        @foreach($transactionData as $transactionDatum)
+                                            <tr>
+                                                <td>{{\App\BookingModel\CounterSellInvoice::where('invoice_number', $transactionDatum->invoice_number)->first()->customer_name != null ? \App\BookingModel\CounterSellInvoice::where('invoice_number', $transactionDatum->invoice_number)->first()->customer_name : 'N/A'}}</td>
+                                                {{--<td>{{$transactionDatum->customer_pan_num != null ? $transactionDatum->customer_pan_num : 'N/A'}}</td>--}}
+                                                <td>{{$transactionDatum->invoice_number}}</td>
+                                                <td>{{\App\BookingModel\CounterSellInvoice::where('invoice_number', $transactionDatum->invoice_number)->first()->payment_mode != null ? \App\BookingModel\CounterSellInvoice::where('invoice_number', $transactionDatum->invoice_number)->first()->payment_mode : 'N/A'}}</td>
+                                                <td>{{\App\Screen\Screen::find($transactionDatum->screen_id)->name}}</td>
+                                                <td>{{$transactionDatum->seat_category}}</td>
+                                                <td>{{$transactionDatum->seat_name}}</td>
+                                                <td>{{$transactionDatum->seat_price}}</td>
+                                                <td>{{\App\MovieModel::find($transactionDatum->movie_id)->movie_title}}</td>
+                                                <td>{{$transactionDatum->show_date}}</td>
+                                                <td>{{$transactionDatum->show_time}}</td>
+                                                <td>{{$transactionDatum->show_day}}</td>
+                                                <td>{{date('d M, Y', strtotime($transactionDatum->created_at))}}</td>
+                                            </tr>
+                                        @endforeach
+                                        <tr>
+                                            <td colspan="10">{{$transactionData->appends(\Illuminate\Support\Facades\Input::except('page'))}}</td>
+                                        </tr>
+                                    @else
+                                        <tr>
+                                            <td colspan="10">No Reports Found !
+                                            </td>
+                                        </tr>
+                                    @endif
                                     </tbody>
                                 </table>
                             </div>
@@ -973,5 +815,166 @@
         </div>
         <!-- END: .main-content -->
     </div>
+@stop
+
+@section('scripts')
+    <script !src="">
+        function openModal() {
+            document.getElementById('load-modal').style.display = 'block';
+            document.getElementById('load-fade').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('load-modal').style.display = 'none';
+            document.getElementById('load-fade').style.display = 'none';
+        }
+
+
+
+        var chart = new Chartist.Line('.line-chart', {
+            labels: [1, 2, 3, 4, 5],
+            series: [
+                [
+                    {meta: 'Visitors', value: "{{$totalVisitorsLastMonth}}"},
+                    {meta: 'Visitors', value: "{{$totalVisitors}}"},
+                ]
+            ]
+        }, {
+            // Remove this configuration to see that chart rendered with cardinal spline interpolation
+            // Sometimes, on large jumps in data values, it's better to use simple smoothing.
+            lineSmooth: Chartist.Interpolation.simple({
+                divisor: 2
+            }),
+            height: "190px",
+            fullWidth: true,
+            chartPadding: {
+                right: 20,
+                left: 10,
+                top: 10,
+                bottom: 0,
+            },
+            axisX: {
+                offset: 0,
+                showGrid: false,
+                showLabel: false,
+            },
+            axisY: {
+                offset: 0,
+                showLabel: false,
+            },
+            plugins: [
+                Chartist.plugins.tooltip()
+            ],
+            low: 0,
+        });
+
+        chart.on('draw', function (data) {
+            if (data.type === 'line' || data.type === 'area') {
+                data.element.animate({
+                    d: {
+                        begin: 2000 * data.index,
+                        dur: 2000,
+                        from: data.path.clone().scale(1, 0).translate(0, data.chartRect.height()).stringify(),
+                        to: data.path.clone().stringify(),
+                        easing: Chartist.Svg.Easing.easeOutQuint
+                    }
+                });
+            }
+        });
+
+
+        var chart2 = new Chartist.Line('.line-chart2', {
+            labels: [1, 2, 3, 4, 5],
+            series: [
+                [
+                    {meta: 'Orders', value: "{{$totalVisitorsSellLastMonth}}"},
+                    {meta: 'Orders', value: "{{$totalVisitorsSell}}"},
+                ]
+            ]
+        }, {
+            // Remove this configuration to see that chart rendered with cardinal spline interpolation
+            // Sometimes, on large jumps in data values, it's better to use simple smoothing.
+            lineSmooth: Chartist.Interpolation.simple({
+                divisor: 2
+            }),
+            height: "190px",
+            fullWidth: true,
+            chartPadding: {
+                right: 20,
+                left: 10,
+                top: 10,
+                bottom: 0,
+            },
+            axisX: {
+                offset: 0,
+                showGrid: false,
+                showLabel: false,
+            },
+            axisY: {
+                offset: 0,
+                showLabel: false,
+            },
+            plugins: [
+                Chartist.plugins.tooltip()
+            ],
+            low: 0,
+        });
+
+        chart2.on('draw', function (data) {
+            if (data.type === 'line' || data.type === 'area') {
+                data.element.animate({
+                    d: {
+                        begin: 2000 * data.index,
+                        dur: 2000,
+                        from: data.path.clone().scale(1, 0).translate(0, data.chartRect.height()).stringify(),
+                        to: data.path.clone().stringify(),
+                        easing: Chartist.Svg.Easing.easeOutQuint
+                    }
+                });
+            }
+        });
+
+        $(document).on('change', '#screen-select', function () {
+            var url = baseurl + '/admin/dashboard?screen=' + $(this).children('option:selected').data('screenid');
+            window.location = url;
+        });
+
+        new Chartist.Pie('.counter-pie-chart', {
+            series: ["{{$totalValueForCounterPieChart}}", "{{$sellValueForCounterPieChart}}", "{{$reservationValueForCounterPieChart}}"],
+        }, {
+            pie: true,
+            showLabel: false,
+            height: "180px",
+            plugins: [
+                Chartist.plugins.tooltip()
+            ],
+            low: 0
+        });
+
+        $(document).on('click', 'ul.pagination li', function(e){
+           e.preventDefault();
+           if(!$(this).hasClass('active') && !$(this).hasClass('disabled'))
+           {
+               openModal();
+               var url = $(this).children('a').attr('href');
+               $.ajax({
+                  url: url,
+                   type: 'get',
+                   success:function(data)
+                   {
+                       $(document).find('.transaction-log-tbody').html(data);
+                       $('html, body').animate({
+                           scrollTop: $(".scroll-to-here").offset().top - 80
+                       }, 100);
+                       closeModal();
+                   }, error:function(data)
+                   {
+                       closeModal();
+                       alertify.alert('Oops ! something went wrong. Data could not be loaded.');
+                   }
+               });
+           }
+        });
+    </script>
 @stop
 

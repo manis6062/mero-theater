@@ -15,7 +15,7 @@ $(function () {
 			max: (new Date(2010, 11)).getTime(),
 			mode: "time",
 			tickSize: [1, "month"],
-			monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+			monthNames: ["Jan 2", "Jan 4", "Jan 6", "Jan 8", "Jan 10", "Jan 12", "Jan 14", "Jan 16", "Jan 18", "Jan 20", "Jan 22", "Jan 24"],
 			tickLength: 0
 		},
 		yaxis: {

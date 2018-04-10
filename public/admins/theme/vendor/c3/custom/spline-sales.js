@@ -1,5 +1,5 @@
 var chart2 = c3.generate({
-	bindto: '#splineSales',
+	bindto: '#splineGraph',
 	padding: {
 		top: -20,
 		left: 0,

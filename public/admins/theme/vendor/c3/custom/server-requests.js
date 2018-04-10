@@ -12,7 +12,7 @@ var chart11 = c3.generate({
 			data1: 'area',
 		},
 		names: {
-			data1: 'Requests',
+			data1: 'Traffics',
 		},
 		colors: {
 			data1: '#da1113',

@@ -23,5 +23,6 @@ var chart2 = c3.generate({
 			data1: '#da1113',
 			data2: '#3c3c3c'
 		},
+		
 	}
 });
