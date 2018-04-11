@@ -37,6 +37,7 @@ Route::group(['prefix'=>'admin/email-marketing', 'middleware'=> 'admin'],functio
     
     Route::get('/sendmail', 'Admin\EmailMarketingController@sendMail');
     Route::get('/campaign','Admin\EmailMarketingController@campaignCreate');
+    Route::post('/campaign-manage','Admin\EmailMarketingController@campaignManage');
 
     // Route for Email-marketing Contact
     Route::resource('emailcontact','Admin\emailCampaign\ContactController');

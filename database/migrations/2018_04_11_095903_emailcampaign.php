@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateUsersTable extends Migration
+class Emailcampaign extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,11 @@ class CreateUsersTable extends Migration
      */
     public function up()
     {
-        Schema::create('user_tbl', function (Blueprint $table) {
+         Schema::create('emailcampaign_tbl', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('theater_id')->unsigned();
+            $table->foreign('theater_id')->references('id')->on('admin_tbl');
             $table->string('name',100);
-            $table->string('email',100)->unique();
-            $table->string('mobile',15);
-            $table->string('registered_type',250);
-            $table->string('api_token', 60);
-            $table->enum('suspend',['Yes','No']);
-            $table->string('remember_token', 60)->nullable();
             $table->timestamps();
            
         });
@@ -34,6 +30,6 @@ class CreateUsersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('user_tbl');
+       Schema::dropIfExists('emailcampaign_tbl');
     }
 }
