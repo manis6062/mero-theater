@@ -204,7 +204,7 @@
             }
             function deleteCheckedContacts(contacts) {
                 $.ajax({
-                    url: baseurl + '/admin/email-marketing/emailcontact/mass-delete',
+                    url: baseurl + '/admin/email-marketing/emailcontact/mass-remove',
                     data: {
                         contacts: contacts
                     },
@@ -238,11 +238,6 @@ $('#deleteCheckedContactsButton').on('click', function (evt) {
            return true;
        } 
    }
-
-
-
-
-
    deleteCheckedContacts(contactIds);
 });
 })

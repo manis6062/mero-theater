@@ -88,7 +88,7 @@ class GroupController extends Controller
         foreach ($contactIds as $contactId) {
             $contactEmail->push(EmailContact::find($contactId));
         }
-         return view('admin.email-marketing.Group.view')->with(['items'=>$contactEmail,'otherContacts'=>$filteredcontact,'groupId'=>$group]);
+        return view('admin.email-marketing.Group.view')->with(['items'=>$contactEmail,'otherContacts'=>$filteredcontact,'groupId'=>$group]);
 
 
 
@@ -128,10 +128,10 @@ class GroupController extends Controller
         }
         try {
             EmailGroup::where('id', $id)
-                ->where('admin_id',Auth::guard('admin')->user()->id)
-                ->update([
-                    'name' => $input['name'],
-                ]);
+            ->where('admin_id',Auth::guard('admin')->user()->id)
+            ->update([
+                'name' => $input['name'],
+            ]);
             Session::flash('success', "Group Successfully Updated");
             return redirect('admin/email-marketing/emailgroup');
         } catch (ModelNotFoundException $ex) {
@@ -146,55 +146,87 @@ class GroupController extends Controller
      * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
-    {
-        try {
-             $group = EmailGroup::where('admin_id',Auth::guard('admin')->user()->id)->findOrFail($id);
-            $group->delete();
-            Session::flash('success', "Deleted Successfully");
-        } catch (ModelNotFoundException $e) {
-            Session::flash('warning', "Oops Something Went Wrong");
+
+    public function removeContact(Request $request){
+        $cid = $request->cid;
+        $gid = $request->gid;
+        $emailcontact = EmailContact::find($cid);
+        $removeContact=$emailcontact->groups()->detach($gid);
+        if(isset($removeContact)){
+            return 'true';
+
+        }else{
+            return 'false';
         }
-        return redirect()->back();
     }
+    public function massRemove(Request $request){
+       $contactIds = $request->contacts;
+       $gid = $request->groupId;
+       foreach ($contactIds as $contactId) {
+         $emailcontact = EmailContact::find($contactId);
+         $removeContact=$emailcontact->groups()->detach($gid);
+     }
+
+ }
+ public function destroy($gid)
+ {
+    $contactIds = EmailContactGroup::where('emailgroup_id',$gid)->pluck('emailcontact_id');
+    foreach ($contactIds as $contactId) {
+        $contact = EmailContact::find($contactId);
+        $removedContact= $contact->groups()->detach($gid);
+    }
+    $deletedgroup = EmailGroup::find($gid)->delete();
+    if(isset($deletedgroup)){
+        return 'true';
+    }
+}
 
     // Mass group delete
-    public function postMassDelete(Request $request )
-    {
-        $inputs = $request->all();
-        $deletedData = \DB::table('emailgroup_tbl')->whereIn('id', $inputs['contacts'])->where('admin_id',Auth::guard('admin')->user()->id)->delete();
-        return response()->json($deletedData, 200);
+public function MassDelete(Request $request )
+{
+    $gids = $request->groups;
+    foreach ($gids as $gid) {
+        $contactIds = EmailContactGroup::where('emailgroup_id',$gid)->pluck('emailcontact_id');
+        foreach ($contactIds as $contactId) {
+            $contact = EmailContact::find($contactId);
+            $removedContact= $contact->groups()->detach($gid);
+        }
+        $deletedgroup = EmailGroup::find($gid)->delete();
     }
+   if(isset($deletedgroup)){
+        return 'true';
+    }
+}
 
-    public function postAddContactsToGroup(Request $request)
-    {
-        $emailgroup_id=$request->group_id;
-        $emailcontact_ids=$request->otherContact;
-        if ($request->has('otherContact')) {
-             foreach ($emailcontact_ids as $emailcontact_id) {
-                 $EmailContact = EmailContact::find($emailcontact_id)->groups()->attach($emailgroup_id);
-             }
-            Session::flash('success', "Contacts added to group");
+public function postAddContactsToGroup(Request $request)
+{
+    $emailgroup_id=$request->group_id;
+    $emailcontact_ids=$request->otherContact;
+    if ($request->has('otherContact')) {
+     foreach ($emailcontact_ids as $emailcontact_id) {
+         $EmailContact = EmailContact::find($emailcontact_id)->groups()->attach($emailgroup_id);
+     }
+     Session::flash('success', "Contacts added to group");
+ } else {
+    Session::flash('error', "Sorry! Error occured");
+}
+
+return redirect()->back();
+}
+
+public function postDeleteContactsFromGroup(Request $request)
+{
+    $inputs = $request->all();
+
+    $groupContact = ContactGroup::where('contact_id', $inputs['contact_id'])->where('group_id', $inputs['group_id'])->first();
+    if ($groupContact) {
+        if ($groupContact->delete()) {
+            Session::flash('success', "Contacts deleted from group");
         } else {
             Session::flash('error', "Sorry! Error occured");
         }
-
-        return redirect()->back();
     }
 
-    public function postDeleteContactsFromGroup(Request $request)
-    {
-        $inputs = $request->all();
-
-        $groupContact = ContactGroup::where('contact_id', $inputs['contact_id'])->where('group_id', $inputs['group_id'])->first();
-        if ($groupContact) {
-            if ($groupContact->delete()) {
-                Session::flash('success', "Contacts deleted from group");
-            } else {
-                Session::flash('error', "Sorry! Error occured");
-            }
-        }
-
-        echo 1;
-    }
+    echo 1;
+}
 }

@@ -201,6 +201,7 @@ span.note{
                                     <label class="col-lg-3 col-form-label form-control-label">Contact File List<span class="req">*</span></label>
                                     <div class="col-lg-9">
                                         <input id="contacts-file" type="file" class="form-control" name="contacts_file" value="">
+                                        <span class="note">(Max Size 2mb | Format: xlxc, xls)</span></br>
                                         @if($errors->has('contacts_file'))
                                         <span class="help-block">
                                             <strong>
@@ -209,8 +210,7 @@ span.note{
                                         </span>
                                         @endif
                                         <label for="">Download :
-                                            <a href="{{url('admin/box-office/smsCampaigns/sampleCsv1/download/sample3')}}"
-                                            target="_blank">
+                                            <a href="{{asset('\download\contact.xlsx')}}" attribute="downloads" target="_blank">
                                             Sample
                                         </a>
                                     </label>
@@ -287,7 +287,19 @@ span.note{
     if ($('#contacts-file').val() == '') {
         e.preventDefault();
         $('.contact-list-error').html('<strong>Please Upload the contact list.</strong>');
-    }
+    }else{
+            var ext = $('input#contacts-file').val().split('.').pop().toLowerCase();
+            if ($.inArray(ext, ['xlsx','xls']) == -1) {
+                e.preventDefault();
+                $('.excel-file-error').html('<strong>Invalid File Format !</strong>');
+            } else {
+                var fileSize = $('input#contacts-file')[0].files[0].size;
+                if (fileSize > 204800) {
+                    e.preventDefault();
+                    $('.excel-file-error').html('<strong>File Size exceed max allowed size !</strong>');
+                }
+            }
+        }
     if ($('#group-contact-list').val() == '') {
         e.preventDefault();
         $('.group-contact-list-error').html('<strong>Please select the group.</strong>');

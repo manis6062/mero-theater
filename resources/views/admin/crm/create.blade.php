@@ -203,10 +203,10 @@ span.note{
                                     </br>
                                     OR
                                     <div class="form-group row">
-                                        <label class="col-lg-3 col-form-label form-control-label">Excel File  </label>
+                                        <label class="col-lg-3 col-form-label form-control-label">Excel File </label>
                                         <div class="col-md-9">
                                             <input type="file"  name="name_list" onclick="removeError();" class="form-control" id="excel_file"></br>
-                                            <span class="note">(Max Size 2mb | Format: xlxc, xls)</span>
+                                            <span class="note">(Max Size 2mb | Format: xlxc, xls)</span></br>
                                             @if($errors->has('name_list'))
                                             <span class="help-block error">
                                                 <strong>

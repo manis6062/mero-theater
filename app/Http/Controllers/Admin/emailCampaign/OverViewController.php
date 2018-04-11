@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin\smsCampaign;
+namespace App\Http\Controllers\Admin\emailCampaign;
 use App\Http\Controllers\Admin\smsCampaign\sms\CampaignController;
 use App\Http\Controllers\Controller;
 use App\Models\Contact;

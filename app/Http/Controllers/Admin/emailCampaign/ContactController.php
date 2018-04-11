@@ -33,11 +33,8 @@ class ContactController extends Controller
     {
 
     }
-
     public function index()
     {
-
-
         // Checking if session exist. Inserted contact id from xlsx file
         $contacts = [];
         if (Session::has('insertedIds')) {
@@ -189,7 +186,6 @@ class ContactController extends Controller
      */
     public function destroy($id)
     {
-
         $emailcontact = EmailContact::find($id);
         $emailcontact->groups()->detach($id);
         $contact = EmailContact::find($id)->delete();
@@ -215,12 +211,6 @@ class ContactController extends Controller
         }
         return 'true';
     }
-
-    /**
-     * Import contact details
-     */
-
-    
 
     public function importExcel(Request $request)
     {
@@ -261,7 +251,6 @@ class ContactController extends Controller
             foreach ($dataToImport as $values) {
                 if(isset($values['first_name']) && isset($values['email']) && isset($values['last_name']))
                 {
-
                     if(EmailContact::where('email', $values['email'])->first() == null )
                         {
                             $insert['first_name'] = $values['first_name'];
@@ -277,7 +266,6 @@ class ContactController extends Controller
                                 $emailcontact->groups()->attach($emailgroup_id);
                             }
 
-
                         } else{
                             return redirect('admin/email-marketing/emailcontact/create')->with('invalidEmailData', 'The excel file contain invalid email');
                         }
@@ -287,12 +275,8 @@ class ContactController extends Controller
                 }else{
                     return redirect('admin/email-marketing/emailcontact/create')->with('empty', 'Some of the fields are empty');
                 }
-// if(isset($result)){
-//     dd('Insert Record successfully.');
-// }
             }
         }
-
         if(count($emailValidationData) > 0)
         {
             return redirect('admin/email-marketing/emailcontact/create')->with('emailErrorData', $emailValidationData)->with('emailErrorData', $emailValidationData);
@@ -301,162 +285,9 @@ class ContactController extends Controller
         {
             return redirect('admin/email-marketing/emailcontact')->with('message','Contact have been successfully imported.');
         }
-//return redirect::back()->withErrors(['msg', $rem]);
-//return back()->with($rem);
-
     }else{
 
     }
 
 }
-
-public static function ComposeContactImport($excelFile = '')
-{
-
-    $insertedIds = [];
-    \Excel::load(public_path($excelFile), function ($reader) use ($excelFile, &$insertedIds) {
-
-        $contacts = $reader->all();
-        $contacts->toArray();
-
-
-            // Formating the contacts
-        foreach ($contacts as $contact) {
-            $insertedIds[] = $contact['phone'];
-
-        }
-
-            //Delete the file
-        if (\File::exists(public_path($excelFile))) {
-            \File::delete(public_path($excelFile));
-        }
-
-
-    });
-    return $insertedIds;
-}
-
-public static function csvToArray($filename, $delimiter = ",")
-{
-        /*if (!file_exists(public_path($filename)) || !is_readable($filename))
-        return false;*/
-
-        $header = null;
-        $data = array();
-        if (($handle = fopen(public_path($filename), 'r')) !== false) {
-            while (($row = fgetcsv($handle, 1000, $delimiter)) !== false) {
-                $data[] = preg_replace("/&#?[a-z0-9]+;/i", "", $row);
-            }
-            fclose($handle);
-        }
-        //Delete the file
-        if (\File::exists(public_path($filename))) {
-            \File::delete(public_path($filename));
-        }
-
-        return $data;
-    }
-
-
-
-
-    /**
-     * Import contact details
-     */
-    public function import(ContactImport $request, $xlsx)
-    {
-
-        //$excelFile = '/uploads/import/contacts_1466741430-18.xlsx';
-       $excelFile = $request->getFile(Auth::guard('admin')->user()->id);
-
-       \Excel::load(public_path($excelFile), function ($reader) use ($request) {
-         $contacts = $reader->all();
-         $contacts->toArray();
-
-            // Formating the contacts
-         foreach ($contacts as $contact) {
-            $formatedContacts = [
-                'admin_id' => Auth::guard('admin')->user()->id,
-                'first_name' => isset($contact['first_name']) ? $contact['first_name'] : "",
-                'last_name' => isset($contact['last_name']) ? $contact['last_name'] : "",
-                'country_code' => '+977',
-                'phone' => $contact['phone'],
-                'created_at' => Carbon::now(),
-            ];
-                // Inserting contact in database
-            $insertedId = Contact::insertGetId($formatedContacts);
-
-
-                // Insert group
-            if ($request->group_id !=null) {
-                ContactGroup::create([
-                    'group_id' => $request->input('group_id'),
-                    'contact_id' => $insertedId
-                ]);
-            }
-        }
-        Session::flash('success', "Successfully added contacts");
-    });
-
-        //Delete the file
-       if (\File::exists(public_path($excelFile))) {
-        \File::delete(public_path($excelFile));
-    }
-    return redirect('admin/email-marketing/contact');
-}
-
-    /**
-     * Add contacts to group
-     */
-    public function postAddContactsToGroup(Request $request)
-    {
-        $input = $request->all();
-        $groupId = trim($input['groupId']);
-        $contactsId = $input['contactsId'];
-        $groupsData = [];
-        foreach ($contactsId as $id) {
-            $groupsData[] = [
-                'group_id' => $groupId,
-                'contact_id' => $id,
-            ];
-        }
-        if (ContactGroup::insert($groupsData)) {
-            return AjaxResponse::sendResponse("Successfully assign contacts to group", false, 200);
-        }
-        return AjaxResponse::sendResponse('Error! problem occured');
-    }
-
-    /**
-     * Delete contact from group
-     */
-    public function deleteContactFromGroup(Request $request)
-    {
-        $input = $request->all();
-        $contactGroupId = trim($input['contactGroupId']);
-        $contactGroup = ContactGroup::find($contactGroupId);
-        if ($contactGroup) {
-            $contactGroup->delete();
-            return AjaxResponse::sendResponse("Successfully removed contact from group", false, 200);
-        }
-        return AjaxResponse::sendResponse('Error! problem occured');
-    }
-
-    /**
-     * Add contacts to group
-     */
-    public function addContactToGroup(Request $request)
-    {
-        $input = $request->all();
-        $groupId = trim($input['groupId']);
-        $contactId = trim($input['contactId']);
-
-        $groupData = [
-            'group_id' => $groupId,
-            'contact_id' => $contactId,
-        ];
-        if (ContactGroup::insert($groupData)) {
-            return AjaxResponse::sendResponse("Successfully assign contact to group", false, 200);
-        }
-        return AjaxResponse::sendResponse('Error! problem occured');
-    }
 }
