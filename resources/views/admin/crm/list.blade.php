@@ -1,7 +1,24 @@
 @extends('admin.layout.master1')
 
 @section('styles')
-	
+	<style>
+		ul.pagination li {
+			padding: .5rem .75rem;
+			background: #fff;
+			border: 1px solid #ddd;
+		}
+
+		ul.pagination li.active {
+			background-color: #da1113;
+			border-color: #da1113;
+			color: #fff !important;
+			cursor: not-allowed;
+		}
+
+		ul.pagination li.disabled {
+			cursor: not-allowed;
+		}
+	</style>
 @stop
 
 @section('main-body')

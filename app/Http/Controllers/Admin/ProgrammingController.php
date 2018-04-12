@@ -76,22 +76,50 @@ class ProgrammingController extends Controller
         $sendPcArr = [];
 
         if (count($params) == 1) {
+            $screen = Screen::find($params[0]);
             foreach (PriceCard::where('admin_id', Auth::guard('admin')->user()->id)->where('screen_ids', $params[0])->get() as $pc) {
-                array_push($pcArr, $pc->name);
+                $push = 0;
+                foreach ($screen->screenSeatCategories as $screenSeatCategory)
+                {
+                    if(PriceCard::where('admin_id', Auth::guard('admin')->user()->id)->where('screen_ids', $params[0])->where('seat_categories', $screenSeatCategory->category_name)->where('name', $pc->name)->first() == null)
+                    {
+                        $push = 1;
+                    }
+                }
+                if($push == 0)
+                {
+                    array_push($pcArr, $pc->name);
+                }
+
             }
 
             return array_values(array_unique($pcArr, SORT_REGULAR));
         } else {
             $cnt = 0;
             foreach ($params as $param) {
+                $screen = Screen::find($params[0]);
                 foreach (PriceCard::where('admin_id', Auth::guard('admin')->user()->id)->where('screen_ids', $param)->get() as $pc) {
-                    if ($cnt == 0)
-                        array_push($pcArr, $pc->name);
-                    else {
-                        array_push($pcArr, $pc->name);
+                    $push = 0;
+                    foreach ($screen->screenSeatCategories as $screenSeatCategory)
+                    {
+                        if(PriceCard::where('admin_id', Auth::guard('admin')->user()->id)->where('screen_ids', $params[0])->where('seat_categories', $screenSeatCategory->category_name)->where('name', $pc->name)->first() == null)
+                        {
+                            $push = 1;
+                        }
                     }
+
+                    if($push == 0)
+                    {
+                        if ($cnt == 0)
+                            array_push($pcArr, $pc->name);
+                        else {
+                            array_push($pcArr, $pc->name);
+                        }
+                    }
+
                 }
-                $cnt++;
+                if($push == 0)
+                    $cnt++;
             }
 
 

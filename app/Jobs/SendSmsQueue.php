@@ -41,7 +41,7 @@ class SendSmsQueue extends Job implements ShouldQueue
         $campaign=new CampaignController();
         $message =  $this->message;
         $messageId =  $this->message_id;
-        MessageHistory::whereIn('id', $this->message_id)->chunk('300', function ($histories) use ($message,&$messageId,&$campaign) {
+        MessageHistory::whereIn('id', $this->message_id)->chunk('15', function ($histories) use ($message,&$messageId,&$campaign) {
             $toNumber = [];
 
 

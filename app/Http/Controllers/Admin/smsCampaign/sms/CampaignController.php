@@ -546,12 +546,12 @@ class CampaignController extends Controller
 
 
             $message_history=MessageHistory::where('message_id',$message->id)->pluck('id')->toArray();
-                $chunks = array_chunk($message_history, 300, true);
+                $chunks = array_chunk($message_history, 15, true);
                 $delayValue=2;
                 for($i=0; $i<count($chunks);$i++){
                     $job = (new SendSmsQueue($chunks[$i],$messegeBody))->delay(Carbon::parse($message->schedule_for)->addSeconds($delayValue));
                     $this->dispatch($job);
-                    $delayValue+=75;
+                    $delayValue+=2;
                 }
 
                 return AjaxResponse::sendResponse('Message Queued! Valid: ' . $valid_count . ' Invalid: ' . $invalid_count, false, 200);

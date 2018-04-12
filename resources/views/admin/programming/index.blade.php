@@ -12,14 +12,10 @@
             display: flex;
         }
 
-
-
         .timepicker {
             position: relative;
             height: auto;
         }
-
-
 
         .timepicker.increment-allowed .prev {
             display: block;
@@ -40,19 +36,14 @@
             cursor: pointer;
         }
 
-
-
         .timepicker input {
             margin: 0;
             width: 100% !important;
         }
 
-
-
         .timepicker span.clear {
             display: none;
         }
-
 
         .timepicker.increment-allowed .next {
             display: block;
@@ -131,7 +122,6 @@
             flex-flow: row;
             overflow-y: hidden;
         }
-
 
         .stDiv {
             flex: 1;
@@ -281,7 +271,7 @@
             display: block;
         }
 
-        .restrict-show{
+        .restrict-show {
             color: #721c24;
             background: #f8d7da;
             border: none;
@@ -292,7 +282,7 @@
             border-radius: 0;
         }
 
-        .event-style{
+        .event-style {
             text-align: center;
             color: #000 !important;
             font-size: 15px;
@@ -300,52 +290,47 @@
             cursor: pointer;
         }
 
-        .removeSchedule{
+        .removeSchedule {
             color: maroon;
             font-weight: 600;
             text-decoration: underline;
             cursor: pointer;
         }
 
-        /*.datepicker-days td.active {*/
-            /*cursor: not-allowed !important;*/
-        /*}*/
+        #load-modal {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 64px;
+            height: 64px;
+            padding: 15px;
+            border: 3px solid #ababab;
+            box-shadow: 1px 1px 10px #ababab;
+            border-radius: 20px;
+            background-color: white;
+            z-index: 1002;
+            text-align: center;
+            overflow: auto;
+        }
 
-        /*.vis-time-axis{*/
-        /*width: 200px !important;*/
-        /*display: block !important;*/
-        /*}*/
+        #load-fade {
+            display: none;
+            position: absolute;
+            top: 0%;
+            left: 0%;
+            width: 100%;
+            height: 100%;
+            background-color: #fff;
+            z-index: 1001;
+            -moz-opacity: 0.8;
+            opacity: .70;
+            filter: alpha(opacity=80);
+        }
 
-        /*.vis-panel .vis-left {*/
-        /*touch-action: none;*/
-        /*-moz-user-select: none;*/
-        /*height: 32px;*/
-        /*left: 0px;*/
-        /*top: -1px;*/
-        /*}*/
-
-        /*.vis-panel .vis-right {*/
-        /*height: 32px;*/
-        /*left: 1036px;*/
-        /*top: -1px;*/
-        /*}*/
-
-        /*.vis-panel .vis-top {*/
-        /*width: 1037px;*/
-        /*left: -1px;*/
-        /*top: 0px;*/
-        /*}*/
-
-        /*.vis-panel .vis-bottom {*/
-        /*width: 1037px;*/
-        /*left: -1px;*/
-        /*top: 31px;*/
-        /*}*/
-
-        /*.stDiv{*/
-        /*width: 100%;*/
-        /*float: left;*/
-        /*}*/
+        .fc-myCustomButton-button{
+            z-index: 0 !important;
+        }
     </style>
 @stop
 @section('main-body')
@@ -406,7 +391,10 @@
                             {{--</div>--}}
                             {{--</div>--}}
                             {{--</div>--}}
-
+                            <div id="load-fade"></div>
+                            <div id="load-modal">
+                                <img id="loader" src="{{asset('admins/loader/loading.gif')}}"/>
+                            </div>
                             <div id='calendar'></div>
 
                             <div class="addAShowDiv">
@@ -697,7 +685,8 @@
                                             <div class="col-lg-9">
                                                 <button type="submit" class="btn btn-primary">Save
                                                 </button>
-                                                <span class="submit-processing" style="display: none;"><i class="fa fa-spin fa-spinner"></i> Please Wait ...</span>
+                                                <span class="submit-processing" style="display: none;"><i
+                                                            class="fa fa-spin fa-spinner"></i> Please Wait ...</span>
                                             </div>
                                         </div>
                                     </form>
@@ -718,6 +707,16 @@
     <script src="{{asset('admins/theme/calendar/js/scheduler.js')}}"></script>
     {{--form script--}}
     <script>
+        function openModal() {
+            document.getElementById('load-modal').style.display = 'block';
+            document.getElementById('load-fade').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('load-modal').style.display = 'none';
+            document.getElementById('load-fade').style.display = 'none';
+        }
+
         $(document).find('.closeMessage').on('click', function () {
             $(this).parent('div').remove();
         });
@@ -728,9 +727,8 @@
 
         var showTimeId = 1;
         $('.next').on('click', function () {
-            var purpose = $('form').find('input.purpose').val();
-            if(purpose == 'store')
-            {
+            var purpose = $('#scheduleForm').find('input.purpose').val();
+            if (purpose == 'store') {
                 var empty = 0;
                 $('input.show-time-input').each(function () {
                     if ($(this).val() == '') {
@@ -794,9 +792,8 @@
         });
 
         $('.prev').on('click', function () {
-            var purpose = $('form').find('input.purpose').val();
-            if(purpose == 'store')
-            {
+            var purpose = $('#scheduleForm').find('input.purpose').val();
+            if (purpose == 'store') {
                 var empty = 0;
                 $('input.show-time-input').each(function () {
                     if ($(this).val() == '') {
@@ -870,7 +867,6 @@
                 }
             }
         });
-
 
 
         $(document).on('click', '.closeInput', function () {
@@ -1013,9 +1009,9 @@
                     $(document).find('input.price-card-start-time').remove();
                     $(document).find('input.price-card-end-time').remove();
                     $(document).find('input.price-card-week-days').remove();
-                    $(document).find('form').append('<input type="hidden" class="price-card-start-time" value="' + data[0] + '">');
-                    $(document).find('form').append('<input type="hidden" class="price-card-end-time" value="' + data[1] + '">');
-                    $(document).find('form').append('<input type="hidden" class="price-card-week-days" value="' + data[2] + '">');
+                    $(document).find('#scheduleForm').append('<input type="hidden" class="price-card-start-time" value="' + data[0] + '">');
+                    $(document).find('#scheduleForm').append('<input type="hidden" class="price-card-end-time" value="' + data[1] + '">');
+                    $(document).find('#scheduleForm').append('<input type="hidden" class="price-card-week-days" value="' + data[2] + '">');
                 }, error: function (data) {
                     $(document).find('select[name=price_card]').val('');
                     alertify.alert('Oops ! something went wrong. Please try again.');
@@ -1136,6 +1132,7 @@
             }
 
             if (emp == 0) {
+                $('span.show-time-error').html('');
                 var today = new Date();
                 var year = today.getFullYear();
                 var month = ("0" + parseInt(today.getMonth() + 1)).slice(-2);
@@ -1308,26 +1305,25 @@
                         var chMonth = ("0" + parseInt(fullDate.getMonth() + 1)).slice(-2);
                         var chDate = ("0" + fullDate.getDate()).slice(-2);
                         var sd = chYear + '-' + chMonth + '-' + chDate;
-                        $(document).find('form').append('<input value="' + sd + '" class="choosed-show-dates" name="choosed_show_dates[]" type="hidden">');
+                        $(document).find('#scheduleForm').append('<input value="' + sd + '" class="choosed-show-dates" name="choosed_show_dates[]" type="hidden">');
                     }
 
                 });
 
                 $(document).find('button[type=submit]').prop('disabled', true);
                 $(document).find('span.submit-processing').show();
-                var formData = $('form').serialize();
-                if($('form').find('button[type=submit]').text() == 'Save')
-                {
+                var formData = $('#scheduleForm').serialize();
+                if ($('#scheduleForm').find('button[type=submit]').text() == 'Save') {
                     $.ajax({
                         url: baseurl + '/admin/programming/submit',
                         type: 'post',
                         data: formData,
                         success: function (data) {
                             if (data == 'success') {
-                                $("form")[0].reset();
+                                $("#scheduleForm")[0].reset();
                                 $('div.price-card-div').hide();
                                 $('div.no-price-card-div').hide();
-                                $('form').find('span.error').html('');
+                                $('#scheduleForm').find('span.error').html('');
                                 $(document).find('input.show-time-input').each(function () {
                                     if ($(this).attr('id') == 'time1') {
                                         $(this).val('');
@@ -1339,7 +1335,7 @@
                                 $('html, body').animate({
                                     scrollTop: 0
                                 }, 500);
-                                $('#calendar').fullCalendar( 'refetchEvents' );
+                                $('#calendar').fullCalendar('refetchEvents');
                             }
 
                             if (data == 'unsuccess') {
@@ -1358,18 +1354,18 @@
                             $(document).find('span.submit-processing').hide();
                         }
                     });
-                }else{
-                    var editId = $('form').find('input.editId').val();
+                } else {
+                    var editId = $('#scheduleForm').find('input.editId').val();
                     $.ajax({
                         url: baseurl + '/admin/programming/update',
                         type: 'post',
                         data: formData,
                         success: function (data) {
                             if (data == 'success') {
-                                $("form")[0].reset();
+                                $("#scheduleForm")[0].reset();
                                 $('div.price-card-div').hide();
                                 $('div.no-price-card-div').hide();
-                                $('form').find('span.error').html('');
+                                $('#scheduleForm').find('span.error').html('');
                                 $(document).find('input.show-time-input').each(function () {
                                     if ($(this).attr('id') == 'time1') {
                                         $(this).val('');
@@ -1381,7 +1377,7 @@
                                 $('html, body').animate({
                                     scrollTop: 0
                                 }, 500);
-                                $('#calendar').fullCalendar( 'refetchEvents' );
+                                $('#calendar').fullCalendar('refetchEvents');
                             }
 
                             if (data == 'unsuccess') {
@@ -1429,7 +1425,6 @@
         });
 
 
-
         $('input[name=clean_up_time]').keypress(function (event) {
             return isNumber(event, this);
         });
@@ -1444,7 +1439,6 @@
                 }
             });
         });
-
 
 
         $(document).on('change', '#film', function () {
@@ -1473,77 +1467,75 @@
 
                 $('#calendar').fullCalendar({
                     eventClick: function (calEvent, jsEvent, view) {
-                        $("form")[0].reset();
+                        $("#scheduleForm")[0].reset();
                         $('div.price-card-div').hide();
                         $('div.no-price-card-div').hide()
-                        $('form').find('span.error').html('');
-                        $('form').find('div.stDivAppended').not(':first').remove();
+                        $('#scheduleForm').find('span.error').html('');
+                        $('#scheduleForm').find('div.stDivAppended').not(':first').remove();
                         $('div.addAShowDiv').fadeOut('slow');
                         var scheduleId = calEvent.unique_id;
-                        $('form').find('input.editId').remove();
-                        $('form').append('<input class="editId" name="scheduleIdToEdit" value="'+scheduleId+'" type="hidden">');
-                        $('form').find('a.removeSchedule').remove();
-                        $('form').prepend('<a href="#" class="removeSchedule" data-scheduleid="'+scheduleId+'"><i class="fa fa-trash"></i> Remove This Schedule</a>');
+                        $('#scheduleForm').find('input.editId').remove();
+                        $('#scheduleForm').append('<input class="editId" name="scheduleIdToEdit" value="' + scheduleId + '" type="hidden">');
+                        $('#scheduleForm').find('a.removeSchedule').remove();
+                        $('#scheduleForm').prepend('<a href="#" class="removeSchedule" data-scheduleid="' + scheduleId + '"><i class="fa fa-trash"></i> Remove This Schedule</a>');
                         $.ajax({
-                           url: baseurl+'/admin/programming/getScheduleData?sid='+scheduleId,
+                            url: baseurl + '/admin/programming/getScheduleData?sid=' + scheduleId,
                             type: 'get',
                             success: function (data) {
-                               console.log(data);
-                               $('form').find('input.purpose').remove();
-                               $('form').append('<input class="purpose" value="edit" type="hidden">');
+                                console.log(data);
+                                $('#scheduleForm').find('input.purpose').remove();
+                                $('#scheduleForm').append('<input class="purpose" value="edit" type="hidden">');
                                 $('div.addAShowDiv').fadeIn('slow');
                                 $('#film').val(data.scheduleData.movie_id);
-                                $('.select-screen-id[value='+data.scheduleData.screen_id+']').prop('checked', true);
+                                $('.select-screen-id[value=' + data.scheduleData.screen_id + ']').prop('checked', true);
 
                                 var html = '';
-                                for(var k = 0; k < data.priceCardData.length; k++)
-                                {
-                                    html += '<option value="'+data.priceCardData[k]+'">'+data.priceCardData[k]+'</option>'
+                                for (var k = 0; k < data.priceCardData.length; k++) {
+                                    html += '<option value="' + data.priceCardData[k] + '">' + data.priceCardData[k] + '</option>'
                                 }
 
                                 $('#price-card-select').html(html);
                                 $('#price-card-select').val(data.scheduleData.price_card_name);
                                 $('div.price-card-div').show();
-                                var dbDay = data.scheduleData.show_day.slice(0,3);
-                                $('.select-days[value='+dbDay.toLowerCase()+']').prop('checked', true);
+                                var dbDay = data.scheduleData.show_day.slice(0, 3);
+                                $('.select-days[value=' + dbDay.toLowerCase() + ']').prop('checked', true);
                                 $(document).find('input[name=clean_up_time]').val(data.scheduleData.clean_up_time);
                                 $(document).find('input#time1').val(data.showTime);
-                                $(document).find('.select-sales-via').each(function(){
-                                    if($.inArray($(this).val(), data.salesVia)  != -1)
-                                    {
+                                $(document).find('.select-sales-via').each(function () {
+                                    if ($.inArray($(this).val(), data.salesVia) != -1) {
                                         $(this).prop('checked', true);
                                     }
                                 });
-                                $(document).find('input[name=seating][value='+data.scheduleData.seating+']').prop('checked', true);
-                                $(document).find('input[name=comps][value='+data.scheduleData.comps+']').prop('checked', true);
-                                $(document).find('input[name=status][value='+data.scheduleData.status+']').prop('checked', true);
-                                $('form').find('.screenIdCheckbox').each(function(data){
-                                   $(this).removeAttr('type').attr('type', 'radio');
+                                $(document).find('input[name=seating][value=' + data.scheduleData.seating + ']').prop('checked', true);
+                                $(document).find('input[name=comps][value=' + data.scheduleData.comps + ']').prop('checked', true);
+                                $(document).find('input[name=status][value=' + data.scheduleData.status + ']').prop('checked', true);
+                                $('#scheduleForm').find('.screenIdCheckbox').each(function (data) {
+                                    $(this).removeAttr('type').attr('type', 'radio');
                                 });
-                                $('form').find('.select-screen-id[value=all]').prop('disabled', true);
-                                $('form').find('.dayCheckBox').each(function(data){
+                                $('#scheduleForm').find('.select-screen-id[value=all]').prop('disabled', true);
+                                $('#scheduleForm').find('.dayCheckBox').each(function (data) {
                                     $(this).removeAttr('type').attr('type', 'radio');
                                 });
 
-                                $('form').find('.select-days[value=every-day]').prop('disabled', true);
-                                $('form').find('button[type=submit]').text('Update');
+                                $('#scheduleForm').find('.select-days[value=every-day]').prop('disabled', true);
+                                $('#scheduleForm').find('button[type=submit]').text('Update');
 
-                                    var choosedPriceCard = $('select[name=price_card]').val();
-                                    $.ajax({
-                                        url: baseurl + '/admin/programming/get-pricecard-time?pc=' + choosedPriceCard,
-                                        type: 'get',
-                                        success: function (data) {
-                                            $(document).find('input.price-card-start-time').remove();
-                                            $(document).find('input.price-card-end-time').remove();
-                                            $(document).find('input.price-card-week-days').remove();
-                                            $(document).find('form').append('<input type="hidden" class="price-card-start-time" value="' + data[0] + '">');
-                                            $(document).find('form').append('<input type="hidden" class="price-card-end-time" value="' + data[1] + '">');
-                                            $(document).find('form').append('<input type="hidden" class="price-card-week-days" value="' + data[2] + '">');
-                                        }, error: function (data) {
-                                            $(document).find('select[name=price_card]').val('');
-                                            alertify.alert('Oops ! something went wrong. Please try again.');
-                                        }
-                                    });
+                                var choosedPriceCard = $('select[name=price_card]').val();
+                                $.ajax({
+                                    url: baseurl + '/admin/programming/get-pricecard-time?pc=' + choosedPriceCard,
+                                    type: 'get',
+                                    success: function (data) {
+                                        $(document).find('input.price-card-start-time').remove();
+                                        $(document).find('input.price-card-end-time').remove();
+                                        $(document).find('input.price-card-week-days').remove();
+                                        $(document).find('#scheduleForm').append('<input type="hidden" class="price-card-start-time" value="' + data[0] + '">');
+                                        $(document).find('#scheduleForm').append('<input type="hidden" class="price-card-end-time" value="' + data[1] + '">');
+                                        $(document).find('#scheduleForm').append('<input type="hidden" class="price-card-week-days" value="' + data[2] + '">');
+                                    }, error: function (data) {
+                                        $(document).find('select[name=price_card]').val('');
+                                        alertify.alert('Oops ! something went wrong. Please try again.');
+                                    }
+                                });
                                 $('html, body').animate({
                                     scrollTop: $(".addAShowDiv").offset().top - 80
                                 }, 500);
@@ -1570,15 +1562,14 @@
                         $('.fc-myCustomButton-button').text(view.title); // Set Text of Custom Button everytime view changes
                         current_view = view.name;
                         $('.add-new-show').next('span').remove();
-                        if (current_view!="timelineDay") {
-                            $("form")[0].reset();
+                        if (current_view != "timelineDay") {
+                            $("#scheduleForm")[0].reset();
                             $('div.price-card-div').hide();
                             $('div.no-price-card-div').hide();
-                            $('form').find('span.error').html('');
-                            $('form').find('div.stDivAppended').not(':first').remove();
+                            $('#scheduleForm').find('span.error').html('');
+                            $('#scheduleForm').find('div.stDivAppended').not(':first').remove();
                             $('div.addAShowDiv').fadeOut('slow');
                         }
-
 
 
                         var defaultDays = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
@@ -1595,13 +1586,13 @@
                             var tueDate = new Date(curr.getTime() + 4 * 24 * 60 * 60 * 1000);
                             var wedDate = new Date(curr.getTime() + 5 * 24 * 60 * 60 * 1000);
                             var thuDate = new Date(curr.getTime() + 6 * 24 * 60 * 60 * 1000);
-                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
-                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
-                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
-                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
-                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
-                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
-                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
+                            $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
+                            $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
+                            $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
+                            $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
+                            $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
+                            $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
+                            $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
                         }
 
 
@@ -1616,13 +1607,13 @@
                             var wedDate = new Date(curr.getTime() + 4 * 24 * 60 * 60 * 1000);
                             var thuDate = new Date(curr.getTime() + 5 * 24 * 60 * 60 * 1000);
                             var friDate = new Date(curr.getTime() - 1 * 24 * 60 * 60 * 1000);
-                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
-                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
-                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
-                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
-                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
-                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
-                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
+                            $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
+                            $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
+                            $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
+                            $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
+                            $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
+                            $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
+                            $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
                         }
 
 
@@ -1637,13 +1628,13 @@
                             var thuDate = new Date(curr.getTime() + 4 * 24 * 60 * 60 * 1000);
                             var satDate = new Date(curr.getTime() - 1 * 24 * 60 * 60 * 1000);
                             var friDate = new Date(curr.getTime() - 2 * 24 * 60 * 60 * 1000);
-                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
-                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
-                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
-                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
-                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
-                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
-                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
+                            $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
+                            $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
+                            $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
+                            $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
+                            $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
+                            $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
+                            $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
                         }
 
                         if (currDay == 'mon') {
@@ -1657,13 +1648,13 @@
                             var sunDate = new Date(curr.getTime() - 1 * 24 * 60 * 60 * 1000);
                             var satDate = new Date(curr.getTime() - 2 * 24 * 60 * 60 * 1000);
                             var friDate = new Date(curr.getTime() - 3 * 24 * 60 * 60 * 1000);
-                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
-                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
-                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
-                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
-                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
-                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
-                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
+                            $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
+                            $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
+                            $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
+                            $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
+                            $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
+                            $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
+                            $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
                         }
 
                         if (currDay == 'tue') {
@@ -1677,13 +1668,13 @@
                             var monDate = new Date(curr.getTime() - 1 * 24 * 60 * 60 * 1000);
                             var sunDate = new Date(curr.getTime() - 2 * 24 * 60 * 60 * 1000);
                             var satDate = new Date(curr.getTime() - 3 * 24 * 60 * 60 * 1000);
-                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
-                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
-                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
-                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
-                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
-                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
-                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
+                            $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
+                            $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
+                            $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
+                            $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
+                            $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
+                            $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
+                            $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
                         }
 
                         if (currDay == 'wed') {
@@ -1697,13 +1688,13 @@
                             var tueDate = new Date(curr.getTime() - 1 * 24 * 60 * 60 * 1000);
                             var monDate = new Date(curr.getTime() - 2 * 24 * 60 * 60 * 1000);
                             var sunDate = new Date(curr.getTime() - 3 * 24 * 60 * 60 * 1000);
-                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
-                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
-                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
-                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
-                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
-                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
-                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
+                            $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
+                            $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
+                            $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
+                            $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
+                            $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
+                            $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
+                            $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
                         }
 
                         if (currDay == 'thu') {
@@ -1717,40 +1708,46 @@
                             var wedDate = new Date(curr.getTime() - 1 * 24 * 60 * 60 * 1000);
                             var tueDate = new Date(curr.getTime() - 2 * 24 * 60 * 60 * 1000);
                             var monDate = new Date(curr.getTime() - 3 * 24 * 60 * 60 * 1000);
-                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
-                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
-                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
-                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
-                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
-                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
-                            $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
+                            $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
+                            $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
+                            $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
+                            $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
+                            $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
+                            $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
+                            $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
                         }
-
 
 
                     },
 
 
                     resources: [
-                        @foreach(\App\Screen\Screen::where('admin_id', \Illuminate\Support\Facades\Auth::guard('admin')->user()->id)->orderBy('screen_number', 'ASC')->get() as $sc)
-                        { id: '{{$sc->id}}', title: '{{$sc->name}}', eventColor: getColor(colorIndex) },
+                            @foreach(\App\Screen\Screen::where('admin_id', \Illuminate\Support\Facades\Auth::guard('admin')->user()->id)->orderBy('screen_number', 'ASC')->get() as $sc)
+                        {
+                            id: '{{$sc->id}}', title: '{{$sc->name}}', eventColor: getColor(colorIndex)
+                        },
                         @endforeach
                     ],
                     eventSources: [
                         {
-                            url: baseurl+'/admin/programming/events', // use the `url` property
+                            url: baseurl + '/admin/programming/events', // use the `url` property
                         }
 
                     ],
+                    loading: function( isLoading, view ) {
+                        if(isLoading) {
+                            openModal();
+                        } else {
+                           closeModal();
+                        }
+                    }
 
                 });
 
-                function getColor(index)
-                {
+                function getColor(index) {
                     colorIndex++;
                     return colors[index];
                 }
-
 
 
 //            $('.fc-myCustomButton-button').attr('id', 'datepicker-custom');
@@ -1780,13 +1777,13 @@
                         var tueDate = new Date(curr.getTime() + 4 * 24 * 60 * 60 * 1000);
                         var wedDate = new Date(curr.getTime() + 5 * 24 * 60 * 60 * 1000);
                         var thuDate = new Date(curr.getTime() + 6 * 24 * 60 * 60 * 1000);
-                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
-                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
-                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
-                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
-                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
-                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
-                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
+                        $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
+                        $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
+                        $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
+                        $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
+                        $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
+                        $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
+                        $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
                     }
 
 
@@ -1801,13 +1798,13 @@
                         var wedDate = new Date(curr.getTime() + 4 * 24 * 60 * 60 * 1000);
                         var thuDate = new Date(curr.getTime() + 5 * 24 * 60 * 60 * 1000);
                         var friDate = new Date(curr.getTime() - 1 * 24 * 60 * 60 * 1000);
-                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
-                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
-                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
-                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
-                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
-                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
-                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
+                        $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
+                        $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
+                        $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
+                        $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
+                        $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
+                        $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
+                        $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
                     }
 
 
@@ -1822,13 +1819,13 @@
                         var thuDate = new Date(curr.getTime() + 4 * 24 * 60 * 60 * 1000);
                         var satDate = new Date(curr.getTime() - 1 * 24 * 60 * 60 * 1000);
                         var friDate = new Date(curr.getTime() - 2 * 24 * 60 * 60 * 1000);
-                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
-                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
-                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
-                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
-                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
-                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
-                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
+                        $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
+                        $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
+                        $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
+                        $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
+                        $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
+                        $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
+                        $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
                     }
 
                     if (currDay == 'mon') {
@@ -1842,13 +1839,13 @@
                         var sunDate = new Date(curr.getTime() - 1 * 24 * 60 * 60 * 1000);
                         var satDate = new Date(curr.getTime() - 2 * 24 * 60 * 60 * 1000);
                         var friDate = new Date(curr.getTime() - 3 * 24 * 60 * 60 * 1000);
-                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
-                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
-                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
-                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
-                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
-                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
-                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
+                        $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
+                        $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
+                        $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
+                        $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
+                        $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
+                        $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
+                        $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
                     }
 
                     if (currDay == 'tue') {
@@ -1862,13 +1859,13 @@
                         var monDate = new Date(curr.getTime() - 1 * 24 * 60 * 60 * 1000);
                         var sunDate = new Date(curr.getTime() - 2 * 24 * 60 * 60 * 1000);
                         var satDate = new Date(curr.getTime() - 3 * 24 * 60 * 60 * 1000);
-                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
-                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
-                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
-                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
-                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
-                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
-                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
+                        $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
+                        $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
+                        $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
+                        $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
+                        $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
+                        $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
+                        $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
                     }
 
                     if (currDay == 'wed') {
@@ -1882,13 +1879,13 @@
                         var tueDate = new Date(curr.getTime() - 1 * 24 * 60 * 60 * 1000);
                         var monDate = new Date(curr.getTime() - 2 * 24 * 60 * 60 * 1000);
                         var sunDate = new Date(curr.getTime() - 3 * 24 * 60 * 60 * 1000);
-                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
-                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
-                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
-                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
-                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
-                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
-                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
+                        $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
+                        $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
+                        $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
+                        $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
+                        $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
+                        $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
+                        $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
                     }
 
                     if (currDay == 'thu') {
@@ -1902,13 +1899,13 @@
                         var wedDate = new Date(curr.getTime() - 1 * 24 * 60 * 60 * 1000);
                         var tueDate = new Date(curr.getTime() - 2 * 24 * 60 * 60 * 1000);
                         var monDate = new Date(curr.getTime() - 3 * 24 * 60 * 60 * 1000);
-                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
-                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
-                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
-                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
-                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
-                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
-                        $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
+                        $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
+                        $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
+                        $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
+                        $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
+                        $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
+                        $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
+                        $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
                     }
                 });
 
@@ -1927,13 +1924,13 @@
                     var tueDate = new Date(curr.getTime() + 4 * 24 * 60 * 60 * 1000);
                     var wedDate = new Date(curr.getTime() + 5 * 24 * 60 * 60 * 1000);
                     var thuDate = new Date(curr.getTime() + 6 * 24 * 60 * 60 * 1000);
-                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
-                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
-                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
-                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
-                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
-                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
-                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
+                    $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
+                    $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
+                    $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
+                    $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
+                    $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
+                    $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
+                    $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
                 }
 
 
@@ -1948,13 +1945,13 @@
                     var wedDate = new Date(curr.getTime() + 4 * 24 * 60 * 60 * 1000);
                     var thuDate = new Date(curr.getTime() + 5 * 24 * 60 * 60 * 1000);
                     var friDate = new Date(curr.getTime() - 1 * 24 * 60 * 60 * 1000);
-                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
-                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
-                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
-                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
-                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
-                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
-                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
+                    $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
+                    $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
+                    $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
+                    $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
+                    $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
+                    $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
+                    $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
                 }
 
 
@@ -1969,13 +1966,13 @@
                     var thuDate = new Date(curr.getTime() + 4 * 24 * 60 * 60 * 1000);
                     var satDate = new Date(curr.getTime() - 1 * 24 * 60 * 60 * 1000);
                     var friDate = new Date(curr.getTime() - 2 * 24 * 60 * 60 * 1000);
-                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
-                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
-                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
-                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
-                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
-                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
-                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
+                    $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
+                    $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
+                    $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
+                    $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
+                    $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
+                    $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
+                    $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
                 }
 
                 if (currDay == 'mon') {
@@ -1989,13 +1986,13 @@
                     var sunDate = new Date(curr.getTime() - 1 * 24 * 60 * 60 * 1000);
                     var satDate = new Date(curr.getTime() - 2 * 24 * 60 * 60 * 1000);
                     var friDate = new Date(curr.getTime() - 3 * 24 * 60 * 60 * 1000);
-                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
-                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
-                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
-                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
-                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
-                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
-                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
+                    $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
+                    $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
+                    $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
+                    $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
+                    $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
+                    $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
+                    $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
                 }
 
                 if (currDay == 'tue') {
@@ -2009,13 +2006,13 @@
                     var monDate = new Date(curr.getTime() - 1 * 24 * 60 * 60 * 1000);
                     var sunDate = new Date(curr.getTime() - 2 * 24 * 60 * 60 * 1000);
                     var satDate = new Date(curr.getTime() - 3 * 24 * 60 * 60 * 1000);
-                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
-                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
-                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
-                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
-                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
-                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
-                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
+                    $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
+                    $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
+                    $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
+                    $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
+                    $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
+                    $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
+                    $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
                 }
 
                 if (currDay == 'wed') {
@@ -2029,13 +2026,13 @@
                     var tueDate = new Date(curr.getTime() - 1 * 24 * 60 * 60 * 1000);
                     var monDate = new Date(curr.getTime() - 2 * 24 * 60 * 60 * 1000);
                     var sunDate = new Date(curr.getTime() - 3 * 24 * 60 * 60 * 1000);
-                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
-                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
-                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
-                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
-                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
-                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
-                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
+                    $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
+                    $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
+                    $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
+                    $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
+                    $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
+                    $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
+                    $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
                 }
 
                 if (currDay == 'thu') {
@@ -2049,20 +2046,20 @@
                     var wedDate = new Date(curr.getTime() - 1 * 24 * 60 * 60 * 1000);
                     var tueDate = new Date(curr.getTime() - 2 * 24 * 60 * 60 * 1000);
                     var monDate = new Date(curr.getTime() - 3 * 24 * 60 * 60 * 1000);
-                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
-                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
-                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
-                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
-                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
-                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
-                    $('form').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
+                    $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-fri" value="' + friDate + '">');
+                    $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sat" value="' + satDate + '">');
+                    $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-sun" value="' + sunDate + '">');
+                    $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-mon" value="' + monDate + '">');
+                    $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-tue" value="' + tueDate + '">');
+                    $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-wed" value="' + wedDate + '">');
+                    $('#scheduleForm').append('<input type="hidden" name="show_dates[]" class="show-date show-date-thu" value="' + thuDate + '">');
                 }
 
             });
 
         });
 
-        $(document).on('click', 'a.removeSchedule', function(e){
+        $(document).on('click', 'a.removeSchedule', function (e) {
             e.preventDefault();
             var scheduleId = $(this).data('scheduleid');
             alertify.confirm("Delete this schedule ?",
@@ -2072,10 +2069,10 @@
                         type: 'get',
                         success: function (data) {
                             if (data == 'true') {
-                                $("form")[0].reset();
+                                $("#scheduleForm")[0].reset();
                                 $('div.price-card-div').hide();
                                 $('div.no-price-card-div').hide();
-                                $('form').find('span.error').html('');
+                                $('#scheduleForm').find('span.error').html('');
                                 $(document).find('input.show-time-input').each(function () {
                                     if ($(this).attr('id') == 'time1') {
                                         $(this).val('');
@@ -2087,7 +2084,7 @@
                                 $('html, body').animate({
                                     scrollTop: 0
                                 }, 500);
-                                $('#calendar').fullCalendar( 'refetchEvents' );
+                                $('#calendar').fullCalendar('refetchEvents');
                             } else {
                                 alertify.alert("Oops ! something went wrong. Please try again.");
                             }
@@ -2104,49 +2101,49 @@
     {{--timeline script--}}
 
     <script>
-//        $(document).find('input.datepicker').on('click', function () {
-//            $(document).find('td.active').on('click', function () {
-//                return false;
-//            });
-//        });
+        //        $(document).find('input.datepicker').on('click', function () {
+        //            $(document).find('td.active').on('click', function () {
+        //                return false;
+        //            });
+        //        });
         $('.add-new-show').on('click', function () {
-           // alert(current_view);
-            if (current_view=="timelineDay") {
-                $("form")[0].reset();
+            // alert(current_view);
+            if (current_view == "timelineDay") {
+                $("#scheduleForm")[0].reset();
                 $('div.price-card-div').hide();
                 $('div.no-price-card-div').hide()
-                $('form').find('span.error').html('');
-                $('form').find('div.stDivAppended').not(':first').remove();
+                $('#scheduleForm').find('span.error').html('');
+                $('#scheduleForm').find('div.stDivAppended').not(':first').remove();
                 $('div.addAShowDiv').fadeIn('slow');
                 $('html, body').animate({
                     scrollTop: $(".addAShowDiv").offset().top - 80
                 }, 500);
-                $('form').find('.screenIdCheckbox ').each(function(data){
+                $('#scheduleForm').find('.screenIdCheckbox ').each(function (data) {
                     $(this).removeAttr('type').attr('type', 'checkbox');
                 });
-                $('form').find('.select-screen-id[value=all]').prop('disabled', false);
-                $('form').find('.select-days[value=every-day]').prop('disabled', false);
-                $('form').find('.dayCheckBox').each(function(data){
+                $('#scheduleForm').find('.select-screen-id[value=all]').prop('disabled', false);
+                $('#scheduleForm').find('.select-days[value=every-day]').prop('disabled', false);
+                $('#scheduleForm').find('.dayCheckBox').each(function (data) {
                     $(this).removeAttr('type').attr('type', 'checkbox');
                 });
-                $('form').find('input.purpose').remove();
-                $('form').find('input.editId').remove();
-                $('form').append('<input class="purpose" value="store" type="hidden">');
-                $('form').find('button[type=submit]').text('Save');
-                $('form').find('a.removeSchedule').remove();
+                $('#scheduleForm').find('input.purpose').remove();
+                $('#scheduleForm').find('input.editId').remove();
+                $('#scheduleForm').append('<input class="purpose" value="store" type="hidden">');
+                $('#scheduleForm').find('button[type=submit]').text('Save');
+                $('#scheduleForm').find('a.removeSchedule').remove();
             }
-            else{
-             $('.add-new-show').parent().append('<span class="restrict-show"  role="alert">You can add new shows only in Day View</span>');
+            else {
+                $('.add-new-show').parent().append('<span class="restrict-show"  role="alert">You can add new shows only in Day View</span>');
             }
         });
 
 
         $('.close-add-show-div').on('click', function () {
-            $("form")[0].reset();
+            $("#scheduleForm")[0].reset();
             $('div.price-card-div').hide();
             $('div.no-price-card-div').hide();
-            $('form').find('span.error').html('');
-            $('form').find('div.stDivAppended').not(':first').remove();
+            $('#scheduleForm').find('span.error').html('');
+            $('#scheduleForm').find('div.stDivAppended').not(':first').remove();
             $('div.addAShowDiv').fadeOut('slow');
             $('html, body').animate({
                 scrollTop: 0
@@ -2154,14 +2151,12 @@
         });
 
 
-
-
-
         $(window).on('load', function () {
-            $("form")[0].reset();
+            $("#scheduleForm")[0].reset();
             $('div.price-card-div').hide();
             $('div.no-price-card-div').hide();
         });
+
 
     </script>
 @stop

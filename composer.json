@@ -16,7 +16,8 @@
         "maatwebsite/excel": "~2.1.0",
         "barryvdh/laravel-dompdf": "^0.8.1",
         "milon/barcode": "^5.3",
-        "mpociot/laravel-firebase-sync": "^1.0"
+        "mpociot/laravel-firebase-sync": "^1.0",
+        "thujohn/twitter": "^2.2"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.1",

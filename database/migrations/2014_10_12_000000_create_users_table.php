@@ -15,9 +15,9 @@ class CreateUsersTable extends Migration
     {
         Schema::create('user_tbl', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name',100);
+            $table->string('name',100)->nullable();
             $table->string('email',100)->unique();
-            $table->string('mobile',15);
+            $table->string('mobile',15)->nullable();
             $table->string('registered_type',250);
             $table->string('api_token', 60);
             $table->enum('suspend',['Yes','No']);

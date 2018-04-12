@@ -90,31 +90,30 @@
                                                         <div class="form-group row">
                                                             <label class="col-lg-3 col-form-label form-control-label">Name <span class="req">*</span></label>
                                                             <div class="col-lg-9">
-                                                                 <input type="text" id="artistName" name="artist_name" class="form-control" value="{{old('name')}}" onfocus="removeError();" placeholder="Enter Artist Name">
+                                                                 <input type="text" id="artistName" name="artist_name" class="form-control" value="{{old('name')}}" onfocus="removeError('artist-name');" placeholder="Enter Artist Name">
                                                                   @if($errors->has('artist_name'))
-                                                    <span class="help-block">
-                                                        <strong>
-                                                            {{$errors->first('artist_name')}}
-                                                        </strong>
-                                                    </span>
-                                                @endif
-                                                <span class="artist-name-error error help-block"></span>
+                                                                    <span class="help-block">
+                                                                        <strong>
+                                                                            {{$errors->first('artist_name')}}
+                                                                        </strong>
+                                                                    </span>
+                                                                @endif
+                                                                <span class="artist-name-error error help-block"></span>
                                                             </div>
                                                         </div>
                                                         <div class="form-group row">
-                                                            <label class="col-lg-3 col-form-label form-control-label">Avatar <span class="req">*</span><br><span class="note">(Dimension 25x25 | Max Size 2mb | Format jpeg, jpg, png, bmp, svg)</span></label>
+                                                            <label class="col-lg-3 col-form-label form-control-label">Avatar <span class="req">*</span><br><span class="note">(Dimension 200x200 | Max Size 2mb | Format jpeg, jpg, png, bmp, svg)</span></label>
                                                             <div class="col-lg-9">
                                                                 <label class="custom-file">
-                                                                  <input  onfocus="removeError();" type="file" id="artistAvatar file2" name="artist_avatar" class="custom-file-input" value="{{old('artist_avatar')}}">
+                                                                  <input  onfocus="removeError('artist-avatar');" type="file" id="artistAvatar file2" name="artist_avatar" class="form-control" value="{{old('artist_avatar')}}">
                                                                    @if($errors->has('artist_avatar'))
-                                                    <span class="help-block error">
-                                                        <strong>
-                                                            {{$errors->first('artist_avatar')}}
-                                                        </strong>
-                                                    </span>
-                                                @endif
-                                               
-                                                                    <span class="custom-file-control avatar-filename" ></span>
+                                                                        <span class="help-block error">
+                                                                            <strong>
+                                                                                {{$errors->first('artist_avatar')}}
+                                                                            </strong>
+                                                                        </span>
+                                                                    @endif
+                                                                    {{--<span class="custom-file-control avatar-filename" ></span>--}}
                                                                      <span class="artist-avatar-error error help-block"></span>
                                                                 </label>
 
@@ -123,60 +122,66 @@
                                                         <div class="form-group row">
                                                             <label class="col-lg-3 col-form-label form-control-label">current status <span class="req">*</span></label>
                                                             <div class="col-lg-9">
- <textarea name="artist_current_status" id="artistCurrentStatus" rows="5" class="form-control" placeholder="Type your cureent status" onfocus="removeError();" value="{{old('artist_current_status')}}"></textarea>
-   @if($errors->has('artist_current_status'))
-                                                    <span class="help-block">
-                                                        <strong>
-                                                            {{$errors->first('artist_current_status')}}
-                                                        </strong>
-                                                    </span>
-                                                @endif
-                                                <span class="artist-current-status-error error help-block"></span>
+                                                                <textarea name="artist_current_status" id="artistCurrentStatus" rows="5" class="form-control" placeholder="Type your cureent status" onfocus="removeError('artist-current-status');" value="{{old('artist_current_status')}}"></textarea>
+                                                                @if($errors->has('artist_current_status'))
+                                                                    <span class="help-block">
+                                                                        <strong>
+                                                                            {{$errors->first('artist_current_status')}}
+                                                                        </strong>
+                                                                    </span>
+                                                                @endif
+                                                                <span class="artist-current-status-error error help-block"></span>
                                                             </div>
                                                         </div>
+
                                                         <div class="form-group row">
                                                             <label class="col-lg-3 col-form-label form-control-label">Early life <span class="req">*</span></label>
                                                             <div class="col-lg-9">
-                                                                 <textarea name="artist_early_life" id="artistEarlyLife" placeholder="Type early life" rows="5" class="form-control" onfocus="removeError();" value="{{old('artist_early_life')}}"></textarea>
-                                                   @if($errors->has('artist_early_life'))
-                                                    <span class="help-block">
-                                                        <strong>
-                                                            {{$errors->first('artist_early_life')}}
-                                                        </strong>
-                                                    </span>
-                                                @endif
-                                                <span class="artist-early-life-error error help-block"></span>
+                                                                 <textarea name="artist_early_life" id="artistEarlyLife" placeholder="Type early life" rows="5" class="form-control" onfocus="removeError('artist-early-life');" value="{{old('artist_early_life')}}"></textarea>
+                                                                   @if($errors->has('artist_early_life'))
+                                                                    <span class="help-block">
+                                                                        <strong>
+                                                                            {{$errors->first('artist_early_life')}}
+                                                                        </strong>
+                                                                    </span>
+                                                                @endif
+                                                                <span class="artist-early-life-error error help-block"></span>
                                                             </div>
                                                         </div>
+
+
                                                         <div class="form-group row">
                                                             <label class="col-lg-3 col-form-label form-control-label">Achievments <span class="req">*</span></label>
                                                             <div class="col-lg-9">
 
-<textarea name="artist_achievements" id="artistAchievements" rows="5" class="form-control" placeholder="Type artist achievments" onfocus="removeError();" value="{{old('artist_achievements')}}"></textarea>
- @if($errors->has('artist_achievements'))
-                                                    <span class="help-block">
-                                                        <strong>
-                                                            {{$errors->first('artist_achievements')}}
-                                                        </strong>
-                                                    </span>
-                                                @endif
-                                                <span class="artist-achievements-error error help-block"></span>
+                                                                <textarea name="artist_achievements" id="artistAchievements" rows="5" class="form-control" placeholder="Type artist achievments" onfocus="removeError('artist-achievements');" value="{{old('artist_achievements')}}"></textarea>
+                                                                 @if($errors->has('artist_achievements'))
+                                                                    <span class="help-block">
+                                                                        <strong>
+                                                                            {{$errors->first('artist_achievements')}}
+                                                                        </strong>
+                                                                    </span>
+                                                                @endif
+                                                                <span class="artist-achievements-error error help-block"></span>
                                                             </div>
                                                         </div>
+
+
                                                         <div class="form-group row">
                                                             <label class="col-lg-3 col-form-label form-control-label">Hash Tags <span class="req">*</span></label>
                                                             <div class="col-lg-9">
-                                                                 <input type="text" id="artistHashTags" name="artist_hash_tags" class="form-control" value="{{old('artist_hash_tags')}}" onfocus="removeError();" placeholder="Type artist hashtags">
+                                                                 <input type="text" id="artistHashTags" name="artist_hash_tags" class="form-control" value="{{old('artist_hash_tags')}}" onfocus="removeError('artist-hash-tags');" placeholder="Type artist hashtags">
                                                                   @if($errors->has('artist_hash_tags'))
-                                                    <span class="help-block">
-                                                        <strong>
-                                                            {{$errors->first('artist_hash_tags')}}
-                                                        </strong>
-                                                    </span>
-                                                @endif
-                                                <span class="artist-hash-tags-error error help-block"></span>
+                                                                    <span class="help-block">
+                                                                        <strong>
+                                                                            {{$errors->first('artist_hash_tags')}}
+                                                                        </strong>
+                                                                    </span>
+                                                                @endif
+                                                                <span class="artist-hash-tags-error error help-block"></span>
                                                             </div>
                                                         </div>
+
                                                         <div class="form-group row">
                                                             <label class="col-lg-3 col-form-label form-control-label"></label>
                                                             <div class="col-lg-9">
@@ -249,19 +254,20 @@
             var widthOfImg = '';
             var heightOfImg = '';
             var file = $('input[type="file"]').val();
-             $(".avatar-filename").text(file);
+//             $(".avatar-filename").text(file);
             if (file != '') {
                 var fileSize = $('input[type="file"]')[0].files[0].size;
                 if (fileSize > 2097152) {
                     $('.subModalBtn').prop('disabled', true);
-                    alertify.alert('Max size 2 mb only !');
-                     $(".avatar-filename").text('');
+                    $('span.artist-avatar-error').html('<strong>Max size 2 mb only !</strong>');
+//                     $(".avatar-filename").text('');
                 } else {
+                    $('span.artist-avatar-error').html('');
                     var ext = $('input[type="file"]').val().split('.').pop().toLowerCase();
                     if ($.inArray(ext, ['jpeg', 'jpg', 'png', 'bmp', 'gif', 'svg']) == -1) {
                         $('.subModalBtn').prop('disabled', true);
-                        alertify.alert('Invalid Image Format !');
-                                             $(".avatar-filename").text('');
+                        $('span.artist-avatar-error').html('<strong>Invalid Image Format !</strong>');
+//                                             $(".avatar-filename").text('');
 
                     } else {
                         var fileInput = $(this)[0],
@@ -276,12 +282,13 @@
                                 widthOfImg = img.naturalWidth;
                                 heightOfImg = img.naturalHeight;
 
-                                if (widthOfImg != 25 && heightOfImg != 25) {
-                                    alertify.alert('Invalid Image Dimension ! Image Size Must be 25*25.');
+                                if (widthOfImg != 200 && heightOfImg != 200) {
+                                    $('span.artist-avatar-error').html('<strong>Invalid Image Dimension ! Image Size Must be 200*200</strong>');
                                     $('.subModalBtn').prop('disabled', true);
-                                                         $(".avatar-filename").text('');
+//                                  $(".avatar-filename").text('');
 
                                 } else {
+                                    $('span.artist-avatar-error').html('');
                                     $('.subModalBtn').prop('disabled', false);
                                 }
                             };
@@ -293,8 +300,8 @@
 
 
 
- function removeError() {
-            $('.error').html('');
+        function removeError(text) {
+            $('.'+text+'-error').html('');
         }
 
     </script>

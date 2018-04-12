@@ -33,6 +33,11 @@
             <div class="row gutters">
                 <div class=" col-md-12 col-sm-12">
                     <div class="card">
+                        <div class="card-header artist-header">
+                            @if(isset($data) && $data->count() == 0)
+                                <a href="{{url('admin/content-management/contact-us/create')}}">Add</a>
+                            @endif
+                        </div>
                         <div class="card-body">
                             @if(\Illuminate\Support\Facades\Session::has('message'))
                                 <div class="alert alert-success">
@@ -41,11 +46,7 @@
                                 </div>
                             @endif
                             <div class="table-responsive">
-              @if(isset($data) && $data->count() >= 1)
 
-            @else
-            <a href="{{url('admin/content-management/contact-us/create')}}">Add</a>
-            @endif
             <table class="table m-0 table-bordered common-table">
                 <thead>
                 <th>Name</th>
