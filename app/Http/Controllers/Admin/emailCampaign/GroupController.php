@@ -34,7 +34,7 @@ class GroupController extends Controller
     public function index()
     {
 
-        $group = EmailGroup::where('admin_id', Auth::guard('admin')->user()->id)->paginate(20);
+        $group = EmailGroup::paginate(20);
         return view('admin.email-marketing.Group.index')->with(['items' => $group]);
     }
 

@@ -37,8 +37,30 @@
 						<div class="card">
 							<div class="card-body">
 								<div class="campaign-form">
-									<form class="form" role="form" autocomplete="off" action="{{url('admin/email-marketing/campaign-manage')}}" method="post">
+									<form class="form" id="create-form" role="form" autocomplete="off" action="{{url('admin/email-marketing/campaign-manage')}}" method="post" enctype="multipart/form-data">
 										{{csrf_field()}}
+										@if(\Session::has('empty'))
+										<span style="color: red">
+											<strong>Sucess!</strong> The excel file contain null value 
+										</span>
+										@endif
+										@if(\Session::has('message'))
+										<span style="color: green">
+											<strong>Sucess!</strong> Email Sucessfully sent from excel file
+										</span>
+										@endif
+										@if(\Session::has('sucess'))
+										<span style="color: green">
+											<strong>Sucess!</strong> Email Sucessfully sent 
+										</span>
+										@endif
+										@if(\Session::has('invalidEmailErrorData'))
+										@php $invalidEmail= \Session::get('invalidEmailData')
+										@endphp
+										<span style="color: red">
+											<strong>Error!</strong> The excel file contain invalid email 
+										</span>
+										@endif
 										<div class="form-group row">
 											<label class="col-lg-3 col-form-label form-control-label">
 												Name<span class="req">*</span> 
@@ -47,7 +69,15 @@
 												</a>
 											</label>
 											<div class="col-lg-9">
-												<input class="form-control" type="text" name = "campaign_name" value="" placeholder="Enter the campaign name">
+												<input class="form-control" id="campaign-name" type="text" onfocus="removeError();" name = "campaign_name" value="" placeholder="Enter the campaign name">
+												<span class="campaign-name-error error help-block">   </span>
+												@if($errors->has('campaign_name'))
+                                                <span class="help-block">
+                                                    <strong>
+                                                        {{$errors->first('campaign_name')}}
+                                                    </strong>
+                                                </span>
+                                                @endif
 											</div>
 										</div>
 										<div class="form-group row">
@@ -58,7 +88,7 @@
 												</a>
 											</label>
 											<div class="col-lg-9">
-												<select name="group" id="contact-group" class="form-control" onfocus="removeError();">
+												<select name="group" id="contact-group"  class="form-control" onfocus="removeError();">
 													<option value="">Choose Group</option>
 													@if ($items)
 													@foreach($items as $item)
@@ -66,22 +96,38 @@
 													@endforeach
 													@endif
 												</select>
+												 @if($errors->has('group'))
+                                                <span class="help-block">
+                                                    <strong>
+                                                        {{$errors->first('group')}}
+                                                    </strong>
+                                                </span>
+                                                @endif
 											</div>
 										</div>
 										<div class="form-group row">
 											<label class="col-lg-3 col-form-label form-control-label">
 												Add Or Upload File
-												<a href="#" class="notice" data-toggle="tooltip" data-placement="bottom" title="Add Or Upload File">
+												<a href="#"  class="notice" data-toggle="tooltip" data-placement="bottom" title="Add Or Upload File">
 													<i class="icon-notifications_none"></i>
 												</a>
 											</label>
 											<div class="col-lg-9">
-												<label class="custom-file">
-													<input type="file" id="file2" class="custom-file-input">
-													<span class="custom-file-control"></span>
+												<label class="contacts-file">
+													<input type="file" id="contacts-file" onfocus="removeError();" name="contacts_file" class="file-input"></br>
+													<span class="contacts-file-error error help-block">   </span>
+												</label>
+													@if($errors->has('contacts_file'))
+													<span class="contacts-file help-block">
+														<strong>
+															{{$errors->first('contacts_file')}}
+														</strong>
+													</span>
+													@endif
+													
 												</label>
 												<div class="sample-file">
-													<a href="#">Sample 1</a><a href="#">Sample 2</a>
+													<a href="{{asset('download\campaing.xlsx')}}">Sample 1</a>
 												</div>
 											</div>
 										</div>
@@ -102,6 +148,25 @@
 										</div>
 										<div class="form-group row">
 											<label class="col-lg-3 col-form-label form-control-label">
+												Subject<span class="req">*</span> 
+												<a href="#" id="campaign-name" class="notice" data-toggle="tooltip" data-placement="bottom" title="Name">
+													<i class="icon-notifications_none"></i>
+												</a>
+											</label>
+											<div class="col-lg-9">
+												<input class="form-control" type="text" onfocus="removeError();" name = "subject" value="" id="subject" placeholder="Enter the subject">
+												<span class="subject-error error help-block">   </span>
+												@if($errors->has('subject'))
+                                                <span class="help-block">
+                                                    <strong>
+                                                        {{$errors->first('subject')}}
+                                                    </strong>
+                                                </span>
+                                                @endif
+											</div>
+										</div>
+										<div class="form-group row">
+											<label class="col-lg-3 col-form-label form-control-label">
 												Message
 												<div class="form-check">
 													<input class="form-check-input" type="radio"> 
@@ -115,7 +180,15 @@
 												</div>
 											</label>
 											<div class="col-lg-12">
-												<textarea name="editor1" id="editor" class="form-control" placeholder="Type your cureent status"></textarea>
+												<textarea name="message" id="editor" onfocus="removeError();" class="message-editor form-control" placeholder="Type your cureent status"></textarea>
+												<span class="message-error error help-block">   </span>
+												@if($errors->has('message'))
+													<span class="help-block">
+														<strong>
+															{{$errors->first('message')}}
+														</strong>
+													</span>
+													@endif
 											</div>
 										</div>
 										
@@ -211,6 +284,55 @@
 @section('scripts')
 <script src="{{asset('ckeditor/ckeditor.js')}}"></script>
 <script>
-	CKEDITOR.replace( 'editor1' );
+	CKEDITOR.replace( 'message' );
+</script>
+<script>
+	 
+    $('#create-form').on('submit', function (e) {
+        $('.error').html('');
+        if ($('#campaign-name').val() == '') {
+            e.preventDefault();
+            $('.campaign-name-error').html('<strong>Please enter the  Campaign Name.</strong>');
+        }
+         if ($('.message-editor').val() == '') {
+            e.preventDefault();
+            $('.message-error').html('<strong>Please enter the  message.</strong>');
+        }
+
+        if ($('#contact-group').val() == '' && $('#contacts-file').val()=='') {
+            e.preventDefault();
+            $('.contacts-file-error').html('<strong>Contact group or upload file should not be empty.</strong>');
+        }
+        if ($('#subject').val() == '') {
+            e.preventDefault();
+            $('.subject-error').html('<strong>Please enter the subject</strong>');
+        }
+    });
+
+    $(document).on('submit', '#create-form-excel', function (e) {
+        $('.error').html('');
+        if ($('#excel_file').val() == '') {
+            e.preventDefault();
+          $('.excel-file-error').html('<strong>Please upload your excel file.</strong>');
+
+        } else {
+
+            var ext = $('input#excel_file').val().split('.').pop().toLowerCase();
+            if ($.inArray(ext, ['xlsx','xls']) == -1) {
+                e.preventDefault();
+                $('.excel-file-error').html('<strong>Invalid File Format !</strong>');
+            } else {
+                var fileSize = $('input#excel_file')[0].files[0].size;
+                if (fileSize > 204800) {
+                    e.preventDefault();
+                    $('.excel-file-error').html('<strong>File Size exceed max allowed size !</strong>');
+                }
+            }
+        }
+    });
+    
+    function removeError() {
+        $('.error').html('');
+    }
 </script>
 @stop
